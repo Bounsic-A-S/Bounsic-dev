@@ -2,6 +2,25 @@
   "name": "bounsic-front",
   "version": "0.0.0",
   "packageManager": "bun@latest",
+  "author": "Bounsic",
+  "contributors": [
+    {
+      "name": "Juan David Patiño Parra",
+      "email": "juandavidp1127@gmail.com"
+    },
+    {
+      "name": "Juan David Carvajal Rondón",
+      "email": "juandacr25@gmail.com"
+    },
+    {
+      "name": "Christian Mauricio Rodriguez Curubo",
+      "email": "cmrcurubo@gmail.com"
+    },
+    {
+      "name": "Jose Daniel Montero Gutierrez",
+      "email": "jmontero.gutierrez2002@gmail.com"
+    }
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -22,8 +41,11 @@
     "@angular/platform-server": "^19.1.0",
     "@angular/router": "^19.1.0",
     "@angular/ssr": "^19.1.6",
+    "@tailwindcss/postcss": "^4.0.4",
     "express": "^4.18.2",
+    "postcss": "^8.5.1",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.0.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
