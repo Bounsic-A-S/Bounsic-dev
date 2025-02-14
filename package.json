@@ -1,0 +1,17 @@
+{
+    "name": "monorepo-angular-python",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "install:frontend": "cd bounsic-front && bun install",
+        "install:backend": "cd bounsic-back && python -m venv venv && powershell -Command \"venv\\Scripts\\pip install -r requirements.txt\"",
+        "install": "bun run install:frontend && bun run install:backend",
+        "start:frontend": "cd bounsic-front && bun run start",
+        "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
+        "start": "concurrently \"bun run start:frontend\" \"bun run start:backend\""
+    },
+    "dependencies": {
+        "concurrently": "^9.1.2",
+        "monorepo-angular-python": "file:"
+    }
+}

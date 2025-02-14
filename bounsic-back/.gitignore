@@ -1,0 +1,61 @@
+# Archivos y carpetas de Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Entornos virtuales
+venv/
+.env/
+*.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Configuración de entorno y credenciales
+.env
+*.env
+config.json
+settings.py
+*.sqlite3
+
+# Dependencias y paquetes
+site-packages/
+Pipfile.lock
+poetry.lock
+
+# Archivos de logs
+*.log
+logs/
+*.out
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints/
+
+# Docker y compilaciones
+Dockerfile
+*.dockerignore
+dist/
+build/
+*.egg-info/
+
+# Archivos de IDEs y editores
+.vscode/
+.idea/
+*.iml
+
+# Archivos de control de versiones de Jupyter
+.jupyter/
+
+# Archivos de testing y cobertura
+.coverage
+.tox/
+.nox/
+htmlcov/
+
+# Archivos de distribución
+*.tar.gz
+*.whl
+*.zip
+
+# Archivos de compilación de Cython
+*.c
+*.cpp
