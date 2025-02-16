@@ -1,7 +1,26 @@
 {
-    "name": "monorepo-angular-python",
+    "name": "bounsic",
     "version": "1.0.0",
     "private": true,
+    "author": "Bounsic",
+    "contributors": [
+      {
+        "name": "Juan David Patiño Parra",
+        "email": "juandavidp1127@gmail.com"
+      },
+      {
+        "name": "Juan David Carvajal Rondón",
+        "email": "juandacr25@gmail.com"
+      },
+      {
+        "name": "Christian Mauricio Rodriguez Curubo",
+        "email": "cmrcurubo@gmail.com"
+      },
+      {
+        "name": "Jose Daniel Montero Gutierrez",
+        "email": "jmontero.gutierrez2002@gmail.com"
+      }
+    ],
     "scripts": {
         "install:frontend": "cd bounsic-front && bun install",
         "install:backend": "cd bounsic-back && python -m venv venv && powershell -Command \"venv\\Scripts\\pip install -r requirements.txt\"",
@@ -11,7 +30,6 @@
         "start": "concurrently \"bun run start:frontend\" \"bun run start:backend\""
     },
     "dependencies": {
-        "concurrently": "^9.1.2",
-        "monorepo-angular-python": "file:"
+        "concurrently": "^9.1.2"
     }
 }
