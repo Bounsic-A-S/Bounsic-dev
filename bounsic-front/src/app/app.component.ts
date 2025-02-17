@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { LandingComponent } from './features/landing/landing.component';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  selector: 'app-root', // name of the component
+  standalone: true, // not module
+  templateUrl: './app.component.html', // render
+  imports: [LandingComponent], // imports what we need
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
-  title = 'bounsic-front';
-}
+export class AppComponent { }

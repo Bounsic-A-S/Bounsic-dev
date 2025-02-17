@@ -1,9 +1,11 @@
-# app/__init__.py
 from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
+import sys
 from pathlib import Path
 
+# Forzar codificación UTF-8 en Windows
+sys.stdout.reconfigure(encoding='utf-8')
 
 # Cargar variables de entorno desde .env.dev
 dotenv_path = Path(__file__).resolve().parent.parent / "env" / ".env.dev"
@@ -11,7 +13,6 @@ if not load_dotenv(dotenv_path):
     print(f"⚠️ No se pudo cargar el archivo {dotenv_path}")
 
 app = FastAPI()
-
 
 # Leer variables de entorno
 env_host = os.getenv("HOST", "127.0.0.1")
