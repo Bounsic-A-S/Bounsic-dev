@@ -1,0 +1,21 @@
+<!-- smooth-hover-text.component.html -->
+<div class="container flex flex-col">
+  <div class="px-10">
+    <h1
+      class="first-tittle translate-y-8"
+      [class.hovered]="isHovered"
+      (mouseenter)="onHover()"
+      (mouseleave)="onLeave()"
+    >
+      TU MÚSICA TU ESCENCIA
+    </h1>
+  </div>
+
+  <h1
+    [class.hovered]="isHovered"
+    (mouseenter)="onHover()"
+    (mouseleave)="onLeave()"
+  >
+    ESCUCHAR AHORA
+  </h1>
+</div>

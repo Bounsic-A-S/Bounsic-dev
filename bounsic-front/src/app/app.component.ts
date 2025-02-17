@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { LandingComponent } from './features/landing/landing.component';
+import {RouterModule} from '@angular/router';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root', // name of the component
   standalone: true, // not module
   templateUrl: './app.component.html', // render
-  imports: [LandingComponent], // imports what we need
+  imports: [RouterModule,NavbarComponent], // imports what we need
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent { }

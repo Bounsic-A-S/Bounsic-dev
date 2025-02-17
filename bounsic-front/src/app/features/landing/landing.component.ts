@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NavbarComponent } from '@app/shared/components/navbar/navbar.component';
+import { LandingTextComponent } from './tittle/tittle.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [NavbarComponent],
+  imports: [LandingTextComponent],
   templateUrl: './landing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
