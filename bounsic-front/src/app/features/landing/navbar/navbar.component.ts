@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   imports: [RouterModule, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent {
+export class LandingNavBarComponent {
   isMobileMenuOpen = false;
 
   toggleMobileMenu() {
