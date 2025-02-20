@@ -1,4 +1,32 @@
 <main-navbar></main-navbar>
-<section class=" min-h-screen">
-  <h1>ROUTES DONE q!</h1>
-</section>
+<div class="bg-black text-white p-8 pt-11 mt-20">
+  <!-- Header Section -->
+  <div class="max-w-4xl mx-auto text-center mb-12">
+    <h1 class="text-2xl mb-6">Inicia la radio a partir de una canción</h1>
+    <!-- SearchBar -->
+    <dashboard-searchBar></dashboard-searchBar>
+  </div>
+  <!-- Carousel songs -->
+  <dashboard-songsCarousel></dashboard-songsCarousel>
+
+  <!-- Safe Choices Section -->
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-xl mb-6">Elecciones seguras</h2>
+    <div class="space-y-4">
+      <!-- Song Item -->
+      <div
+        class="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg cursor-pointer"
+      >
+        <img
+          src="https://i.pinimg.com/736x/b2/60/94/b26094970505bcd59c2e5fe8b6f41cf0.jpg"
+          alt="Album cover"
+          class="w-12 h-12 rounded"
+        />
+        <div>
+          <h4 class="font-semibold">Starboy (con Daft punk)</h4>
+          <p class="text-sm text-gray-400">The Weekend || Starboy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

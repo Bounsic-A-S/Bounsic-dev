@@ -1,6 +1,6 @@
 {
   "name": "bounsic-front",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "packageManager": "bun@latest",
   "author": "Bounsic",
   "contributors": [
@@ -47,7 +47,9 @@
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.0.4",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "zone.js": "~0.15.0",
+    "lucide-angular": "^0.475.0"
+
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.1.6",
