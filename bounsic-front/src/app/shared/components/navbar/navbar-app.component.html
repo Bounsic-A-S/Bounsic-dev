@@ -53,19 +53,21 @@
         >
           <!-- Mostrar opciones de inicio y cierre de sesión -->
           <button
-            *ngIf="!isLoggedIn"
-            (click)="login()"
+            *ngIf="!userProfile"
+            (click)="loginRedirect()"
             class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 hover:cursor-pointer"
           >
             Iniciar sesión
           </button>
-          <button
-            *ngIf="isLoggedIn"
-            (click)="logout()"
-            class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 hover:cursor-pointer"
-          >
-            Cerrar sesión
-          </button>
+          <div *ngIf="userProfile">
+            <span class="text-white">{{ userProfile?.name }}</span>
+            <button
+              (click)="logout()"
+              class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 hover:cursor-pointer"
+            >
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -121,14 +123,14 @@
 
       <!-- Mobile Login / Logout -->
       <button
-        *ngIf="!isLoggedIn"
-        (click)="login()"
+        *ngIf="!userProfile"
+        (click)="loginRedirect()"
         class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
       >
         Iniciar sesión
       </button>
       <button
-        *ngIf="isLoggedIn"
+        *ngIf="userProfile"
         (click)="logout()"
         class="block text-sm text-white/90 hover:text-red-600 transition-colors"
       >
