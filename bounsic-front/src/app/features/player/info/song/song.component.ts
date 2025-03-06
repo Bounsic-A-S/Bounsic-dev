@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
-  selector: 'player-song-card',
+  selector: 'player-song',
   standalone: true,
   templateUrl: './song.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayerSongCard {}
+export class PlayerSong {}

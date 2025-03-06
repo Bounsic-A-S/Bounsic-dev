@@ -15,5 +15,7 @@ export const routes: Routes = [
     {
         path: 'player',
         component: PlayerComponent,
-    }
+    },
+    { path: '**', redirectTo: '' } // Esto previene rutas desconocidas
+
 ];

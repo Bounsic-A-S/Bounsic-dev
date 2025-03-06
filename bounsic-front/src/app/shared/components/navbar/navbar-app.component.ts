@@ -3,14 +3,14 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest, RedirectRequest } from '@azure/msal-browser';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {

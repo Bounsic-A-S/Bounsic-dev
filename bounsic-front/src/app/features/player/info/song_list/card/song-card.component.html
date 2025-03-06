@@ -1,0 +1,20 @@
+
+<div class="bg-[#191818] flex items-center p-2 pr-8 rounded hover:bg-white/30 transition-colors cursor-pointer w-full">
+    <div class="w-12 h-12 mr-4 flex-shrink-0">
+      <img [src]="song.coverUrl" [alt]="song.title + ' by ' + song.artist" class="w-full h-full object-cover rounded" />
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 class="m-0 text-base font-medium text-white truncate">{{ song.title }}</h3>
+      <p class="text-sm text-white/70 truncate">{{ song.artist }}</p>
+    </div>
+    <div *ngIf="showActions" class="ml-4">
+      <button class="bg-transparent border-none text-white/70 hover:text-white p-1 flex items-center justify-center" (click)="$event.stopPropagation()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1"></circle>
+          <circle cx="12" cy="5" r="1"></circle>
+          <circle cx="12" cy="19" r="1"></circle>
+        </svg>
+      </button>
+    </div>
+  </div>
+  

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'dashboard-searchBar',
-  templateUrl: 'searchBar.component.html',
+  templateUrl: 'search-bar.component.html',
   imports: [CommonModule],
 })
 export class SearchBarComponent {

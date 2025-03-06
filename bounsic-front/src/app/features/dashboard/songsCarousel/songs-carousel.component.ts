@@ -5,7 +5,7 @@ import { LucideAngularModule, ChevronRight, ChevronLeft } from 'lucide-angular';
 
 @Component({
   selector: 'dashboard-songsCarousel',
-  templateUrl: 'songsCarousel.component.html',
+  templateUrl: 'songs-carousel.component.html',
   imports: [CommonModule, LucideAngularModule],
 })
 export class SongsCarouselComponent {

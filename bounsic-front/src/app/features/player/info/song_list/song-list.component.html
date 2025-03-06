@@ -1,0 +1,9 @@
+<ul class="hidden sm:block text-white mt-2 max-w-lg mx-auto list-none space-y-3">
+  <li *ngFor="let song of songs; let i = index">
+    <player-song-card-ui 
+      [song]="song" 
+      [showActions]="i === 0"
+      (click)="playSong(song)">
+    </player-song-card-ui>
+  </li>
+</ul>
