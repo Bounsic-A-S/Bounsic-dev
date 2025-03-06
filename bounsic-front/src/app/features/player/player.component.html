@@ -1,15 +1,15 @@
 <body class="flex flex-col min-h-screen">
   <main-navbar />
 
-  <main class="bg-black text-white flex-1 w-full pt-20 mt-20">
-    <div class="container mx-auto px-4 py-6">
+  <main class="bg-black text-white flex-1 sm:flex-none sm:h-[90vh] w-full">
+    <div class="container mx-auto px-4 py-6 h-full">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-        <section class="flex justify-center items-center">
+        <section class="flex justify-center items-center h-full">
           <player-song-card />
         </section>
 
         <section
-          class="flex justify-center md:justify-start items-center mt-6 md:mt-0"
+          class="flex justify-center md:justify-start items-center h-full"
         >
           <player-lyrics />
         </section>
@@ -17,7 +17,7 @@
     </div>
   </main>
 
-  <footer class="bg-white w-full">
+  <footer class="bg-white w-full sm:h-[10vh]">
     <player-bar />
   </footer>
 </body>
