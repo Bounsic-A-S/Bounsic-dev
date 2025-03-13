@@ -1,9 +1,9 @@
 <div class="bg-black text-white min-h-screen">
   <main-navbar></main-navbar>
-  <main class="container mx-auto mt-20 pt-10 px-6 xl:px-2">
+  <main class="container mx-auto mt-20 pt-8 sm:pt-10 px-6 xl:px-2">
     <!-- Playlists Section -->
     <section class="mb-10">
-      <h2 class="text-3xl font-bold mb-4">Playlists</h2>
+      <h2 class="text-xl sm:text-3xl font-bold mb-4">Playlists</h2>
       <div class="h-px w-full bg-white mb-6"></div>
 
       <div
@@ -11,7 +11,7 @@
       >
         <!-- Playlist Cards -->
         <div *ngFor="let playlist of playlists" class="cursor-pointer">
-          <div class="aspect-square rounded-xl overflow-hidden mb-2 size-44 xl:size-48">
+          <div class="aspect-square rounded-xl overflow-hidden mb-2 size-36 md:size-44 xl:size-48">
             <img
               [src]="playlist.coverUrl"
               alt="{{ playlist.title }}"
@@ -27,7 +27,7 @@
         <!-- Add Playlist Button -->
         <div class="cursor-pointer flex items-center ">
           <div
-            class="aspect-square border border-gray-700 rounded-xl flex items-center justify-center mb-2 size-36 xl:size-40"
+            class="aspect-square border border-gray-700 rounded-xl flex items-center justify-center mb-2 size-28 md:size-36 xl:size-40"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@
 
     <!-- Me gustas Section -->
     <section>
-      <h2 class="text-3xl font-bold mb-4">Me gustas</h2>
+      <h2 class="text-xl sm:text-3xl font-bold mb-4">Me gustas</h2>
       <div class="h-px w-full bg-white mb-6"></div>
 
       <div
@@ -59,7 +59,7 @@
         <!-- Liked Playlist Cards -->
         <div *ngFor="let playlist of likedPlaylists" class="cursor-pointer">
           <div
-            class="aspect-square overflow-hidden mb-2 bg-gradient-to-br rounded-xl size-44 xl:size-48"
+            class="aspect-square overflow-hidden mb-2 bg-gradient-to-br rounded-xl size-36 md:size-44 xl:size-48"
             [ngClass]="{
               'from-red-500 to-orange-500': playlist.id === 4,
               'bg-gray-800': playlist.id !== 4

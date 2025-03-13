@@ -51,7 +51,7 @@ export class SongsCarouselComponent {
     },
     {
       "id": 7,
-      "title": "A donde vamos?",
+      "title": "A donde vamos",
       "artist": "Morat",
       "cover": "https://i.pinimg.com/736x/27/64/0c/27640c8e00774a9081534486b8488ab4.jpg"
     },
