@@ -1,4 +1,5 @@
 # Archivos y carpetas de Python
+.pycache_global/
 __pycache__/
 *.py[cod]
 *.so
@@ -59,3 +60,8 @@ htmlcov/
 # Archivos de compilación de Cython
 *.c
 *.cpp
+
+# Mantener la carpeta pero ignorar su contenido
+/audios/*
+!/audios/.gitkeep
+.qodo

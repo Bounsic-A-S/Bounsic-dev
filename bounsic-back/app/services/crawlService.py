@@ -30,8 +30,6 @@ def crawler(url, visited=None):
 
     except Exception as e:
         print(f"Error al acceder a {url}: {e}")
-    print("--------------------------------")
-    print(visited)
     return visited
 
 # crawler("https://www.letras.com/kendrick-lamar")
