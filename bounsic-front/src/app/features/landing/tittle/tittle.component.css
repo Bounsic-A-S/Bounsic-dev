@@ -4,7 +4,7 @@
 h1 {
   font-family: "Inter", sans-serif;
   font-weight: 900;
-  font-size: 7rem;
+  font-size: clamp(3rem, 8vw, 7rem); /* Ajuste dinámico de tamaño */
   letter-spacing: -0.05em;
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
   -webkit-text-fill-color: transparent;
@@ -16,12 +16,28 @@ h1.hovered {
   -webkit-text-fill-color: white;
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
 }
+
 .first-tittle {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem); /* Ajuste dinámico */
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 5rem;
+  }
 }
 
 @media (max-width: 768px) {
   h1 {
     font-size: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 3rem;
+  }
+  .second-tittle {
+    font-size: 2.2rem
   }
 }
