@@ -20,7 +20,7 @@ debug_mode = os.getenv("DEBUG", "False") == "True"
 env_mode = "debug" if debug_mode else "production"
 os.environ["PYTHONPYCACHEPREFIX"] = os.path.abspath("./.pycache_project")
 
-print(f"✅ Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
+print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
 
 # Opcional: Importar y registrar routers aquí
 from app.api.routes import bert_router, crawl_router, scrapping_router

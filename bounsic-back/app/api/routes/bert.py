@@ -4,7 +4,7 @@ from app.services import pregunta_respuesta
 
 router = APIRouter()
 
-@router.get("/bert")
+@router.get("/")
 async def home():
     return {"message": "¡Hola, Bounsic-back está funcionando!"}
 
