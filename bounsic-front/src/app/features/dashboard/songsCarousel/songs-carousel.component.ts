@@ -16,32 +16,45 @@ export class SongsCarouselComponent {
       "id": 1,
       "title": "Like You Do",
       "artist": "Joji",
-      "cover": "https://i.pinimg.com/736x/b6/e5/6e/b6e56e823610424007e409a658445338.jpg"
+      "cover": "https://i.pinimg.com/736x/93/43/93/9343933fad669973700724344ff45003.jpg"
     },
     {
       "id": 2,
       "title": "Blinding Lights",
       "artist": "The Weeknd",
-      "cover": "https://i.pinimg.com/736x/d8/2d/b1/d82db192bfa37d3a0ca8594bf22f018f.jpg"
+      "cover": "https://i.pinimg.com/736x/94/a6/c9/94a6c97dbe731ed13e3bcf7e392f0960.jpg"
     },
     {
       "id": 3,
       "title": "After Hours",
       "artist": "The Weeknd",
-      "cover": "https://i.pinimg.com/736x/04/26/97/042697ed3bf0ad7876683527bb33bcbb.jpg"
+      "cover": "https://i.pinimg.com/736x/f6/66/12/f66612351e98a1e260221cdcba336ab1.jpg"
     },
     {
       "id": 4,
       "title": "Good Days",
       "artist": "SZA",
-      "cover": "https://i.pinimg.com/736x/60/6e/42/606e42c9c46dac97d8a318f4af23c92e.jpg "
+      "cover": "https://i.pinimg.com/736x/0a/e2/09/0ae20923c372768058244213dfdc90a9.jpg"
     },
     {
       "id": 5,
       "title": "Maria",
       "artist": "Blondie",
       "cover": "https://i.pinimg.com/736x/cd/4f/15/cd4f1528fbe6d5c1e9b89012fd7394b4.jpg"
-    }
+    },
+    {
+      "id": 6,
+      "title": "Daylight",
+      "artist": "Taylor Swift",
+      "cover": "https://i.pinimg.com/736x/a0/89/72/a08972f11ad0daed9a74d7058c730c26.jpg"
+    },
+    {
+      "id": 7,
+      "title": "A donde vamos?",
+      "artist": "Morat",
+      "cover": "https://i.pinimg.com/736x/27/64/0c/27640c8e00774a9081534486b8488ab4.jpg"
+    },
+
   ]
 
 }
