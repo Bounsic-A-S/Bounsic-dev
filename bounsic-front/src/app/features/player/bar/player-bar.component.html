@@ -1,5 +1,4 @@
-<footer class="bg-gray-900 text-white h-full flex items-center justify-between px-6 w-full">
-    <!-- Song Info -->
+<!-- <footer class="bg-gray-900 text-white h-full flex items-center justify-between px-6 w-full">
     <div class="flex items-center space-x-4">
       <div>
         <h3 class="text-sm font-semibold">Title</h3>
@@ -7,5 +6,125 @@
       </div>
     </div>
   
-  </footer>
-  
+  </footer> -->
+<div
+  class="bg-black text-white h-full w-full mx-auto flex items-center justify-between px-6"
+>
+  <!-- Song Info -->
+  <div class="flex items-center gap-4">
+    <img
+      src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
+      alt="Cover"
+      class="w-16 h-16 rounded-md object-cover"
+    />
+    <div class="flex-1 truncate">
+      <h3 class="md:text-lg font-semibold">No One Noticed</h3>
+      <p class="text-xs sm:text-sm text-gray-400">The Marias</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-4 px-2 sm:px-4">
+      <button class="text-gray-400 hover:text-white">
+        <lucide-angular
+          [img]="Heart"
+          class="my-icon"
+          [size]="20"
+        ></lucide-angular>
+      </button>
+      <button class="text-gray-400 hover:text-white">
+        <lucide-angular
+          [img]="MoreVertical"
+          class="my-icon"
+          [size]="20"
+        ></lucide-angular>
+      </button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div
+    class="flex flex-col justify-center items-center gap-2 my-4 w-full max-w-3xs xl:max-w-xl"
+  >
+    <div class="flex gap-4">
+      <button
+        (click)="prevSong()"
+        class="hidden sm:block text-gray-400 hover:text-white"
+      >
+        <lucide-angular
+          [img]="SkipBack"
+          class="my-icon"
+          [size]="24"
+        ></lucide-angular>
+      </button>
+      <button
+        (click)="togglePlay()"
+        class="bg-white text-black p-2 rounded-full cursor-pointer"
+      >
+        <lucide-angular
+          *ngIf="!isPlaying"
+          [img]="Play"
+          class="my-icon"
+          [size]="24"
+        ></lucide-angular>
+        <lucide-angular
+          *ngIf="isPlaying"
+          [img]="Pause"
+          class="my-icon"
+          [size]="24"
+        ></lucide-angular>
+      </button>
+      <button
+        (click)="nextSong()"
+        class="hidden sm:block text-gray-400 hover:text-white"
+      >
+        <lucide-angular
+          [img]="SkipForward"
+          class="my-icon"
+          [size]="24"
+        ></lucide-angular>
+      </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="hidden md:flex w-full items-center mt-2">
+      <span class="text-white text-sm">0:00</span>
+      <div class="relative w-full mx-3">
+        <div class="relative h-1 w-full bg-gray-600 rounded overflow-hidden">
+          <div
+            class="absolute left-0 top-0 h-full bg-white"
+            [style.width.%]="(60 / 190) * 100"
+          ></div>
+        </div>
+        <svg
+          class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
+          [style.left.%]="(60 / 190) * 100"
+          fill="white"
+          height="12"
+          width="12"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="12" cy="12" r="6" />
+        </svg>
+      </div>
+      <span class="text-white text-sm">3:27</span>
+    </div>
+  </div>
+
+  <!-- Extra Controls -->
+  <div class="flex justify-end gap-4 mt-4">
+    <button class="text-gray-400 hover:text-white">
+      <lucide-angular [img]="List" class="my-icon" [size]="24"></lucide-angular>
+    </button>
+    <button class="text-gray-400 hover:text-white">
+      <lucide-angular
+        [img]="Volume2"
+        class="my-icon"
+        [size]="24"
+      ></lucide-angular>
+    </button>
+  </div>
+
+  <!-- Audio Element -->
+  <!-- <audio #audio (timeupdate)="updateTime()" (loadedmetadata)="setDuration()">
+    <source [src]="song.url" type="audio/mpeg" />
+  </audio> -->
+</div>
