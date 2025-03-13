@@ -1,6 +1,6 @@
 // search-filter.component.ts
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { LucideAngularModule, ChevronRight, ChevronLeft } from 'lucide-angular';
 
 @Component({
@@ -9,6 +9,7 @@ import { LucideAngularModule, ChevronRight, ChevronLeft } from 'lucide-angular';
   imports: [CommonModule, LucideAngularModule],
 })
 export class SongsCarouselComponent {
+  @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
   readonly ChevronRight = ChevronRight;
   readonly ChevronLeft = ChevronLeft;
   public albums = [
@@ -56,5 +57,12 @@ export class SongsCarouselComponent {
     },
 
   ]
+  scrollLeft() {
+    this.scrollContainer.nativeElement.scrollBy({ left: -500, behavior: 'smooth' });
+  }
+
+  scrollRight() {
+    this.scrollContainer.nativeElement.scrollBy({ left: 500, behavior: 'smooth' });
+  }
 
 }

@@ -2,20 +2,15 @@
   <h2 class="text-xl mb-4">Nuevos descubrimientos</h2>
   <h3 class="text-3xl font-bold mb-6">Podría interesarte...</h3>
 
-  <!-- Album Carousel (mapping) -->
   <div class="relative">
     <button
-      class="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full"
+      class="hidden md:absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+      (click)="scrollLeft()"
     >
-      <lucide-angular
-        [img]="ChevronLeft"
-        class="my-icon"
-        [size]="36"
-      ></lucide-angular>
+      <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
     </button>
 
-    <div class="flex gap-4 overflow-x-auto pb-4 px-8">
-        <!-- forrr -->
+    <div #scrollContainer class="flex gap-8 overflow-x-auto pb-4 px-8 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto">
       <div *ngFor="let album of albums" class="flex-none w-48">
         <img
           [src]="album.cover"
@@ -28,13 +23,10 @@
     </div>
 
     <button
-      class="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full"
+      class="hidden md:absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+      (click)="scrollRight()"
     >
-      <lucide-angular
-        [img]="ChevronRight"
-        class="my-icon"
-        [size]="36"
-      ></lucide-angular>
+      <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
     </button>
   </div>
 </div>
