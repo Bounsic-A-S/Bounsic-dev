@@ -32,43 +32,43 @@
 
   <!-- Controls -->
   <div
-    class="flex flex-col justify-center items-center xl:gap-2 my-2 w-full max-w-3xs xl:max-w-xl"
+    class="flex flex-col justify-center items-center w-full max-w-3xs xl:max-w-xl"
   >
-    <div class="flex gap-4">
+    <div class="flex gap-x-10 lg:gap-x-16 2xl:gap-x-24">
       <button
         (click)="prevSong()"
-        class="hidden sm:block text-gray-400 hover:text-white"
+        class="hidden sm:block cursor-pointer"
       >
         <lucide-angular
           [img]="SkipBack"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
       <button
         (click)="togglePlay()"
-        class="bg-white text-black p-2 rounded-full cursor-pointer"
+        class="p-2 rounded-full cursor-pointer"
       >
         <lucide-angular
           *ngIf="!isPlaying"
           [img]="Play"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
         <lucide-angular
           *ngIf="isPlaying"
           [img]="Pause"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
       <button
         (click)="nextSong()"
-        class="hidden sm:block text-gray-400 hover:text-white"
+        class="hidden sm:block cursor-pointer"
       >
         <lucide-angular
           [img]="SkipForward"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
