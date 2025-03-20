@@ -1,24 +1,24 @@
-<div class="flex flex-col hv-dvh">
+<div class="flex flex-col min-h-screen">
   <main-navbar />
 
-  <main class="bg-black text-white flex-1 sm:flex-none h-[90vh] w-full">
+  <main class="bg-black text-white flex-grow w-full pb-[10vh]">
     <div class="container mx-auto px-4 py-6 h-full">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full pt-20 md:pt-0">
-        <section class="flex flex-row md:flex-col justify-center items-center h-full gap-x-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[80vh] pt-20">
+        <section
+          class="flex flex-row md:flex-col justify-center items-center gap-x-6"
+        >
           <player-song />
-          <player-song-list/>
+          <player-song-list />
         </section>
 
-        <section
-          class="flex justify-center md:justify-start items-center h-full"
-        >
+        <section class="flex h-52 place-self-center overflow-y-auto p-1 scroll-hidden scroll-smooth">
           <player-lyrics />
         </section>
       </div>
     </div>
   </main>
 
-  <footer class="bg-white w-full h-[10vh]">
+  <footer class="bg-white w-full h-[10vh] fixed bottom-0">
     <player-bar />
   </footer>
 </div>
