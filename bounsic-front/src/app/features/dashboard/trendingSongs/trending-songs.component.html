@@ -1,0 +1,35 @@
+<div class="relative">
+    <!-- Contenedor de botones arriba a la derecha -->
+    <div class="absolute top-0 right-0 flex gap-2 p-2 z-10 -translate-y-14">
+      <button
+        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer"
+        (click)="scrollLeft()"
+      >
+        <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
+      </button>
+  
+      <button
+        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer"
+        (click)="scrollRight()"
+      >
+        <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
+      </button>
+    </div>
+  
+    <!-- Carrusel de álbumes -->
+    <div
+      #scrollContainer
+      class="flex gap-12 overflow-x-auto pb-4 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
+    >
+      <div *ngFor="let trendingSong of trendingSongs" class="flex-none w-32 sm:w-36 lg:w-40">
+        <img
+          [src]="trendingSong.cover"
+          [alt]="trendingSong.title"
+          class="w-full aspect-square object-cover rounded-md mb-2"
+        />
+        <h4 class="font-semibold">{{ trendingSong.title }}</h4>
+        <p class="text-sm text-gray-400">{{ trendingSong.artist }}</p>
+      </div>
+    </div>
+  </div>
+  
