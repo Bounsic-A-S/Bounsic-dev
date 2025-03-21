@@ -1,0 +1,24 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <!-- Song Item -->
+  <div
+    *ngFor="let safeChoiceSong of safeChoiceSongs | slice:0:maxSongsToShow"
+    class="hover:bg-white/5 rounded-lg cursor-pointer"
+  >
+    <a routerLink="/player" class="flex items-center gap-4 p-2 w-full h-full">
+      <div class="w-12 sm:w-14 lg:w-16">
+        <img
+          [src]="safeChoiceSong.cover"
+          [alt]="safeChoiceSong.title"
+          class="w-full aspect-square object-cover rounded"
+        />
+      </div>
+
+      <div>
+        <h4 class="font-semibold">{{ safeChoiceSong.title }}</h4>
+        <p class="text-sm sm:text-base text-gray-400">
+          {{ safeChoiceSong.artist }} || {{ safeChoiceSong.album }}
+        </p>
+      </div>
+    </a>
+  </div>
+</div>
