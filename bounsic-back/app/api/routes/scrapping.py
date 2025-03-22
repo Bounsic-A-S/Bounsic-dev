@@ -36,19 +36,22 @@ async def web_scrapping1(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
         
 @router.get("/descarga")
-async def descargaYu(request: Request):
+async def descargaYu(url: str = Query(..., description="URL del video de YouTube")):
     try:
+        if not url:
+            raise HTTPException(status_code=400, detail="URL no proporcionada")
 
-        descarga = descargar_audio("https://www.youtube.com/watch?v=rYEDA3JcQqw")
+        resultado = descargar_audio(url)
 
-        # Retorna la información y el estado de la descarga
-        return JSONResponse(content={
-            "download_status": descarga
-        })
+        if not resultado:
+            return JSONResponse(status_code=404, content={"detail": "No se pudo descargar el audio"})
+        
+        return JSONResponse(status_code=200, content={"message": "Se descargó el audio", "data": resultado})
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
 @router.get("/scrapingYu")
 async def scrap(request: Request):
     try:

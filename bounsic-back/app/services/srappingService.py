@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-
+import os
+from pathlib import Path
 import yt_dlp
 
 def scrappingBueno():
@@ -56,6 +57,15 @@ def scrappingBueno():
 
 
 def descargar_audio(url):
+    base_path = Path(__file__).resolve().parent
+    while base_path.name != "bounsic-back":
+        base_path = base_path.parent
+
+    audio_dir = base_path / "audios"
+    audio_dir.mkdir(parents=True, exist_ok=True)
+
+    ffmpeg_path = base_path / "ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"
+
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -63,12 +73,28 @@ def descargar_audio(url):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': 'audios/%(title)s.%(ext)s',  # Guarda en la carpeta "audios"
-        'ffmpeg_location': r"D:\Descargas\ffmpeg-7.1-essentials_build\bin\ffmpeg.exe"
+        'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
+        'ffmpeg_location': str(ffmpeg_path)
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)  
+
+            # 🔹 Obtener el nombre del archivo esperado
+            video_title = info.get("title", "unknown").replace("/", "-")  # Evita caracteres inválidos
+            downloaded_file = audio_dir / f"{video_title}.mp3"
+            print(f"Archivo esperado: {downloaded_file}")
+
+            # 🔹 Verificar si el archivo existe
+            if downloaded_file.exists():
+                return f"Archivo descargado: {downloaded_file}"
+        
+        return None  
+
+    except Exception as e:
+        print(f"Error en la descarga: {e}")
+        return None
 
 
 # 🔍 Scraping para buscar en YouTube
