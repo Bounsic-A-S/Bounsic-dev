@@ -1,32 +1,38 @@
-<div class="max-w-6xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-  <h2 class="sm:text-xl mb-4">Nuevos descubrimientos</h2>
-  <h3 class="text-xl sm:text-3xl font-bold mb-6">Podría interesarte...</h3>
+<div class="relative">
+  <button
+    class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    (click)="scrollLeft()"
+  >
+    <lucide-angular
+      [img]="ChevronLeft"
+      class="my-icon"
+      [size]="36"
+    ></lucide-angular>
+  </button>
 
-  <div class="relative">
-    <button
-      class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
-      (click)="scrollLeft()"
-    >
-      <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
-    </button>
-
-    <div #scrollContainer class="flex gap-8 overflow-x-auto pb-4 px-8 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto">
-      <div *ngFor="let album of albums" class="flex-none w-36 sm:w-40 lg:w-48">
-        <img
-          [src]="album.cover"
-          [alt]="album.title"
-          class="w-full aspect-square object-cover rounded-md mb-2"
-        />
-        <h4 class="font-semibold">{{ album.title }}</h4>
-        <p class="text-sm text-gray-400">{{ album.artist }}</p>
-      </div>
+  <div
+    #scrollContainer
+    class="flex gap-8 overflow-x-auto pb-4 px-8 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
+  >
+    <div *ngFor="let album of albums" class="flex-none w-36 sm:w-40 lg:w-48">
+      <img
+        [src]="album.cover"
+        [alt]="album.title"
+        class="w-full aspect-square object-cover rounded-md mb-2"
+      />
+      <h4 class="font-semibold">{{ album.title }}</h4>
+      <p class="text-sm text-gray-400">{{ album.artist }}</p>
     </div>
-
-    <button
-      class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
-      (click)="scrollRight()"
-    >
-      <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
-    </button>
   </div>
+
+  <button
+    class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    (click)="scrollRight()"
+  >
+    <lucide-angular
+      [img]="ChevronRight"
+      class="my-icon"
+      [size]="36"
+    ></lucide-angular>
+  </button>
 </div>

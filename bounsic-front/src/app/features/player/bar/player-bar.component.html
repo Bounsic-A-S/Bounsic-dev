@@ -1,12 +1,3 @@
-<!-- <footer class="bg-gray-900 text-white h-full flex items-center justify-between px-6 w-full">
-    <div class="flex items-center space-x-4">
-      <div>
-        <h3 class="text-sm font-semibold">Title</h3>
-        <p class="text-xs text-gray-400">Artist</p>
-      </div>
-    </div>
-  
-  </footer> -->
 <div
   class="bg-black text-white h-full w-full mx-auto flex items-center justify-between px-6"
 >
@@ -15,10 +6,10 @@
     <img
       src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
       alt="Cover"
-      class="w-16 h-16 rounded-md object-cover"
+      class="size-12 sm:size-16 rounded-md object-cover"
     />
     <div class="flex-1 truncate">
-      <h3 class="md:text-lg font-semibold">No One Noticed</h3>
+      <h3 class="text-base md:text-lg font-semibold">No One Noticed</h3>
       <p class="text-xs sm:text-sm text-gray-400">The Marias</p>
     </div>
     <div class="flex flex-col sm:flex-row gap-4 px-2 sm:px-4">
@@ -29,7 +20,7 @@
           [size]="20"
         ></lucide-angular>
       </button>
-      <button class="text-gray-400 hover:text-white">
+      <button class="hidden sm:block text-gray-400 hover:text-white">
         <lucide-angular
           [img]="MoreVertical"
           class="my-icon"
@@ -41,50 +32,50 @@
 
   <!-- Controls -->
   <div
-    class="flex flex-col justify-center items-center gap-2 my-4 w-full max-w-3xs xl:max-w-xl"
+    class="flex flex-col justify-center items-center w-full max-w-3xs xl:max-w-xl"
   >
-    <div class="flex gap-4">
+    <div class="flex gap-x-10 lg:gap-x-16 2xl:gap-x-24">
       <button
         (click)="prevSong()"
-        class="hidden sm:block text-gray-400 hover:text-white"
+        class="hidden sm:block cursor-pointer"
       >
         <lucide-angular
           [img]="SkipBack"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
       <button
         (click)="togglePlay()"
-        class="bg-white text-black p-2 rounded-full cursor-pointer"
+        class="p-2 rounded-full cursor-pointer"
       >
         <lucide-angular
           *ngIf="!isPlaying"
           [img]="Play"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
         <lucide-angular
           *ngIf="isPlaying"
           [img]="Pause"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
       <button
         (click)="nextSong()"
-        class="hidden sm:block text-gray-400 hover:text-white"
+        class="hidden sm:block cursor-pointer"
       >
         <lucide-angular
           [img]="SkipForward"
-          class="my-icon"
+          class="my-icon fill-white"
           [size]="24"
         ></lucide-angular>
       </button>
     </div>
 
     <!-- Progress Bar -->
-    <div class="hidden md:flex w-full items-center mt-2">
+    <div class="hidden md:flex w-full items-center my-2">
       <span class="text-white text-sm">0:00</span>
       <div class="relative w-full mx-3">
         <div class="relative h-1 w-full bg-gray-600 rounded overflow-hidden">
@@ -110,7 +101,7 @@
   </div>
 
   <!-- Extra Controls -->
-  <div class="flex justify-end gap-4 mt-4">
+  <div class="flex items-center justify-end gap-4">
     <button class="text-gray-400 hover:text-white">
       <lucide-angular [img]="List" class="my-icon" [size]="24"></lucide-angular>
     </button>
