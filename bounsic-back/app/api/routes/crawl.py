@@ -1,7 +1,6 @@
 from fastapi import APIRouter,HTTPException
 from app.services import crawler
 from fastapi.responses import JSONResponse
-from app.services.scrapping import scrapping
 router = APIRouter()
 
 @router.get("/crawl")
@@ -10,7 +9,7 @@ async def web_crawling(url: str):
         response = crawler(url)
         print(response)
         if response:
-            scrapping(response[0])
+            return JSONResponse(content=response)
         if not response:
             raise HTTPException(status_code=404, detail="No se encontraron datos")
         return JSONResponse(content=list(response))

@@ -15,3 +15,4 @@ async def ask(request: Request):
 
     response = pregunta_respuesta(question)  # Llama a la función del modelo
     return JSONResponse(content=response)
+
