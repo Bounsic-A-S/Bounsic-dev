@@ -2,12 +2,20 @@ from fastapi import APIRouter,Request
 from fastapi.responses import JSONResponse
 from app.provider.azure_imgs import AZURE_CONNECTION_STRING,AZURE_CONTAINER_NAME
 from azure.storage.blob import BlobServiceClient
-from app.services.songService import insert_image
+from app.services.songService import insert_image,getSongByTitle
 import re
+from bson import json_util
+
+
 
 router = APIRouter()
 
-@router.post("/img")
+@router.get("/title/{song_artist}")
+async def getSong(song_artist:str):
+    res = getSongByTitle(song_artist)
+    return JSONResponse(content=res)
+
+@router.post("/create")
 async def upload_(request : Request):
     data = await request.json()  # Obtener el JSON de la solicitud
     image_url = data.get("url", "")
