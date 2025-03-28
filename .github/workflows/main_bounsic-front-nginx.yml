@@ -55,7 +55,7 @@ jobs:
           context: .  # 🔹 Usa la raíz del repo para evitar problemas de rutas
           file: ./bounsic-front/Dockerfile
           push: true
-          tags: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:ac56b26514c83394be7669c46c78d2515376fb51'
+          tags: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}'
 
 
   deploy:
@@ -70,5 +70,4 @@ jobs:
           app-name: 'bounsic-front-nginx'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3CCD7D22BA9147A6B28572F8F693B975 }}
-          images: 'bounsiccontainerregistery.azurecr.io/bounsic-front:ac56b26514c83394be7669c46c78d2515376fb51'
-
+          images: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}'
