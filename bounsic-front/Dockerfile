@@ -4,10 +4,10 @@ FROM nginx:alpine
 RUN mkdir /etc/nginx/sites-available
 
 # Copiar el archivo de configuración del sitio (default) a sites-available
-COPY default /etc/nginx/sites-available/
+COPY ./bounsic-front/default /etc/nginx/sites-available/
 
 # Copiar el archivo nginx.conf modificado
-COPY nginx.conf /etc/nginx/
+COPY ./bounsic-front/nginx.conf /etc/nginx/
 
 # Copiar los archivos de la aplicación Angular construida.
 COPY ./bounsic-front/dist/bounsic-front/browser /usr/share/nginx/html
