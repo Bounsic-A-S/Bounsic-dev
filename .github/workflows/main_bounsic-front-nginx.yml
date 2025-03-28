@@ -45,8 +45,8 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: bounsiccontainerregistery.azurecr.io
-          username: ${{ AZUREAPPSERVICE_CONTAINERUSERNAME_88D09074E414417AA1D7C4B43A8E2A92 }}
-          password: ${{ AZUREAPPSERVICE_CONTAINERPASSWORD_523D865B699E42D5A2EFF7A5782E78D9 }}
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_88D09074E414417AA1D7C4B43A8E2A92 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_523D865B699E42D5A2EFF7A5782E78D9 }}
 
       # 🔹 Construir y subir imagen del frontend
       - name: Build and push frontend (Nginx) image
@@ -69,5 +69,5 @@ jobs:
         with:
           app-name: 'bounsic-front-nginx'
           slot-name: 'production'
-          publish-profile: ${{ AZUREAPPSERVICE_PUBLISHPROFILE_3CCD7D22BA9147A6B28572F8F693B975 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3CCD7D22BA9147A6B28572F8F693B975 }}
           images: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}'
