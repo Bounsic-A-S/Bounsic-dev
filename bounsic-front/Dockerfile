@@ -10,7 +10,7 @@ COPY default /etc/nginx/sites-available/
 COPY nginx.conf /etc/nginx/
 
 # Copiar los archivos de la aplicación Angular construida.
-COPY dist/bounsic-front/browser /usr/share/nginx/html
+COPY ./bounsic-front/dist/bounsic-front/browser /usr/share/nginx/html
 
 EXPOSE 80
 
