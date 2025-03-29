@@ -3,6 +3,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { LandingComponent } from './features/landing/landing.component';
 import { PlayerComponent } from './features/player/player.component';
 import { LibraryComponent } from './features/library/library.component';
+import { NotFoundComponent } from './features/404/404.component';
 
 export const routes: Routes = [
     {
@@ -21,6 +22,9 @@ export const routes: Routes = [
         path: 'library',
         component: LibraryComponent,
     },
-    { path: '**', redirectTo: '' } // Esto previene rutas desconocidas
+    { path: '**', 
+        component: NotFoundComponent, 
+        data: { title: '404 - Not Found' } 
+    } // Esto previene rutas desconocidas
 
 ];
