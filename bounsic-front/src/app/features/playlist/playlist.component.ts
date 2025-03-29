@@ -86,7 +86,54 @@ export class PlaylistComponent {
         cover:
           'https://i.pinimg.com/736x/c7/dc/60/c7dc60cfeaab1c085d3bba491826a06b.jpg',
         duration: '4:29',
+      }, {
+        id: 8,
+        title: "Smells Like Teen Spirit",
+        artist: "Nirvana",
+        album: "Nevermind",
+        cover: "https://i.pinimg.com/736x/66/4e/1d/664e1d976aea5b6fde0c6c09f4a48572.jpg",
+        duration: "5:01"
       },
+      {
+        id: 9,
+        title: "Somebody That I Used to Know",
+        artist: "Gotye ft. Kimbra",
+        album: "Making Mirrors",
+        cover: "https://i.pinimg.com/736x/05/90/02/05900242bf89234a36fc1d8dfd83d0de.jpg",
+        duration: "4:04"
+      },
+      {
+        id: 10,
+        title: "Counting Stars",
+        artist: "OneRepublic",
+        album: "Native",
+        cover: "https://i.pinimg.com/736x/bc/e2/0c/bce20c8a2786659b119555d45884ccd0.jpg",
+        duration: "4:17"
+      },
+      {
+        id: 11,
+        title: "Clocks",
+        artist: "Coldplay",
+        album: "A Rush of Blood to the Head",
+        cover: "https://i.pinimg.com/736x/e9/89/50/e98950fc61a295ca2c653681f6dc728e.jpg",
+        duration: "5:07"
+      },
+      {
+        id: 12,
+        title: "Shape of You",
+        artist: "Ed Sheeran",
+        album: "÷ (Divide)",
+        cover: "https://i.pinimg.com/736x/52/75/fb/5275fbf6f58f84ae522e29e434aa893d.jpg",
+        duration: "3:53"
+      },
+      {
+        id: 13,
+        title: "Radioactive",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        cover: "https://i.pinimg.com/736x/62/ec/04/62ec049bb30969e8ef154d6aca5bd274.jpg",
+        duration: "3:06"
+      }
     ],
   };
 }
