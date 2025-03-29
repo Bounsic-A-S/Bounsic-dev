@@ -1,0 +1,24 @@
+<main-navbar></main-navbar>
+<!-- Main content with proper spacing for fixed navbar -->
+<main
+  class="mx-auto pt-16 px-6 pb-10 min-h-screen bg-gradient-to-b from-zinc-900 to-black"
+>
+  <section class="flex gap-x-10 mx-auto container">
+    <aside class="w-40">card</aside>
+    <section>
+      <h1 class="text-3xl md:text-5xl font-bold mt-1 mb-2">
+        Canciones Que Te Han Gustado
+      </h1>
+      <div class="h-px bg-gray-800 w-full my-6"></div>
+
+      <!-- Songs list -->
+      <div class="w-full">
+        <ul>
+          <li *ngFor="let song of songs" class="flex-none w-36 sm:w-40 lg:w-48">
+            <playlist-item></playlist-item>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </section>
+</main>
