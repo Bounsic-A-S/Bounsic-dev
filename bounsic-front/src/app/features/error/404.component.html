@@ -1,0 +1,28 @@
+<main class="bg-black text-white min-h-screen flex flex-col justify-center px-6 relative overflow-hidden">
+    
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <h1 class="outline-404">404</h1>
+    </div>
+    
+    <header class="absolute top-0 left-1/2 -translate-x-1/2 sm:top-8 sm:left-8 sm:translate-x-0 z-10">
+        <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-40" />
+    </header>
+    
+    <div class="flex flex-col md:flex-row items-center max-w-6xl w-full gap-12 mx-auto z-10 relative">
+        <div class="w-full md:w-1/2 flex justify-center">
+            <div class="relative p-0.5 rounded-lg bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg">
+                <img src="/background/background.png" alt="Persona con auriculares" 
+                     class="h-auto w-full max-w-xl rounded-lg shadow-inner" />
+            </div>
+        </div>
+        
+        <div class="w-full md:w-1/2 md:text-left">
+            <h1 class="text-5xl lg:text-6xl 2xl:text-7xl font-bold text-red-500 mb-6">Oops ... 404</h1>
+            <p class="text-xl sm:text-2xl mb-6">No pudimos encontrar la página que buscas.</p>
+            <p class="text-xl sm:text-2xl mb-8">
+                <span class="text-red-500">♪</span> Parece que te perdiste en el ritmo <span class="text-red-500">♪</span>
+            </p>
+            <router-err-button [redirectToDashboard]="redirectToDashboard"></router-err-button>              
+        </div>
+    </div>
+</main>

@@ -3,7 +3,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { LandingComponent } from './features/landing/landing.component';
 import { PlayerComponent } from './features/player/player.component';
 import { LibraryComponent } from './features/library/library.component';
-import { NotFoundComponent } from './features/404/404.component';
+import { NotFoundComponent } from './features/error/404.component';
 
 export const routes: Routes = [
     {
