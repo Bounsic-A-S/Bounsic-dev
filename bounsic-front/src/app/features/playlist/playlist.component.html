@@ -12,13 +12,18 @@
       <div class="h-px bg-gray-800 w-full my-6"></div>
 
       <!-- Songs list -->
-      <div class="w-full">
-        <ul>
-          <li *ngFor="let song of songs" class="flex-none w-36 sm:w-40 lg:w-48">
-            <playlist-item></playlist-item>
-          </li>
-        </ul>
-      </div>
+      <ul class="w-full">
+        <li *ngFor="let song of songs">
+          <playlist-item
+            [id]="song.id"
+            [title]="song.title"
+            [artist]="song.artist"
+            [album]="song.album"
+            [duration]="song.duration"
+            [imageUrl]="song.cover"
+          ></playlist-item>
+        </li>
+      </ul>
     </section>
   </section>
 </main>

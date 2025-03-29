@@ -1,21 +1,21 @@
-<div
-class="grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 items-center py-3 px-4 hover:bg-white hover:bg-opacity-10 rounded-md transition group"
+<article
+class="grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 items-center py-3 px-4 hover:bg-white hover:bg-opacity-10 rounded-md transition group text-white"
 >
-<div class="text-gray-400 w-6 text-center">2</div>
+<div class="text-gray-400 w-6 text-center">{{id}}</div>
 <div class="flex items-center gap-4">
   <img
-    src="/placeholder.svg?height=40&width=40"
+    src={{imageUrl}}
     alt="Album cover"
-    class="w-10 h-10 rounded"
+    class="w-8 sm:w-9 lg:w-10 aspect-square object-cover rounded-md"
   />
   <div>
-    <p class="font-medium">Can I Call You Tonight?</p>
+    <p class="font-medium">{{title}}</p>
   </div>
 </div>
 <div class="text-gray-400">
-  <span>Dayglow</span>
+  <span>{{artist}}</span>
   <span class="mx-1">•</span>
-  <span class="text-gray-500">Fuzzybrain</span>
+  <span class="text-gray-500">{{album}}</span>
 </div>
 <button
   class="text-gray-400 opacity-0 group-hover:opacity-100 transition"
@@ -33,5 +33,5 @@ class="grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 items-center py-3 px-4 hove
     />
   </svg>
 </button>
-<div class="text-gray-400 w-12 text-right">4:38</div>
-</div>
+<div class="text-gray-400 w-12 text-right">{{duration}}</div>
+</article>
