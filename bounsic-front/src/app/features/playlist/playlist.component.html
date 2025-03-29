@@ -1,15 +1,10 @@
 <main-navbar></main-navbar>
-<main
-  class="mx-auto px-6 py-10 mt-20 min-h-screen bg-gradient-to-b from-zinc-900 to-black text-white"
->
-  <section class="flex gap-x-10 mx-auto container">
-    <aside class="w-40">
-      <app-song-hero
-        [totalSongs]="album.totalSongs"
-        [totalDuration]="album.totalDuration"
-      ></app-song-hero>
+<main class="mx-auto px-6 py-10 mt-20 min-h-screen bg-gradient-to-b from-zinc-900 to-black text-white">
+  <section class="flex flex-1 gap-x-10 mx-auto container">
+    <aside>
+      <app-song-hero [totalSongs]="album.totalSongs" [totalDuration]="album.totalDuration"></app-song-hero>
     </aside>
-    <section>
+    <section class="w-full">
       <h1 class="text-3xl md:text-5xl font-bold mt-1 mb-2">
         Canciones Que Te Han Gustado
       </h1>
@@ -17,14 +12,8 @@
 
       <ul class="w-full">
         <li *ngFor="let song of album.songs">
-          <playlist-item
-            [id]="song.id"
-            [title]="song.title"
-            [artist]="song.artist"
-            [album]="song.album"
-            [duration]="song.duration"
-            [imageUrl]="song.cover"
-          ></playlist-item>
+          <playlist-item [id]="song.id" [title]="song.title" [artist]="song.artist" [album]="song.album"
+            [duration]="song.duration" [imageUrl]="song.cover"></playlist-item>
         </li>
       </ul>
     </section>
