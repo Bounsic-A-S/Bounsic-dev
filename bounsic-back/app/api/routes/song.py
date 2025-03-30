@@ -1,15 +1,10 @@
 from fastapi import APIRouter,Request
 from fastapi.responses import JSONResponse
-from app.provider.azure_imgs import AZURE_CONNECTION_STRING,AZURE_CONTAINER_NAME
-from azure.storage.blob import BlobServiceClient
 from app.services.songService import insert_image,getSongByTitle
-from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen
+from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_songs
 import re
 import json
 import os
-from bson import json_util
-
-
 
 router = APIRouter()
 
@@ -18,30 +13,12 @@ async def getSong(song_artist:str):
     res = getSongByTitle(song_artist)
     return JSONResponse(content=res)
 
-@router.post("/create")
-async def upload_(request : Request):
-    data = await request.json()  # Obtener el JSON de la solicitud
-    image_url = data.get("url", "")
-    
-    if not image_url:
-        return JSONResponse(status_code=400, content={"detail": "Debe proporcionar una URL de imagen"})
-    pattern = r"([^/\\]+)\.(jpg|jpeg|png|gif|mp3)"
-    match = re.search(pattern, image_url)
-
-    if not match:
-        return JSONResponse(status_code=400, content={"detail": "URL de imagen no válida"})
-
-    blob_name = match.group(0)
-
-    response = insert_image(image_url,blob_name)  # Llama a la función del modelo
-    return JSONResponse(content=response)
-
 
 @router.post("/insert/songs")
 async def insert_bs(request: Request):
     try:
         # Ruta del archivo JSON con las canciones
-        json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/audios/songTry.json"
+        json_path = "C:/Users/Usuario/documents/UNIVERSIDADDDDDD/6to Semestre/pi_2/Bounsic-dev/bounsic-back/audios/songs_list.json"
 
         # Verificar si el archivo existe
         if not os.path.exists(json_path):
@@ -50,7 +27,6 @@ async def insert_bs(request: Request):
         # Cargar el JSON con la lista de canciones
         with open(json_path, "r", encoding="utf-8") as f:
             songs_list = json.load(f)
-
         results = []  # Lista para almacenar los resultados
 
         for song in songs_list:
@@ -110,19 +86,29 @@ async def insert_bs(request: Request):
                 img_name = match_img.group(0)  
 
                 
-
                 # Insertar la imagen o archivo descargado
-                response = insert_image(descarga, mp3_name)
-                if not response:
+                mp3_blob_url = insert_image(descarga, mp3_name)
+                if not mp3_blob_url:
                     results.append({"title": title, "artist": artist, "status": "Fallo al insertar audio"})
                     continue
 
                 # Insertar la imagen o archivo descargado
-                response = insert_image(descarga_image, img_name)
-                if not response:
+                img_blob_url = insert_image(descarga_image, img_name)
+                if not img_blob_url:
                     results.append({"title": title, "artist": artist, "status": "Fallo al insertar imagen"})
                     continue
-
+                
+                if img_blob_url and mp3_blob_url:
+                    mongo_song = {
+                        "title": title,
+                        "artist": artist,
+                        "genre": genre,
+                        "language": language,
+                        "img_url": img_blob_url,
+                        "mp3_url": mp3_blob_url
+                    }
+                    insert_songs(mongo_song)
+                    
                 # Si todo fue exitoso
                 results.append({
                     "title": title,
