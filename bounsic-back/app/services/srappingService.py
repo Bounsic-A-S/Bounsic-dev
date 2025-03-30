@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import yt_dlp
 import re
+import pprint
+import json
 
 def sanitize_filename(text):
     """Limpia el título y el artista para que sean nombres válidos de archivos."""
@@ -60,13 +62,18 @@ def scrappingBueno(url):
     }
 
 
+
+
 def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
     while base_path.name != "bounsic-back":
         base_path = base_path.parent
 
     audio_dir = base_path / "audios"
+    image_dir = base_path / "images"
+
     audio_dir.mkdir(parents=True, exist_ok=True)
+    image_dir.mkdir(parents=True, exist_ok=True)
 
     ffmpeg_path = base_path / "ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"
 
@@ -83,23 +90,36 @@ def descargar_audio(url):
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)  
+            info = ydl.extract_info(url, download=True)
 
-            # 🔹 Obtener el nombre del archivo esperado
-            video_title = info.get("title", "unknown").replace("/", "-")  # Evita caracteres inválidos
+            video_title = info.get("title", "unknown").replace("/", "-")
+
+            
             downloaded_file = audio_dir / f"{video_title}.mp3"
             print(f"Archivo esperado: {downloaded_file}")
 
-            # 🔹 Verificar si el archivo existe
+
+            image_url = info.get("thumbnail")
+            if image_url:
+                image_path = image_dir / f"{video_title}.jpg"
+                response = requests.get(image_url)
+                if response.status_code == 200:
+                    with open(image_path, "wb") as thumb_file:
+                        thumb_file.write(response.content)
+                    print(f"Thumbnail guardado en: {image_path}")
+                else:
+                    print("No se pudo descargar la imagen")
+
             if downloaded_file.exists():
-                return str(downloaded_file)
-        
-        return None  
+                return {
+                    "audio": str(downloaded_file),
+                    "thumbnail": str(image_path) if image_url else None
+                }
+        return None
 
     except Exception as e:
         print(f"Error en la descarga: {e}")
         return None
-
 
 # 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):

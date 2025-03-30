@@ -18,7 +18,7 @@ async def getSong(song_artist:str):
 async def insert_bs(request: Request):
     try:
         # Ruta del archivo JSON con las canciones
-        json_path = "C:/Users/Usuario/documents/UNIVERSIDADDDDDD/6to Semestre/pi_2/Bounsic-dev/bounsic-back/audios/songs_list.json"
+        json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/audios/songs_list.json"
 
         # Verificar si el archivo existe
         if not os.path.exists(json_path):
@@ -50,34 +50,30 @@ async def insert_bs(request: Request):
                     results.append({"title": title, "artist": artist, "status": "Scraping fallido"})
                     continue
 
-                # Descargar el audio del video
+                # Descargar el audio y obtener rutas separadas
                 descarga = descargar_audio(video_url)
-                if not descarga:
+
+                if not descarga or not descarga.get("audio"):
                     results.append({"title": title, "artist": artist, "status": "Descarga de audio fallida"})
                     continue
-                
 
-                # Extraer el nombre del archivo MP3
+                # Extraer las rutas del audio y la imagen
+                audio_path = descarga.get("audio")  
+                image_path = descarga.get("thumbnail")  
+
                 pattern_mp3 = r"([^/\\]+)\.(mp3)"
-                match_mp3 = re.search(pattern_mp3, descarga)
+                match_mp3 = re.search(pattern_mp3, audio_path)
 
                 if not match_mp3:
                     results.append({"title": title, "artist": artist, "status": "Nombre de archivo de audio inválido"})
                     continue
 
                 mp3_name = match_mp3.group(0)
-                mp3_name_without_ext = mp3_name.replace(".mp3", "")  # Nombre sin extensión
 
-
-                # 🔹 Descargar la imagen asociada
-                descarga_image = descargar_imagen(video_url, mp3_name_without_ext)
-                if not descarga_image:
-                    results.append({"title": title,"artist": artist, "status": "Descarga de imagen fallida"})
-                    continue
 
                 # Extraer el nombre del archivo de imagen
                 pattern_img = r"([^/\\]+)\.(jpg|jpeg|png|gif)"
-                match_img = re.search(pattern_img, descarga_image)
+                match_img = re.search(pattern_img, image_path)
 
                 if not match_img:
                     results.append({"title": title, "artist": artist, "status": "Nombre de archivo de imagen inválido"})
@@ -87,13 +83,13 @@ async def insert_bs(request: Request):
 
                 
                 # Insertar la imagen o archivo descargado
-                mp3_blob_url = insert_image(descarga, mp3_name)
+                mp3_blob_url = insert_image(audio_path, mp3_name)
                 if not mp3_blob_url:
                     results.append({"title": title, "artist": artist, "status": "Fallo al insertar audio"})
                     continue
 
                 # Insertar la imagen o archivo descargado
-                img_blob_url = insert_image(descarga_image, img_name)
+                img_blob_url = insert_image(image_path, img_name)
                 if not img_blob_url:
                     results.append({"title": title, "artist": artist, "status": "Fallo al insertar imagen"})
                     continue
@@ -123,12 +119,12 @@ async def insert_bs(request: Request):
                 continue  # No detener el proceso por un error individual
         
         #  Eliminar el archivo MP3 después de subirlo
-        if os.path.exists(descarga):
-            os.remove(descarga)
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
 
         # Eliminar la imagen después de subirla
-        if os.path.exists(descarga_image):
-            os.remove(descarga_image)
+        if os.path.exists(image_path):
+            os.remove(image_path)
             
         return JSONResponse(content={"message": "Canciones procesadas", "data": results})
 
