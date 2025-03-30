@@ -1,4 +1,6 @@
-<div class="text-white w-60 p-4">
+<article
+  class="text-white w-full p-4 flex flex-row items-start gap-4 sm:flex-col sm:items-start sm:gap-2 sm:w-[300px]"
+>
   <div class="flex justify-center drop-shadow-lg">
     <img
       src="/playlist/like.png"
@@ -7,27 +9,29 @@
     />
   </div>
 
-  <article class="mt-4 text-left">
-    <h3 class="text-lg font-semibold">Playlist privada</h3>
-    <p class="text-sm text-gray-400">{{ totalSongs }} Canciones</p>
-    <p class="text-sm text-gray-400">Actualizada en Enero 2025</p>
-  </article>
+  <div class="flex-1 sm:w-full sm:flex sm:flex-col sm:justify-between">
+    <section class="text-left">
+      <h3 class="text-lg font-semibold">Playlist privada</h3>
+      <p class="text-sm text-gray-400">{{ totalSongs }} Canciones</p>
+      <p class="text-sm text-gray-400">Actualizada en Enero 2025</p>
+    </section>
 
-  <article class="mt-2 text-left">
-    <p class="text-sm text-gray-400">Duración:</p>
-    <p class="text-sm">{{ formattedDuration }}</p>
-  </article>
+    <section class="mt-2 text-left">
+      <p class="text-sm text-gray-400">Duración:</p>
+      <p class="text-sm">{{ formattedDuration }}</p>
+    </section>
 
-  <div class="flex items-center gap-3 mt-4">
-    <button
-      class="bg-white text-black px-4 py-1 rounded-full text-sm font-semibold"
-    >
-      Reproducir Mix
-    </button>
-    <button
-      class="border border-gray-500 text-gray-500 px-2 py-1 rounded-full text-sm"
-    >
-      ⟳
-    </button>
+    <div class="flex items-center gap-3 mt-4">
+      <button
+        class="bg-white text-black px-4 py-1 rounded-full text-sm font-semibold hover:scale-105 transition-transform"
+      >
+        Reproducir Mix
+      </button>
+      <button
+        class="border border-gray-500 text-gray-500 px-2 py-1 rounded-full text-sm hover:bg-gray-800 transition-colors"
+      >
+        ⟳
+      </button>
+    </div>
   </div>
-</div>
+</article>
