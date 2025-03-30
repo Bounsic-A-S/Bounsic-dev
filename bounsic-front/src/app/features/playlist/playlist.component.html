@@ -2,18 +2,18 @@
 
 <main
   class="mx-auto px-6 pt-[14vh] h-screen bg-gradient-to-b from-zinc-900 to-black text-white overflow-hidden flex flex-col">
-  <section class="flex flex-col flex-1 gap-x-10 mx-auto container overflow-hidden md:flex-row">
+  <section class="flex flex-col flex-1 xl:gap-x-10 mx-auto container overflow-hidden md:flex-row">
     <aside class="self-center md:self-auto">
       <app-song-hero [totalSongs]="album.totalSongs" [totalDuration]="album.totalDuration"></app-song-hero>
     </aside>
 
     <section class="w-full flex flex-col overflow-hidden">
-      <h1 class="text-3xl md:text-5xl font-bold mt-1 mb-2">
+      <h1 class="text-xl sm:text-3xl md:text-5xl font-bold mt-4 sm:mt-1 mb-2">
         Canciones Que Te Han Gustado
       </h1>
-      <div class="h-px bg-white w-full my-6"></div>
+      <div class="h-px bg-white w-full my-3 md:my-6"></div>
 
-      <ul class="w-full flex-1 pr-4 overflow-y-auto max-h-[65vh] scroll-smooth scroll-hidden">
+      <ul class="w-full flex-1 pr-1 xl:pr-4 overflow-y-auto max-h-[65vh] scroll-smooth scroll-hidden">
         <li *ngFor="let song of album.songs">
           <playlist-item [id]="song.id" [title]="song.title" [artist]="song.artist" [album]="song.album"
             [duration]="song.duration" [imageUrl]="song.cover"></playlist-item>

@@ -1,6 +1,6 @@
 <article
-  class="grid grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-2 items-center py-3 px-4 hover:bg-white/10 hover:bg-opacity-5 rounded-md transition-all duration-200 group text-white cursor-pointer">
-  <div class="text-gray-400 w-6 text-center">{{ id }}</div>
+  class="grid grid-cols-[1fr_1fr_auto] md:grid-cols-[auto_1fr_1fr_auto_auto_auto] gap-2 items-center py-3 px-2 md:px-4 hover:bg-white/10 hover:bg-opacity-5 rounded-md transition-all duration-200 group text-white cursor-pointer">
+  <div class="hidden md:block text-gray-400 w-6 text-center">{{ id }}</div>
   <div class="flex items-center gap-4">
     <div class="relative">
       <img [src]="imageUrl" alt="Album cover" class="w-8 sm:w-9 lg:w-10 aspect-square object-cover rounded-md" />
@@ -10,12 +10,12 @@
       </div>
     </div>
     <div>
-      <p class="font-medium">{{ title }}</p>
+      <p class="text-sm md:text-base font-medium">{{ title }}</p>
     </div>
   </div>
   <div class="text-gray-400">
-    <span class="pr-3.5">{{ artist }}</span>
-    <span class="text-gray-600">{{ album }}</span>
+    <span class="text-sm md:text-base pr-1.5 sm:pr-2 md:pr-3.5">{{ artist }}</span>
+    <span class="text-sm md:text-base text-gray-600">{{ album }}</span>
   </div>
 
   <button class="transition-opacity focus:opacity-100 focus:outline-none">
@@ -25,8 +25,8 @@
         clip-rule="evenodd" />
     </svg>
   </button>
-  <div class="text-gray-400 w-12 text-right">{{ duration }}</div>
-  <button class="pl-1 opacity-0 group-hover:opacity-100">
+  <div class="hidden md:block text-gray-400 w-12 text-right">{{ duration }}</div>
+  <button class="hidden md:block pl-1 opacity-0 group-hover:opacity-100">
     <lucide-angular [img]="Options" class="my-icon fill-white"
       [size]="20"></lucide-angular>
   </button>
