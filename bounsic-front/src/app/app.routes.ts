@@ -23,7 +23,7 @@ export const routes: Routes = [
         component: LibraryComponent,
     },
     {
-        path: 'playlist',
+        path: 'playlist/:id',
         component: PlaylistComponent,
     },
     { path: '**', redirectTo: '' } // Esto previene rutas desconocidas
