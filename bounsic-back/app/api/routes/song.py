@@ -135,7 +135,15 @@ async def insert_bs(request: Request):
             except Exception as song_error:
                 results.append({"title": title, "artist": artist, "status": f"Error: {str(song_error)}"})
                 continue  # No detener el proceso por un error individual
+        
+        #  Eliminar el archivo MP3 después de subirlo
+        if os.path.exists(descarga):
+            os.remove(descarga)
 
+        # Eliminar la imagen después de subirla
+        if os.path.exists(descarga_image):
+            os.remove(descarga_image)
+            
         return JSONResponse(content={"message": "Canciones procesadas", "data": results})
 
     except Exception as e:
