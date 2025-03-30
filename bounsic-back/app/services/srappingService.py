@@ -3,10 +3,14 @@ from bs4 import BeautifulSoup
 import os
 from pathlib import Path
 import yt_dlp
+import re
 
-def scrappingBueno():
-    print('llega')
-    url = "https://www.youtube.com/watch?v=_Yhyp-_hX2s"  # URL del video
+def sanitize_filename(text):
+    """Limpia el título y el artista para que sean nombres válidos de archivos."""
+    return re.sub(r'[<>:"/\\|?*]', '', text).strip()
+
+def scrappingBueno(url):
+
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
@@ -88,7 +92,7 @@ def descargar_audio(url):
 
             # 🔹 Verificar si el archivo existe
             if downloaded_file.exists():
-                return f"Archivo descargado: {downloaded_file}"
+                return str(downloaded_file)
         
         return None  
 
@@ -115,4 +119,38 @@ def buscar_en_youtube(query):
     video_url = first_video["webpage_url"]  # URL completa del video
 
     return video_url
+
+
+def descargar_imagen(url, title):
+    response = requests.get(url, stream=True)
+    
+    if response.status_code == 200:
+        # 🔹 Extraer la extensión de la imagen de la URL
+        match = re.search(r"\.(jpg|jpeg|png|gif)", url)
+        extension = match.group(1) if match else "jpg"  # Si no encuentra extensión, usa jpg
+
+        # 🔹 Definir el directorio base
+        base_path = Path(__file__).resolve().parent
+        while base_path.name != "bounsic-back":
+            base_path = base_path.parent
+
+        image_dir = base_path / "images"  # Directorio para imágenes
+        image_dir.mkdir(parents=True, exist_ok=True)
+
+        # 🔹 Sanitizar nombres
+        title = sanitize_filename(title)
+
+        # 🔹 Generar el nombre del archivo: "Título - Artista.ext"
+        image_filename = f"{title}.{extension}"
+        image_path = image_dir / image_filename  # Definir la ruta completa
+
+        # 🔹 Guardar imagen
+        with open(image_path, 'wb') as file:
+            for chunk in response.iter_content(1024):
+                file.write(chunk)
+
+        return str(image_path)  # Devuelve la ruta de la imagen
+
+    return None  # Retorna None si la descarga falla
+
 

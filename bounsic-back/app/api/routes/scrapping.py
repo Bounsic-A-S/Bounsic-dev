@@ -15,16 +15,17 @@ async def web_scrapping(request: Request):
     # return JSONResponse(content=list(response))
 
 @router.get("/scrapingYutu")
-async def web_scrapping1(request: Request):
+async def web_scrapping1(url: str = Query(..., title="URL del video de YouTube")):
+
     try:
         # Ejecuta el scraping
-        response = scrappingBueno()
+        response = scrappingBueno(url)
 
         if not response:
             raise HTTPException(status_code=404, detail="No se encontraron datos")
 
         # Descarga el audio
-        descarga = descargar_audio("https://www.youtube.com/watch?v=_Yhyp-_hX2s")
+        descarga = descargar_audio(url)
 
         # Retorna la información y el estado de la descarga
         return JSONResponse(content={
