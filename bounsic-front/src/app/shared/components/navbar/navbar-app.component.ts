@@ -4,13 +4,14 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest, RedirectRequest } from '@azure/msal-browser';
 import { Router, RouterModule } from '@angular/router';
+import { LucideAngularModule, LogIn, LogOut, Heart } from 'lucide-angular';
 
 
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {
@@ -20,6 +21,10 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
   isIframe = false;
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
+  //icons
+  readonly Heart = Heart;
+  readonly loginIcon = LogIn;
+  readonly logoutIcon = LogOut;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
