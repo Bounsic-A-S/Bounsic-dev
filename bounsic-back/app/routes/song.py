@@ -33,7 +33,7 @@ async def get_song_image(blob_name: str = Query(..., description="blob_name from
 async def insert_bs(request: Request):
     try:
         # Ruta del archivo JSON con las canciones
-        json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/audios/songs_list.json"
+        json_path = "/home/dxckrr/dev/universidad/sexto_semestre/pi_2/Bounsic-dev/bounsic-back/images/data.json"
 
         # Verificar si el archivo existe
         if not os.path.exists(json_path):

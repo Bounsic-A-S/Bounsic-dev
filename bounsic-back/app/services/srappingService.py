@@ -1,11 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
-import os
 from pathlib import Path
 import yt_dlp
 import re
-import pprint
-import json
+from app.provider import get_ffmpeg_path
 
 def sanitize_filename(text):
     """Limpia el título y el artista para que sean nombres válidos de archivos."""
@@ -75,7 +73,7 @@ def descargar_audio(url):
     audio_dir.mkdir(parents=True, exist_ok=True)
     image_dir.mkdir(parents=True, exist_ok=True)
 
-    ffmpeg_path = base_path / "ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"
+    ffmpeg_path = get_ffmpeg_path(base_path)
 
     ydl_opts = {
         'format': 'bestaudio/best',
