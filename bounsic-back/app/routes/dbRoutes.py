@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Query  # Se agregó HTTPException
 from fastapi.responses import JSONResponse
-from app.services import dbService
-from app.services.dbService import get_songs, insert_songs
+from app.services import get_songs, insert_songs
 
 router = APIRouter()
 

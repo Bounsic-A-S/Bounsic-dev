@@ -1,4 +1,4 @@
-from app.provider.mongo_db import db
+from app.provider import db
 
 def get_songs():
     songs_collection = db["songs"]

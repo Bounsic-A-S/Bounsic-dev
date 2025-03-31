@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from app.services import pregunta_respuesta
-from app.provider.mongo_db import db
+from app.provider import db
 
 router = APIRouter()
 

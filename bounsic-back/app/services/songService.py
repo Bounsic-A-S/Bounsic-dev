@@ -1,6 +1,6 @@
-from app.provider.azure_imgs import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME, AZURE_CONNECTION_KEY
-from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
-from app.provider.mongo_db import db
+from app.provider.azure_imgs import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
+from azure.storage.blob import BlobServiceClient
+from app.provider import db
 
 def getSongByTitle(song_title:str):
     songs_collection = db["songs"]

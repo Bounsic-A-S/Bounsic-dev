@@ -1,18 +1,33 @@
-from fastapi import APIRouter,Request
+from fastapi import APIRouter,Request, Query
 from fastapi.responses import JSONResponse
-from app.services.songService import insert_image,getSongByTitle,getSongByArtist,getSongByGenre
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_songs
 import re
 import json
 import os
 
 router = APIRouter()
-
-@router.get("/title/{song_artist}")
-async def getSong(song_artist:str):
-    res = getSongByTitle(song_artist)
+@router.get("/artist/{artist}")
+async def get_song_by_artist(artist: str):
+    print(f"Buscando canciones de: {artist}")
+    res = getSongByArtist(artist)
     return JSONResponse(content=res)
 
+@router.get("/title/{title}")
+async def get_song_by_title(title: str):
+    res = getSongByTitle(title)
+    return JSONResponse(content=res)
+
+@router.get("/genre/{genre}")
+async def get_songs_by_genre(genre: str):
+    res = getSongByGenre(genre)
+    return JSONResponse(content=res)
+
+@router.get("/img")
+async def get_song_image(blob_name: str = Query(..., description="blob_name from azure")):
+    print(blob_name)
+    res = get_image(blob_name)
+    return JSONResponse(content=res)
 
 @router.post("/insert/songs")
 async def insert_bs(request: Request):
@@ -131,20 +146,6 @@ async def insert_bs(request: Request):
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})
 
-@router.get("/song/artist/{artist}")
-async def get_song_by_artist(artist: str):
-    print(f"Buscando canciones de: {artist}")
-    res = getSongByArtist(artist)
-    return JSONResponse(content=res)
 
-@router.get("/song/title/{title}")
-async def get_song_by_title(title: str):
-    res = getSongByTitle(title)
-    return JSONResponse(content=res)
-
-@router.get("/song/genre/{genre}")
-async def get_songs_by_genre(genre: str):
-    res = getSongByGenre(genre)
-    return JSONResponse(content=res)
     
     
