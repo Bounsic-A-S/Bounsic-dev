@@ -11,7 +11,32 @@ def getSongByTitle(song_title:str):
         return song
     else:
         return {"message": "Song not found"}
+    
+def getSongByArtist(artist: str):
+    songs_collection = db["songs"]
+    songs = list(songs_collection.find({"artist": artist}))
+    for song in songs:
+        song["_id"] = str(song["_id"])
+    return songs if songs else {"message": "No songs found for this artist"}
 
+def getSongByTitle(title: str):
+    songs_collection = db["songs"]
+    song = songs_collection.find_one({"title": title})
+    if song:
+        song["_id"] = str(song["_id"])
+        return song
+    return {"message": "Song not found"}
+
+def getSongByGenre(genre: str):
+    songs_collection = db["songs"]
+    songs = list(songs_collection.find({"genre": genre}))
+    for song in songs:
+        song["_id"] = str(song["_id"])
+    return songs if songs else {"message": "No songs found for this genre"}
+    
+
+
+######################
 def get_image(blob_name: str):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(AZURE_CONTAINER_NAME)
@@ -30,5 +55,9 @@ def insert_image(file_url: str, blob_name: str):
         blob_client.upload_blob(data, overwrite=True)
 
     # Construir URL de acceso
-    return f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/{blob_name}"
+    blob_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/{blob_name}"
 
+    return {
+        "message": "Img created successfully",
+        "blob_url": blob_url
+    }

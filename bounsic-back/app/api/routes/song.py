@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Request
 from fastapi.responses import JSONResponse
-from app.services.songService import insert_image,getSongByTitle
+from app.services.songService import insert_image,getSongByTitle,getSongByArtist,getSongByGenre
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_songs
 import re
 import json
@@ -130,5 +130,21 @@ async def insert_bs(request: Request):
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": str(e)})
+
+@router.get("/song/artist/{artist}")
+async def get_song_by_artist(artist: str):
+    print(f"Buscando canciones de: {artist}")
+    res = getSongByArtist(artist)
+    return JSONResponse(content=res)
+
+@router.get("/song/title/{title}")
+async def get_song_by_title(title: str):
+    res = getSongByTitle(title)
+    return JSONResponse(content=res)
+
+@router.get("/song/genre/{genre}")
+async def get_songs_by_genre(genre: str):
+    res = getSongByGenre(genre)
+    return JSONResponse(content=res)
     
     

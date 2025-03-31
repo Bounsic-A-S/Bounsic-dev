@@ -1,3 +1,3 @@
 from app.provider.azure_imgs import AZURE_CONNECTION_STRING,AZURE_CONTAINER_NAME
 from azure.storage.blob import BlobServiceClient
-from app.services.songService import insert_image,getSongByTitle
+from app.services.songService import insert_image,getSongByTitle,getSongByArtist,getSongByGenre
