@@ -55,9 +55,4 @@ def insert_image(file_url: str, blob_name: str):
         blob_client.upload_blob(data, overwrite=True)
 
     # Construir URL de acceso
-    blob_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/{blob_name}"
-
-    return {
-        "message": "Img created successfully",
-        "blob_url": blob_url
-    }
+    return f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/{blob_name}"
