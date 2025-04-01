@@ -19,7 +19,7 @@ async def web_scrapping(url: str = Query(..., title="URL del video de YouTube"))
         raise HTTPException(status_code=500, detail=str(e))
         
 @router.get("/download")
-async def descargaYu(url: str = Query(..., description="URL del video de YouTube")):
+async def descarga_yu(url: str = Query(..., description="URL del video de YouTube")):
     try:
         result = get_youtube_download_request(url)
         return JSONResponse(status_code=200, content={"message": "Se descargó el audio", "data": result})
