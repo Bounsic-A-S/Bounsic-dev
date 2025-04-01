@@ -1,6 +1,6 @@
-from .bert import router as bert_router
-from .crawl import router as crawl_router
-from .scrapping import router as scrapping_router
-from .song import router as song_router
-from .dbRoutes import router as db_router
-from .health import router as health_router
+from .bert_routes import router as bert_router
+from .crawl_routes import router as crawl_router
+from .scrapping_routes import router as scrapping_router
+from .song_routes import router as song_router
+from .db_routes import router as db_router
+from .health_routes import router as health_router
