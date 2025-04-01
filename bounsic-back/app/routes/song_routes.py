@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Request, Query
 from fastapi.responses import JSONResponse
 from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image
-from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_songs
+from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
 import re
 import json
 import os
@@ -118,7 +118,7 @@ async def insert_bs(request: Request):
                         "img_url": img_blob_url,
                         "mp3_url": mp3_blob_url
                     }
-                    insert_songs(mongo_song)
+                    insert_one_song(mongo_song)
                     
                 # Si todo fue exitoso
                 results.append({

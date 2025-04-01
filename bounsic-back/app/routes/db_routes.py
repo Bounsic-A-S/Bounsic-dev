@@ -1,14 +1,13 @@
-from fastapi import APIRouter, Request, HTTPException, Query  # Se agregó HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import get_songs, insert_songs
+from app.controllers import get_songs_request,create_one_song_request
 
 router = APIRouter()
 
 @router.get("/getSongsBd")
 async def get_songs_bd():
     try:
-        print('holi')
-        songs = get_songs()
+        songs = get_songs_request()
         return JSONResponse(content=songs)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -17,7 +16,7 @@ async def get_songs_bd():
 async def insert_songs_bd(request: Request):
     try:
         data = await request.json()
-        response = insert_songs(data)
+        response = create_one_song_request(data)
         return JSONResponse(content=response, status_code=201)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
