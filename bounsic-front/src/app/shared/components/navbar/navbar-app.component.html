@@ -1,4 +1,5 @@
 <header class="fixed top-0 left-0 w-full z-10 bg-black">
+  <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
   <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-4">
     <!-- Logo -->
     <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer">
@@ -31,7 +32,7 @@
         <div *ngIf="isLoggingToggled" class="absolute right-0 mt-2 w-48 bg-black text-white shadow-lg rounded-lg">
           <!-- Usuario no autenticado -->
           <ng-container *ngIf="!userProfile">
-            <button (click)="loginRedirect()"
+            <button (click)="openModal()"
               class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
               role="menuitem">
               <lucide-icon [img]="loginIcon" class="my-icon mr-2" [size]="16" [strokeWidth]="3">
