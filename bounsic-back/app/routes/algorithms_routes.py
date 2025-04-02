@@ -10,7 +10,7 @@ async def ask(request: Request):
         data = await request.json()
         question = data.get("question","")
             
-        response = bert_request(question)
+        response = test()
         return JSONResponse(content={"response": response})
     
     except Exception as e:
