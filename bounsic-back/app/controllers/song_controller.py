@@ -5,6 +5,7 @@ import re
 import json
 import os
 
+
 async def get_song_by_artist_controller(artist: str):
     if not artist:
         return {"error": "Artist not valid"}

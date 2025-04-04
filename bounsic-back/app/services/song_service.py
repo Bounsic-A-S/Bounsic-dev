@@ -1,6 +1,10 @@
+from pickletools import pylong
+from pymongo.errors import PyMongoError
 from app.provider import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
 from azure.storage.blob import BlobServiceClient
 from app.provider import db
+import re
+
 
 def getSongByTitle(song_title:str):
     songs_collection = db["songs"]
@@ -12,28 +16,70 @@ def getSongByTitle(song_title:str):
     else:
         return {"message": "Song not found"}
     
-def getSongByArtist(artist: str):
-    songs_collection = db["songs"]
-    songs = list(songs_collection.find({"artist": artist}))
-    for song in songs:
-        song["_id"] = str(song["_id"])
-    return songs if songs else {"message": "No songs found for this artist"}
+def normalize_string(s: str) -> str:
+    """Quita espacios y convierte a minúsculas para normalizar un string."""
+    return re.sub(r"\s+", "", s).lower()
 
+def getSongByArtist(artist: str):
+    try:
+        songs_collection = db["songs"]
+        normalized_artist = normalize_string(artist)
+        regex = re.compile(f"^{normalized_artist}$", re.IGNORECASE)
+        songs = list(songs_collection.find({
+            "$expr": {
+                "$eq": [
+                    {"$toLower": {"$replaceAll": {"input": "$artist", "find": " ", "replacement": ""}}},
+                    normalized_artist
+                ]
+            }
+        }))
+
+        for song in songs:
+            song["_id"] = str(song["_id"])
+
+        return songs if songs else {"message": "No songs found for this artist"}
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+    except Exception as e:
+        return {"error": "Unexpected error", "details": str(e)}
+    
 def getSongByTitle(title: str):
-    songs_collection = db["songs"]
-    song = songs_collection.find_one({"title": title})
-    if song:
-        song["_id"] = str(song["_id"])
-        return song
-    return {"message": "Song not found"}
+    try:
+        songs_collection = db["songs"]
+        normalized_title = normalize_string(title)
+        song = songs_collection.find_one({
+            "$expr": {
+                "$eq": [
+                    {"$toLower": {"$replaceAll": {"input": "$title", "find": " ", "replacement": ""}}},
+                    normalized_title
+                ]
+            }
+        })
+
+        if song:
+            song["_id"] = str(song["_id"])
+            return song
+
+        return {"message": "Song not found"}
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+    except Exception as e:
+        return {"error": "Unexpected error", "details": str(e)}
 
 def getSongByGenre(genre: str):
-    songs_collection = db["songs"]
-    songs = list(songs_collection.find({"genre": genre}))
-    for song in songs:
-        song["_id"] = str(song["_id"])
-    return songs if songs else {"message": "No songs found for this genre"}
-    
+    try:
+        songs_collection = db["songs"]
+        songs = list(songs_collection.find({"genre": genre}))
+        for song in songs:
+            song["_id"] = str(song["_id"])
+        return songs if songs else {"message": "No songs found for this genre"}
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+    except Exception as e:
+        return {"error": "Unexpected error", "details": str(e)}
+
 def get_image(blob_name: str):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(AZURE_CONTAINER_NAME)
