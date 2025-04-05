@@ -1,0 +1,28 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
+          echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install dependencies
+        working-directory: ./bounsic-front
+        run: bun install
+
+      - name: Run tests
+        working-directory: ./bounsic-front
+        run: bun test  # Asegúrate de tener un script `test` en tu package.json
+

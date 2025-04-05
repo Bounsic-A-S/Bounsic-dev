@@ -1,0 +1,45 @@
+name: Dockerize Frontend
+
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
+
+jobs:
+  dockerize:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
+          echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install dependencies and build frontend
+        working-directory: ./bounsic-front
+        run: |
+          bun install
+          bun run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: bounsiccontainerregistery.azurecr.io
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_88D09074E414417AA1D7C4B43A8E2A92 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_523D865B699E42D5A2EFF7A5782E78D9 }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./bounsic-front/Dockerfile
+          push: true
+          tags: bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}
