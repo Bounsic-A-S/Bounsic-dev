@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LandingNavBarComponent } from './navbar.component';
+import { LandingNavBarComponent } from '@app/features/landing/navbar/navbar.component';
 import { ApiService } from '@app/services/song.service';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';

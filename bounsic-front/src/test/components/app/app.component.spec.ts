@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { AppComponent } from '@app/app.component';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -13,3 +13,4 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 });
+  
