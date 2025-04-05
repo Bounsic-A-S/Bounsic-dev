@@ -1,21 +1,11 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from app.controllers.algorithms_controller import test
+from app.controllers.algorithms_controller import fingerprint
 
 router = APIRouter()
 
-@router.post("/ask")
-async def ask(request: Request):
-    try:
-        data = await request.json()
-        question = data.get("question","")
-            
-        response = test()
-        return JSONResponse(content={"response": response})
+@router.post("/fingerprint")
+async def generate_fingerprint():
+    res = await fingerprint()
+    return JSONResponse(content={"response": res})
     
-    except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"error": "Internal Server Error", "detail": str(e)}
-        )
-

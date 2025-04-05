@@ -1,13 +1,12 @@
 from fastapi import HTTPException
-from app.services.algorithms_service import test
+from app.services.algorithms_service import generate_fingerprint
 
-def test(url: str):
-    if not url:
-        raise HTTPException(status_code=400, detail="La URL es obligatoria")
+def fingerprint():
+    # if not song?:
+    #     raise HTTPException(status_code=400, detail="Song not found")
+    res = generate_fingerprint()
     
-    response = crawler(url)
-    
-    if not response:
+    if not res:
         raise HTTPException(status_code=404, detail="No se encontraron datos")
 
-    return response
+    return {"data": res}
