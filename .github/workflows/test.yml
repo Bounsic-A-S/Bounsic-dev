@@ -26,5 +26,5 @@ jobs:
 
       - name: Run tests
         working-directory: ./bounsic-front
-        run: bun test  # Asegúrate de tener un script `test` en tu package.json
+        run: bun run test  # Asegúrate de tener un script `test` en tu package.json
 
