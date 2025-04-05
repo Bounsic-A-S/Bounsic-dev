@@ -4,27 +4,41 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-
+  
 jobs:
-  run-tests:
+  test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      # 🔹 Instalar Bun y agregarlo al PATH
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20  # o la versión que uses
+
+      # Si usas Bun, instala Bun y luego Angular
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
           echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
           echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
-          source $HOME/.bashrc
         shell: bash
 
       - name: Install dependencies
         working-directory: ./bounsic-front
         run: bun install
 
-      - name: Run tests
+      # Instalar Chrome
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      # Ejecutar tests
+      - name: Run Angular Tests
         working-directory: ./bounsic-front
-        run: bun run test  # Asegúrate de tener un script `test` en tu package.json
+        run: bun run test --watch=false --browsers=ChromeHeadless
+
 
