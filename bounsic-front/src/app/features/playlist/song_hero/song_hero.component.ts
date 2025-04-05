@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { formatDuration } from '../utils/format-song-duration';
 
 @Component({
   selector: 'app-song-hero',
@@ -11,9 +12,6 @@ export class SongHeroComponent {
   @Input() totalDuration!: string;
 
   get formattedDuration(): string {
-    const [hours, minutes] = this.totalDuration.split(':').map(Number);
-    return `${hours} hora${hours !== 1 ? 's' : ''} ${minutes} minuto${
-      minutes !== 1 ? 's' : ''
-    }`;
+    return formatDuration(this.totalDuration)
   }
 }
