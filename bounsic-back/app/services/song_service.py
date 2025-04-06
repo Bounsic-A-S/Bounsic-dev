@@ -3,6 +3,7 @@ from pymongo.errors import PyMongoError
 from app.provider import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
 from azure.storage.blob import BlobServiceClient
 from app.provider import db
+from app.provider import DatabaseFacade
 import re
 
 
@@ -99,3 +100,14 @@ def insert_image(file_url: str, blob_name: str):
 
     # Construir URL de acceso
     return f"https://{blob_service_client.account_name}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/{blob_name}"
+
+def mysql_db():
+    db_facade = DatabaseFacade()
+    # Perform a database operation
+    results = db_facade.execute_query("SELECT VERSION()")
+    if results:
+        version = results.fetchone()
+        print(f"MySQL Version: {version[0]}")
+        return version[0]
+    else:
+        return None
