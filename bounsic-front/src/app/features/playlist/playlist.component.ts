@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NavbarAppComponent } from '@app/shared/components/navbar/navbar-app.component';
+import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { CommonModule } from '@angular/common';
 import { SongHeroComponent } from './song_hero/song_hero.component';

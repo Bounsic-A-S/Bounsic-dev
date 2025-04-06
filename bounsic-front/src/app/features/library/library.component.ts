@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NavbarAppComponent } from '@app/shared/components/navbar/navbar-app.component';
+import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { LibraryItemComponent } from "./library_item/library_item.component";
 
 interface Playlist {
