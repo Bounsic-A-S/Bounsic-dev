@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/components/navbar/navbar-app.component';
+import { LibraryItemComponent } from "./library_item/library_item.component";
 
 interface Playlist {
     id: number;
@@ -12,7 +13,7 @@ interface Playlist {
     selector: 'app-library', // name of the component
     standalone: true, // not module
     templateUrl: './library.component.html', // render
-    imports: [NavbarAppComponent, CommonModule],
+    imports: [NavbarAppComponent, CommonModule, LibraryItemComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -37,14 +38,16 @@ export class LibraryComponent {
             coverUrl: 'https://i.pinimg.com/736x/d8/1a/31/d81a315aabbbb422b7d2501cc1702beb.jpg'
         }
     ];
-
-    likedPlaylists: Playlist[] = [
+    favorites: Playlist =
         {
             id: 4,
             title: 'Lista de Me gustas',
             songCount: 156,
-            coverUrl: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-zPe2si1GE8dvlMhks4FqZw6lawdjES.png'
-        },
+            coverUrl: '/library/favorites.png'
+        }
+
+
+    likedPlaylists: Playlist[] = [
         {
             id: 5,
             title: 'Jueves',

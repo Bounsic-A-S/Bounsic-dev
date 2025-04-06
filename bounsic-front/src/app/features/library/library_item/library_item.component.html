@@ -1,0 +1,9 @@
+<article class="cursor-pointer">
+  <div class="aspect-square rounded-xl overflow-hidden mb-2 size-36 md:size-44 xl:size-48">
+    <img [src]="playlist.coverUrl" alt="{{ playlist.title }}" class="w-full h-full object-cover" />
+  </div>
+  <h3 class="font-medium">{{ playlist.title }}</h3>
+  <p class="text-sm text-gray-400">
+    {{ playlist.songCount }} Canciones
+  </p>
+</article>
