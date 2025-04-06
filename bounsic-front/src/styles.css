@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-    --color-bounsic-gray: #0F0F0F;
-  }
+  --color-bounsic-gray: #0f0f0f;
+  --color-bounsic-red: #DF0E50;
+  --color-bounsic-yellow: #F6A618;
+
+}
+
 .scroll-hidden::-webkit-scrollbar {
   display: none;
 }
@@ -11,5 +15,3 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-
-

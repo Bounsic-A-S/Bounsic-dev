@@ -1,43 +1,41 @@
 <div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-  <div class="flex items-center justify-center ">
+  <div class="flex items-center justify-center min-h-screen bg-black">
     <div class="relative w-[460px] h-[460px] flex items-center justify-center group">
       <div class="absolute w-full h-full flex items-center justify-center">
         <div
-          class="ring absolute w-full h-full rounded-full border-[3px] border-gray-600 animate-spin-custom1 group-hover:border-lime-400 group-hover:drop-shadow-[0_0_20px_lime]"
-        ></div>
-        <div
-          class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] border-gray-600 animate-spin-custom2 group-hover:border-red-500 group-hover:drop-shadow-[0_0_20px_red]"
-        ></div>
-        <div
-          class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] border-gray-600 animate-spin-custom3 group-hover:border-yellow-400 group-hover:drop-shadow-[0_0_20px_yellow]"
-        ></div>
+          class="ring absolute w-full h-full rounded-full border-[3px] border-gray-600 animate-spin-custom1 group-hover:border-lime-400 group-hover:drop-shadow-[0_0_20px_lime]">
+        </div>
+      </div>
+      <div
+        class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] border-gray-600 animate-spin-custom2 group-hover:border-bounsic-red group-hover:drop-shadow-[0_0_20px_red]">
+      </div>
+      <div
+        class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] border-gray-600 animate-spin-custom3 group-hover:border-bounsic-yellow group-hover:drop-shadow-[0_0_20px_yellow]">
       </div>
 
+      <!-- Contenido del modal -->
       <div class="z-10 bg-black/80 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white">
-        <h2 class="text-lg font-semibold mb-4">Login</h2>
+        <h2 class="text-lg font-semibold mb-4">{{ isRegisterForm ? 'Iniciar Sesión' : 'Registrarse' }}</h2>
 
-        <input
-          type="text"
-          placeholder="Username"
-          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
-        />
+        <input type="text" placeholder="Username"
+          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
 
-        <input
-          type="password"
-          placeholder="Password"
-          class="w-full mb-4 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
-        />
+        <input *ngIf="!isRegisterForm" type="email" placeholder="Email"
+          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
 
-        <button
-          (click)="onLogin()"
-          class="w-full py-2 rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-300 text-black font-semibold hover:brightness-110 transition"
-        >
-          Sign in
+        <input type="password" placeholder="Password"
+          class="w-full mb-4 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
+
+        <button (click)="isRegisterForm ? onLogin() : onLogin()"
+          class="w-full py-2 rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-300 text-black font-semibold hover:brightness-110 transition">
+          {{ isRegisterForm ? 'Sign in' : 'Create account' }}
         </button>
 
         <div class="flex justify-between w-full mt-4 text-xs text-zinc-400">
-          <button class="hover:underline">Forget Password</button>
-          <button class="hover:underline">Signup</button>
+          <button class="hover:underline" *ngIf="isRegisterForm">Forget Password</button>
+          <button class="hover:underline" (click)="toggleForms()">
+            {{ isRegisterForm ? 'Signup' : 'Login' }}
+          </button>
         </div>
       </div>
     </div>
