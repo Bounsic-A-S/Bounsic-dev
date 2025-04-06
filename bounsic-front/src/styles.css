@@ -6,7 +6,12 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
   /* colors */
-  --color-bounsic-gray: #0f0f0f;
+  /* black & white levels , scale 1-4 , low -> strong */
+  --color-bounsic-gray-1: #b8b7b7;
+  --color-bounsic-gray-2: #A7A7A7;
+  --color-bounsic-gray-3: #6C6C6C;
+  --color-bounsic-gray-4: #141313;
+  /* main */
   --color-bounsic-red: #df0e50;
   --color-bounsic-yellow: #f6a618;
 }
