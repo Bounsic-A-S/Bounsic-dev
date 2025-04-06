@@ -1,13 +1,27 @@
 @import "tailwindcss";
 
 @theme {
+  /* fonts */
   --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
+  --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  /* colors */
   --color-bounsic-gray: #0f0f0f;
   --color-bounsic-red: #df0e50;
   --color-bounsic-yellow: #f6a618;
 }
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+/* FONTS */
+
+/* ROBOTO (MAIN) */
 @font-face {
   font-family: "Roboto";
   src: url("/bounsic-front/assets/fonts/roboto/Roboto-Bold.woff2")
@@ -38,11 +52,24 @@
   font-display: swap;
 }
 
-.scroll-hidden::-webkit-scrollbar {
-  display: none;
+/* POPPINS */
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/bounsic-front/assets/fonts/poppins/Poppins-Black.woff2")
+      format("woff2"),
+    url("/bounsic-front/assets/fonts/poppins/Poppins-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
 }
 
-.scroll-hidden {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+@font-face {
+  font-family: "Poppins";
+  src: url("/bounsic-front/assets/fonts/poppins/Poppins-Bold.woff2")
+      format("woff2"),
+    url("/bounsic-front/assets/fonts/poppins/Poppins-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
