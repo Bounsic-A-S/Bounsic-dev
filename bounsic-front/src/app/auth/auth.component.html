@@ -14,21 +14,31 @@
       </div>
 
       <!-- Contenido del modal -->
-      <div class="z-10 bg-black/80 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white">
+      <div class="z-10 bg-gradient-to-br from-zinc-900 via-black/30 to-zinc-800 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white">
         <h2 class="text-lg font-semibold mb-4">{{ isRegisterForm ? 'Iniciar Sesión' : 'Registrarse' }}</h2>
+        <section *ngIf="isRegisterForm">
+          <p class="text-sm sm:text-base text-white/70 mb-1 text-center">
+            Inicio seguro con Azure
+          </p>
+          <p class="text-sm sm:text-base text-white/70 mb-6 text-center">
+            Tu cuenta, tu música. Conéctate con confianza.
+          </p>
+        </section>
+        <section *ngIf="!isRegisterForm">
+          <input type="text" placeholder="Username"
+            class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
 
-        <input type="text" placeholder="Username"
-          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
+          <input *ngIf="!isRegisterForm" type="email" placeholder="Email"
+            class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
 
-        <input *ngIf="!isRegisterForm" type="email" placeholder="Email"
-          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
+          <input type="password" placeholder="Password"
+            class="w-full mb-4 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
 
-        <input type="password" placeholder="Password"
-          class="w-full mb-4 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" />
+        </section>
 
         <button (click)="isRegisterForm ? onLogin() : onLogin()"
           class="w-full py-2 rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-300 text-black font-semibold hover:brightness-110 transition">
-          {{ isRegisterForm ? 'Sign in' : 'Create account' }}
+          {{ isRegisterForm ? 'Ingresar' : 'Crear cuenta' }}
         </button>
 
         <div class="flex justify-between w-full mt-4 text-xs text-zinc-400">
