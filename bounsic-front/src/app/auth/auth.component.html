@@ -1,106 +1,45 @@
-<div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-20 backdrop-blur-[1.9px]">
-  <div class="w-full max-w-md md:max-w-lg bg-zinc-900 rounded-lg shadow-xl overflow-hidden relative">
-    <button (click)="close()" class="z-30 absolute top-4 right-4 text-gray-300 hover:text-white"> <svg
-        xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg> </button>
-    <!-- Close button -->
-    <button class="absolute right-4 top-4 text-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
+<div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="flex items-center justify-center ">
+    <div class="relative w-[460px] h-[460px] flex items-center justify-center group">
+      <div class="absolute w-full h-full flex items-center justify-center">
+        <div
+          class="ring absolute w-full h-full rounded-full border-[3px] border-gray-600 animate-spin-custom1 group-hover:border-lime-400 group-hover:drop-shadow-[0_0_20px_lime]"
+        ></div>
+        <div
+          class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] border-gray-600 animate-spin-custom2 group-hover:border-red-500 group-hover:drop-shadow-[0_0_20px_red]"
+        ></div>
+        <div
+          class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] border-gray-600 animate-spin-custom3 group-hover:border-yellow-400 group-hover:drop-shadow-[0_0_20px_yellow]"
+        ></div>
+      </div>
 
-    <!-- Logo and Title -->
-    <section class="flex flex-col items-center pt-10 pb-6">
-      <div class="flex justify-center"> <img src="/logo/logoBounsic.png" alt="BOUNSIC" class="h-12"> </div>
-      <div class="h-px bg-white/50 w-9/10 my-2 md:my-4"></div>
-      <h2 class="text-2xl font-bold text-white">{{ isRegisterForm ? 'Registrarse' : 'Iniciar sesión' }}</h2>
-    </section>
+      <div class="z-10 bg-black/80 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white">
+        <h2 class="text-lg font-semibold mb-4">Login</h2>
 
-    <!-- Toggle Switch -->
-    <div class="flex justify-center mb-6">
-      <div class="flex items-center space-x-2">
-        <span class="text-sm font-medium" [ngClass]="isRegisterForm ? 'text-zinc-400' : 'text-white'">Iniciar
-          sesión</span>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" [(ngModel)]="isRegisterForm" class="sr-only peer">
-          <div class="w-11 h-6 bg-zinc-700 peer-checked:bg-white rounded-full">
-            <div class="toggle-thumb"></div>
-          </div>
-        </label>
-        <span class="text-sm font-medium" [ngClass]="isRegisterForm ? 'text-white' : 'text-zinc-400'">Registrarse</span>
+        <input
+          type="text"
+          placeholder="Username"
+          class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          class="w-full mb-4 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
+        />
+
+        <button
+          (click)="onLogin()"
+          class="w-full py-2 rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-300 text-black font-semibold hover:brightness-110 transition"
+        >
+          Sign in
+        </button>
+
+        <div class="flex justify-between w-full mt-4 text-xs text-zinc-400">
+          <button class="hover:underline">Forget Password</button>
+          <button class="hover:underline">Signup</button>
+        </div>
       </div>
     </div>
-
-    <!-- Forms Container -->
-    <section class="relative h-auto overflow-hidden">
-      <div class="forms-slider" [class.slide-left]="isRegisterForm">
-
-        <!-- Login Form - Only Button -->
-        <div class="w-1/2 px-6 flex flex-col justify-center items-center">
-          <div class="text-center mb-8">
-            <p class="text-white text-lg mb-2">Bienvenido de nuevo</p>
-            <p class="text-zinc-400 text-sm">Inicia sesión con tu cuenta</p>
-          </div>
-
-          <button type="button" (click)="onLogin()"
-            class="w-full py-3 mb-4 rounded-full bg-white text-black font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center">
-            Iniciar sesión
-          </button>
-
-          <p class="text-zinc-400 text-sm mt-4">
-            ¿No tienes cuenta? Desliza para registrarte
-          </p>
-        </div>
-
-        <!-- Register Form - 3 Inputs -->
-        <div class="w-1/2 px-6 flex flex-col">
-          <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-4 flex-grow">
-            <div class="space-y-2">
-              <label for="register-name" class="block text-sm font-medium text-white">Nombre</label>
-              <input type="text" id="register-name" formControlName="name" placeholder="Ingresar nombre..."
-                class="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-                [ngClass]="{'border-red-500': registerForm.get('name')?.invalid && registerForm.get('name')?.touched}">
-              <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
-                class="text-red-500 text-xs mt-1">
-                Nombre es requerido
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <label for="register-email" class="block text-sm font-medium text-white">Correo electrónico</label>
-              <input type="email" id="register-email" formControlName="email" placeholder="Ingresar correo..."
-                class="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-                [ngClass]="{'border-red-500': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
-              <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-                class="text-red-500 text-xs mt-1">
-                <span *ngIf="registerForm.get('email')?.errors?.['required']">Email es requerido</span>
-                <span *ngIf="registerForm.get('email')?.errors?.['email']">Email no es válido</span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <label for="register-password" class="block text-sm font-medium text-white">Contraseña</label>
-              <input type="password" id="register-password" formControlName="password"
-                placeholder="Ingresar contraseña..."
-                class="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/30"
-                [ngClass]="{'border-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-              <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                class="text-red-500 text-xs mt-1">
-                <span *ngIf="registerForm.get('password')?.errors?.['required']">Contraseña es requerida</span>
-                <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Contraseña debe tener al menos 6
-                  caracteres</span>
-              </div>
-            </div>
-
-            <button type="submit"
-              class="w-full py-2 mb-6 mt-4 rounded-full bg-white text-black font-medium hover:bg-zinc-200 transition-colors">
-              Registrarse
-            </button>
-          </form>
-        </div>
-      </div>
-    </section>
   </div>
 </div>

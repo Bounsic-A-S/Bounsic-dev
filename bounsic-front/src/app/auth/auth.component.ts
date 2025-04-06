@@ -19,9 +19,8 @@ import {
 export class AuthComponent {
   isRegisterForm = false;
   registerForm: FormGroup;
-  @Input() isOpen: boolean = false; // Para controlar la visibilidad
-  @Output() closeModal: EventEmitter<void> = new EventEmitter(); // Emitir evento para cerrar el modal
-
+  @Input() isOpen: boolean = false; 
+  @Output() closeModal: EventEmitter<void> = new EventEmitter(); 
   constructor(private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
@@ -42,9 +41,7 @@ export class AuthComponent {
   onRegister(): void {
     if (this.registerForm.valid) {
       console.log('Register form submitted', this.registerForm.value);
-      // Implement your registration logic here
     } else {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.registerForm.controls).forEach(key => {
         const control = this.registerForm.get(key);
         control?.markAsTouched();
