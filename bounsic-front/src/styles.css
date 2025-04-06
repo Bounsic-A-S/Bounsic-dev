@@ -1,8 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-    --color-bounsic-gray: #0F0F0F;
-  }
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --color-bounsic-gray: #0f0f0f;
+  --color-bounsic-red: #df0e50;
+  --color-bounsic-yellow: #f6a618;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Bold.woff2")
+      format("woff2"),
+    url("/bounsic-front/assets/fonts/roboto/Roboto-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Regular.woff2")
+      format("woff2"),
+    url("/bounsic-front/assets/fonts/roboto/Roboto-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Thin.woff2")
+      format("woff2"),
+    url("/bounsic-front/assets/fonts/roboto/Roboto-Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
 .scroll-hidden::-webkit-scrollbar {
   display: none;
 }
