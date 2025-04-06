@@ -1,5 +1,6 @@
 <div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
   <div class="flex items-center justify-center min-h-screen bg-black">
+    
     <div class="relative w-[460px] h-[460px] flex items-center justify-center group">
       <div class="absolute w-full h-full flex items-center justify-center">
         <div
@@ -14,7 +15,12 @@
       </div>
 
       <!-- Contenido del modal -->
-      <div class="z-10 bg-gradient-to-br from-zinc-900 via-black/30 to-zinc-800 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white">
+      <div class="z-10 bg-gradient-to-br from-zinc-900 via-black/30 to-zinc-800 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white relative">
+        <button (click)="close()" class="z-30 absolute top-4 right-4 text-gray-300 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <h2 class="text-lg font-semibold mb-4">{{ isRegisterForm ? 'Iniciar Sesión' : 'Registrarse' }}</h2>
         <section *ngIf="isRegisterForm">
           <p class="text-sm sm:text-base text-white/70 mb-1 text-center">
@@ -42,9 +48,9 @@
         </button>
 
         <div class="flex justify-between w-full mt-4 text-xs text-zinc-400">
-          <button class="hover:underline" *ngIf="isRegisterForm">Forget Password</button>
+          <button class="hover:underline" *ngIf="isRegisterForm">Olvide mi contraseña</button>
           <button class="hover:underline" (click)="toggleForms()">
-            {{ isRegisterForm ? 'Signup' : 'Login' }}
+            {{ isRegisterForm ? 'Registrarse' : 'Iniciar Sesión' }}
           </button>
         </div>
       </div>
