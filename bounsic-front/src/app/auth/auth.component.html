@@ -1,101 +1,160 @@
-<div *ngIf="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center z-50"
+>
   <div class="flex items-center justify-center min-h-screen">
-    
-    <div class="relative w-[460px] h-[460px] flex items-center justify-center group">
+    <div
+      class="relative w-[460px] h-[460px] flex items-center justify-center group"
+    >
       <div class="absolute w-full h-full flex items-center justify-center">
         <div
-          class="ring absolute w-full h-full rounded-full border-[3px] animate-spin-custom1 border-bounsic-red drop-shadow-[0_0_20px_red]">
-        </div>
+          class="ring absolute w-full h-full rounded-full border-[3px] animate-spin-custom1 border-bounsic-red drop-shadow-[0_0_20px_red]"
+        ></div>
       </div>
       <div
-        class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] animate-spin-custom2 border-cyan-200 drop-shadow-[0_0_20px_blue]">
-      </div>
+        class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] animate-spin-custom2 border-cyan-200 drop-shadow-[0_0_20px_blue]"
+      ></div>
       <div
-        class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] animate-spin-custom3 border-bounsic-yellow drop-shadow-[0_0_20px_yellow]">
-      </div>
+        class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] animate-spin-custom3 border-bounsic-yellow drop-shadow-[0_0_20px_yellow]"
+      ></div>
 
       <!-- Contenido del modal -->
-      <div class="z-10 bg-bounsic-gray-4 w-[280px] p-6 rounded-3xl flex flex-col items-center text-white relative">
-        <button (click)="close()" class="z-30 absolute top-4 right-4 text-gray-300 hover:text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      <div
+        class="z-10 bg-bounsic-gray-4 border border-bounsic-gray-3/10 w-80 h-80 px-6 py-3 rounded-xl flex flex-col justify-center items-center text-white relative"
+      >
+        <button
+          (click)="close()"
+          class="z-20 absolute top-4 right-4 text-gray-300 hover:text-white cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
-        <h2 class="text-lg font-semibold mb-4">{{ isRegisterForm ? 'Iniciar Sesión' : 'Registrarse' }}</h2>
+        <h2 class="text-lg font-semibold">
+          {{ isRegisterForm ? "Iniciar Sesión" : "Registrarse" }}
+        </h2>
+        <div class="h-[1px] w-11/12 bg-white my-4"></div>
         <section *ngIf="isRegisterForm">
-          <p class="text-sm sm:text-base text-white/70 mb-1 text-center">
+          <p class="text-sm sm:text-base text-bounsic-gray-1 mb-1 text-center">
             Inicio seguro con Azure
           </p>
-          <p class="text-sm sm:text-base text-white/70 mb-6 text-center">
+          <p class="text-sm sm:text-base text-bounsic-gray-1 mb-6 text-center">
             Tu cuenta, tu música. Conéctate con confianza.
           </p>
         </section>
-        
+
         <!-- Modified Registration Form Section -->
-        <section *ngIf="!isRegisterForm">
-          <form [formGroup]="registerForm" class="w-full">
+        <section *ngIf="!isRegisterForm" class="w-full">
+          <form [formGroup]="registerForm">
             <!-- Name field -->
-            <input 
-              type="text" 
+            <input
+              type="text"
               formControlName="name"
               placeholder="Nombre"
-              class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" 
+              class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
-            <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" 
-                 class="text-red-400 text-xs -mt-2 mb-2 px-4">
-              Nombre es requerido
+            <div
+              *ngIf="
+                registerForm.get('name')?.invalid &&
+                registerForm.get('name')?.touched
+              "
+              class="text-red-400 text-xs -mt-2 mb-2 px-4"
+            >
+              Necesitas un nombre
             </div>
-            
-            <!-- Last Name field -->
-            <input 
-              type="text" 
-              formControlName="last_name"
-              placeholder="Apellido"
-              class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" 
-            />
-            
+
             <!-- Email field -->
-            <input 
-              type="email" 
+            <input
+              type="email"
               formControlName="email"
               placeholder="Email"
-              class="w-full mb-3 px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20" 
+              class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
-            <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" 
-                 class="text-red-400 text-xs -mt-2 mb-2 px-4">
-              <span *ngIf="registerForm.get('email')?.errors?.['required']">Email es requerido</span>
-              <span *ngIf="registerForm.get('email')?.errors?.['email']">Email no válido</span>
+            <div
+              *ngIf="
+                registerForm.get('email')?.invalid &&
+                registerForm.get('email')?.touched
+              "
+              class="text-red-400 text-xs -mt-2 mb-2 px-4"
+            >
+              <span *ngIf="registerForm.get('email')?.errors?.['required']"
+                >Necesitas un Email</span
+              >
+              <span *ngIf="registerForm.get('email')?.errors?.['email']"
+                >Email no válido</span
+              >
             </div>
-            
+
             <!-- Image Upload field - properly integrated with reactive form -->
             <div class="mb-3">
-              <div 
-                (click)="fileInput.click()" 
-                class="w-full px-4 py-2 rounded-full bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer flex items-center justify-between"
+              <div
+                (click)="fileInput.click()"
+                class="text-sm w-full px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20 cursor-pointer flex items-center justify-between"
               >
-                <span class="truncate">{{ selectedFileName || 'Seleccionar imagen de perfil' }}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <span class="truncate">{{
+                  selectedFileName || "Seleccionar imagen de perfil"
+                }}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
-              <input 
+              <input
                 #fileInput
-                type="file" 
+                type="file"
                 (change)="onFileSelected($event)"
                 accept="image/*"
-                class="hidden" 
+                class="hidden"
               />
               <div *ngIf="imagePreview" class="mt-2 flex justify-center">
-                <div class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-700">
-                  <img [src]="imagePreview" class="w-full h-full object-cover" alt="Preview" />
-                  <button 
+                <div
+                  class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-zinc-700"
+                >
+                  <img
+                    [src]="imagePreview"
+                    class="w-full h-full object-cover"
+                    alt="Preview"
+                  />
+                  <button
                     type="button"
-                    (click)="removeImage()" 
+                    (click)="removeImage()"
                     class="absolute top-0 right-0 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center"
                     title="Remove image"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3 w-3 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -104,24 +163,55 @@
           </form>
         </section>
 
-        <button (click)="onLogin()"
-          class="w-full py-2 rounded-full bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-300 text-black font-semibold cursor-pointer hover:brightness-110 transition"
-          [disabled]="!isRegisterForm && (isSubmitting || registerForm.invalid)">
-          <span>{{ isRegisterForm ? 'Ingresar' : 'Crear cuenta' }}</span>
-          <span *ngIf="!isRegisterForm && isSubmitting" class="flex items-center justify-center">
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <button
+          (click)="onLogin()"
+          
+          class="w-full py-2 rounded-full bg-white text-black font-semibold cursor-pointer hover:brightness-110 transition"
+          [disabled]="!isRegisterForm && (isSubmitting || registerForm.invalid)"
+        >
+          <span>{{ isRegisterForm ? "Ingresar" : "Crear cuenta" }}</span>
+          <span
+            *ngIf="!isRegisterForm && isSubmitting"
+            class="flex items-center justify-center"
+          >
+            <svg
+              class="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             Procesando...
           </span>
         </button>
 
-        <div class="flex justify-between w-full mt-4 text-xs text-zinc-400">
-          <button class="hover:underline" *ngIf="isRegisterForm">Olvide mi contraseña</button>
-          <button class="hover:underline" (click)="toggleForms()">
-            {{ isRegisterForm ? 'Registrarse' : 'Iniciar Sesión' }}
-          </button>
+        <div
+          class="flex justify-center w-full mt-4 text-xs text-bounsic-gray-1"
+        >
+          <span class="flex items-center gap-x-1">
+            <p>
+              {{ isRegisterForm ? "No tienes cuenta? " : "Ya tienes cuenta " }}
+            </p>
+            <button
+              class="text-xs text-bounsic-gray-1 underline hover:cursor-pointer"
+              (click)="toggleForms()"
+            >
+              {{ isRegisterForm ? "Registrarse" : "Iniciar Sesión" }}
+            </button>
+          </span>
         </div>
       </div>
     </div>
