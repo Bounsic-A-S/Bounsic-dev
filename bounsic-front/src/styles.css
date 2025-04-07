@@ -17,8 +17,10 @@
   /* background */
   --color-bounsic-bg-main-purple: #1e0d16;
   --color-bounsic-bg-main-purple-gray: #1a181a;
+  /* shadows */
+  --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
 }
-
+/* custom classes */
 .scroll-hidden::-webkit-scrollbar {
   display: none;
 }
