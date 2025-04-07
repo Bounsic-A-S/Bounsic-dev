@@ -1,4 +1,4 @@
-from app.services.artist_service import getDesc,getSongsByArtist
+from app.services import getDesc,getSongsByArtist
 
 
 async def get_songs_by_artist_controller(artist: str):

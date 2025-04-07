@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from app.controllers.artist_controller import (
+from app.controllers import (
     get_songs_by_artist_controller,
     get_artist_desc_controller
 )
