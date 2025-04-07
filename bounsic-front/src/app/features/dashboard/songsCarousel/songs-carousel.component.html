@@ -12,16 +12,16 @@
 
   <div
     #scrollContainer
-    class="flex gap-8 overflow-x-auto pb-4 px-8 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
+    class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
   >
-    <div *ngFor="let album of albums" class="flex-none w-36 sm:w-40 lg:w-48">
+    <div *ngFor="let album of albums" class="flex-none w-32 sm:w-36 lg:w-44">
       <img
         [src]="album.cover"
         [alt]="album.title"
         class="w-full aspect-square object-cover rounded-md mb-2"
       />
-      <h4 class="font-semibold">{{ album.title }}</h4>
-      <p class="text-sm text-gray-400">{{ album.artist }}</p>
+      <h4 class="lg:text-lg">{{ album.title }}</h4>
+      <p class="font-light text-sm lg:text-base text-bounsic-gray-1">{{ album.artist }}</p>
     </div>
   </div>
 

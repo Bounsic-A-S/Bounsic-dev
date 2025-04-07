@@ -1,0 +1,28 @@
+from fastapi import HTTPException
+from app.services import scrappingBueno, descargar_audio,buscar_en_youtube
+def get_youtube_scrapping_request(url :str):
+    if not url:
+        raise HTTPException(status_code=400, detail="La URL es obligatoria")
+    scrapping_response = scrappingBueno(url)
+    if not scrapping_response:
+        raise HTTPException(status_code=404, detail="No se encontraron datos")
+    download_response = descargar_audio(url)
+    if not download_response:
+        raise HTTPException(status_code=404, detail="No se encontraron datos")
+    return scrapping_response,download_response
+
+def get_youtube_download_request(url:str):
+    if not url:
+        raise HTTPException(status_code=400, detail="La URL es obligatoria")
+    download_response = descargar_audio(url)
+    if not download_response:
+        raise HTTPException(status_code=404,content={"detail": "No se pudo descargar el audio"})
+    return download_response
+
+def search_youtube_request(query:str):
+        if not query:
+            raise HTTPException(status_code=400, detail="El término de búsqueda es obligatorio")
+        search_response = buscar_en_youtube(query)
+        if not search_response:
+            raise HTTPException(status_code=404, detail="No se encontraron resultados")
+        return search_response
