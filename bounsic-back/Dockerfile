@@ -1,7 +1,7 @@
 # Etapa 1: Builder
 FROM python:3.11-alpine AS builder
 
-WORKDIR /app
+WORKDIR /
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
