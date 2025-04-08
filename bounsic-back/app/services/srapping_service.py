@@ -6,8 +6,8 @@ import re
 from app.provider import get_ffmpeg_path
 
 def sanitize_filename(text):
-    """Limpia el título y el artista para que sean nombres válidos de archivos."""
-    return re.sub(r'[<>:"/\\|?*]', '', text).strip()
+    # Reemplaza los caracteres inválidos por guiones bajos o vacíos
+    return re.sub(r'[<>:"/\\|?*]', '', text)
 
 def scrappingBueno(url):
 
