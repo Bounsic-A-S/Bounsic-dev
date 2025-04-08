@@ -6,8 +6,8 @@ import re
 from app.provider import get_ffmpeg_path
 
 def sanitize_filename(text):
-    """Limpia el título y el artista para que sean nombres válidos de archivos."""
-    return re.sub(r'[<>:"/\\|?*]', '', text).strip()
+    # Reemplaza los caracteres inválidos por guiones bajos o vacíos
+    return re.sub(r'[<>:"/\\|?*]', '', text)
 
 def scrappingBueno(url):
 
@@ -64,8 +64,6 @@ def scrappingBueno(url):
 
 def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
-    while base_path.name != "bounsic-back":
-        base_path = base_path.parent
 
     audio_dir = base_path / "audios"
     image_dir = base_path / "images"
@@ -73,7 +71,8 @@ def descargar_audio(url):
     audio_dir.mkdir(parents=True, exist_ok=True)
     image_dir.mkdir(parents=True, exist_ok=True)
 
-    ffmpeg_path = get_ffmpeg_path(base_path)
+
+    ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -83,8 +82,10 @@ def descargar_audio(url):
             'preferredquality': '192',
         }],
         'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
-        'ffmpeg_location': str(ffmpeg_path)
+        'ffmpeg_location': str(ffmpeg_path),
     }
+
+    
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
