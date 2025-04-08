@@ -2,6 +2,7 @@
 FROM python:3.11-alpine AS builder
 
 WORKDIR /
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -29,9 +30,12 @@ RUN apk add --no-cache ffmpeg
 # Copia dependencias de Python instaladas desde builder
 COPY --from=builder /install /usr/local
 
-# Copia tu código fuente
+# Copia el código fuente y archivo .env.dev
 COPY . .
+COPY ./env/.env.dev /env/.env.dev
 
-EXPOSE 8000
+# Expón el puerto 80
+EXPOSE 80
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando de arranque del servidor FastAPI
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
