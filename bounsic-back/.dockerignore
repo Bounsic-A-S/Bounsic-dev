@@ -5,13 +5,8 @@ __pycache__/
 *.pyd
 *.log
 
-.env/
 venv/
-env/
-audios/
-images/
 ffmpeg-7.1-essentials_build/
-
 *.bat
 *.sh
 default

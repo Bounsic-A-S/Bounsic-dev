@@ -6,9 +6,11 @@ def get_youtube_scrapping_request(url :str):
     if not url:
         raise HTTPException(status_code=400, detail="La URL es obligatoria")
     scrapping_response = scrappingBueno(url)
+    print(scrapping_response)
     if not scrapping_response:
         raise HTTPException(status_code=404, detail="No se encontraron datos")
     download_response = descargar_audio(url)
+    print(download_response)
     if not download_response:
         raise HTTPException(status_code=404, detail="No se encontraron datos")
     

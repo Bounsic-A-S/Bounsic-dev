@@ -64,8 +64,6 @@ def scrappingBueno(url):
 
 def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
-    while base_path.name != "bounsic-back":
-        base_path = base_path.parent
 
     audio_dir = base_path / "audios"
     image_dir = base_path / "images"
