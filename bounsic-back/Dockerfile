@@ -33,8 +33,8 @@ COPY --from=builder /install /usr/local
 # Copia el código fuente y archivo .env.dev
 COPY . .
 
-# Expón el puerto 80
-EXPOSE 80
+# Expón el puerto 8000
+EXPOSE 8000
 
 # Comando de arranque del servidor FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
