@@ -11,3 +11,35 @@ ffmpeg-7.1-essentials_build/
 *.sh
 default
 info_video.json
+
+# Git
+.git/
+.gitignore
+
+# Logs y datos generados
+*.sqlite3
+*.db
+*.json
+
+# Carpeta de compilaciones locales de ffmpeg
+ffmpeg-7.1-essentials_build/
+*.bat
+*.sh
+*.exe
+
+# Archivos del sistema o IDE
+.DS_Store
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos temporales
+*.swp
+*.tmp
+
+# Datos de ejecución
+audios/
+images/
+default
+info_video.json
