@@ -1,12 +1,4 @@
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-
-client_id = "e873f0ae04bd4ea7ae99523409cbf29d"
-client_secret = "2cc6c6f926284fcab5487389fcdbd556"
-
-auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-sp = spotipy.Spotify(auth_manager=auth_manager)
-
+from app.provider import sp
 def get_album_images(album_name, artist_name=None):
     query = f"{album_name} {artist_name or ''}".strip()
     print(f"Buscando portada de álbum: {query}")
