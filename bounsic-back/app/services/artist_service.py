@@ -1,16 +1,18 @@
 from pymongo.errors import PyMongoError
 from app.provider import db
 import re
+from bson import ObjectId
 
 collection = db["artists"]
 
 def normalize_string(s: str) -> str:
-    """Quita espacios y convierte a minúsculas para normalizar un string."""
+    """Removes spaces and converts to lowercase to normalize a string."""
     return re.sub(r"\s+", "", s).lower()
 
 def getSongsByArtist(artist_name: str):
     try:
         normalized_artist = normalize_string(artist_name)
+        
         artist = collection.find_one({
             "$expr": {
                 "$eq": [
@@ -21,10 +23,19 @@ def getSongsByArtist(artist_name: str):
         })
 
         if artist and "songs" in artist:
-            for song in artist["songs"]:
-                if isinstance(song, dict) and "_id" in song and "$oid" in song["_id"]:
-                    song["_id"] = song["_id"]["$oid"]
-            return artist["songs"]
+            song_ids_str = artist["songs"]
+            if isinstance(song_ids_str, str):
+                import json
+                song_ids_str = json.loads(song_ids_str)
+
+            song_ids = [ObjectId(song_id) for song_id in song_ids_str]
+
+            songs_collection = db["songs"]
+            songs_cursor = songs_collection.find({"_id": {"$in": song_ids}}, {"title": 1})
+
+            song_titles = [song["title"] for song in songs_cursor]
+
+            return song_titles if song_titles else {"message": "No song titles found"}
 
         return {"message": "No songs found for this artist"}
 
@@ -32,6 +43,7 @@ def getSongsByArtist(artist_name: str):
         return {"error": "Database error", "details": str(e)}
     except Exception as e:
         return {"error": "Unexpected error", "details": str(e)}
+
 
 def getDesc(artist_name: str):
     try:
