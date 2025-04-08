@@ -4,3 +4,4 @@ from .crawl_controller import crawl_request
 from .db_controller import get_songs_request,create_one_song_request
 from .scrapping_controller import get_youtube_scrapping_request,search_youtube_request,get_youtube_download_request
 from .artist_controller import get_artist_desc_controller, get_songs_by_artist_controller
+from .spotify_controller import get_album_cover_controller
