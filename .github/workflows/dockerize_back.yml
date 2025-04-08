@@ -7,7 +7,6 @@ on:
       - completed
 
 jobs:
-
   dockerize:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
@@ -25,6 +24,11 @@ jobs:
           username: ${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}
           password: ${{ secrets.AzureAppService_ContainerPassword_8bddef9a4aa34be999717e96becf3a09 }}
 
+      - name: Crear archivo .env.dev
+        run: |
+          mkdir -p ./bounsic-back/env
+          echo "${{ secrets.ENV_DEV }}" > ./bounsic-back/env/.env.dev
+
       - name: Build and push backend Docker image
         uses: docker/build-push-action@v3
         with:
@@ -32,4 +36,3 @@ jobs:
           file: ./bounsic-back/Dockerfile
           push: true
           tags: bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}
-          
