@@ -1,0 +1,35 @@
+name: Dockerize Back
+
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
+
+jobs:
+
+  dockerize:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: https://bounsiccontainerregistery.azurecr.io/
+          username: ${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}
+          password: ${{ secrets.AzureAppService_ContainerPassword_8bddef9a4aa34be999717e96becf3a09 }}
+
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./bounsic-back/Dockerfile
+          push: true
+          tags: bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}
+          

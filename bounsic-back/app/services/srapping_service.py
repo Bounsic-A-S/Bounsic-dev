@@ -71,7 +71,8 @@ def descargar_audio(url):
     audio_dir.mkdir(parents=True, exist_ok=True)
     image_dir.mkdir(parents=True, exist_ok=True)
 
-    ffmpeg_path = get_ffmpeg_path(base_path)
+
+    ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -81,8 +82,10 @@ def descargar_audio(url):
             'preferredquality': '192',
         }],
         'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
-        'ffmpeg_location': str(ffmpeg_path)
+        'ffmpeg_location': str(ffmpeg_path),
     }
+
+    
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

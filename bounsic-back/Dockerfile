@@ -1,28 +1,37 @@
-FROM python:3.11-slim
+# Etapa 1: Builder
+FROM python:3.11-alpine AS builder
 
-# Instala dependencias necesarias
-RUN apt-get update && apt-get install -y \
-    curl \
-    tar \
-    xz-utils \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Descarga y extrae ffmpeg y ffprobe en /usr/bin
-RUN curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
-    | tar -xJ && \
-    cp ffmpeg-*-static/ffmpeg /usr/bin/ && \
-    cp ffmpeg-*-static/ffprobe /usr/bin/ && \
-    chmod +x /usr/bin/ffmpeg /usr/bin/ffprobe && \
-    rm -rf ffmpeg-*-static
+# Instala dependencias del sistema + ffmpeg
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    build-base \
+    libpq \
+    ffmpeg 
 
-# Verificación
-RUN ffmpeg -version && ffprobe -version
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --prefix=/install -r requirements.txt
 
-# Crea el directorio de trabajo
+# Etapa final
+FROM python:3.11-alpine
+
 WORKDIR /
 
-# Copia los archivos y requisitos
+# Instala ffmpeg y librerías necesarias también en la etapa final
+RUN apk add --no-cache ffmpeg
+
+# Copia dependencias de Python instaladas desde builder
+COPY --from=builder /install /usr/local
+
+# Copia tu código fuente
 COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
