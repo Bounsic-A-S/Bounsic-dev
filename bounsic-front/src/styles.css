@@ -40,8 +40,8 @@
       var(--color-bounsic-bg-main-purple-gray)
     ),
     url('/background/PATTERNS.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: auto;
+  background-repeat: repeat;
   background-position: center;
   background-blend-mode: multiply, overlay;
 }
