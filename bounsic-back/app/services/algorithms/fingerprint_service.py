@@ -1,4 +1,5 @@
 import os
+from typing import List, TypedDict
 import librosa
 import json
 import numpy as np
@@ -7,6 +8,18 @@ from scipy.signal import find_peaks
 # from azure.storage.blob import BlobServiceClient
 # from app.provider import db
 
+class FrequencyData(TypedDict):
+    time: float
+    frequencies: float
+    amplitudes: float
+class DistributionData(TypedDict):
+    bajos: float
+    medios: float
+    altos: float
+class FingerprintData(TypedDict):
+    bpm: float
+    frequencies: List[FrequencyData]
+    distribution: DistributionData
 
 def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_freqs: int = 1):
     try:
@@ -14,15 +27,11 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         song_path = os.path.join("app", "services", "songs", f"{songName}.mp3")
         if not os.path.exists(song_path):
             raise FileNotFoundError(f"Audio file not found: {song_path}")
-        
 
         # Read and normalize audio
         y, sr = librosa.load(song_path, sr=None)
         y = librosa.util.normalize(y)
         bpm, _ = librosa.beat.beat_track(y=y, sr=sr)
-
-        print(f"sr: {sr}")
-        print(f"BPM: {bpm}")
 
         # Calculate STFT
         n_fft = 2048  # More frequency bins
@@ -35,7 +44,7 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         # 200 Hz     [dB1, dB2, dB3, dB4, dB5, ...]  
         # ...        ...  ...  ...  ...  ...  ...   
         # sr/2       [dB1, dB2, dB3, dB4, dB5, ...]  
-        print(f"max: {np.max(D)}")
+
         # D_normalized = D / np.max(D)  # Normaliza en escala lineal
         D_dB = librosa.amplitude_to_db(D, ref=0)
         
@@ -44,11 +53,6 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         
         frequencies = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
 
-        # for i, freq in enumerate(frequencies[:500]): # Max frequencie: 240000.00 Hz   
-        #     print(f"Fila {i} corresponde a {freq:.2f} Hz")
-
-        print(f"Frames per segment: {frames_per_segment}")
-        print(f"Top n frequencies: {top_n_freqs}")
         bpm = float(np.array(bpm).item())
         frequenciesData, distribution = _analyze_frequencies(
             D_dB=D_dB, 
@@ -114,7 +118,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             # Total++
             freq_distribution[0] += 1
         
-    print(f"Total freq = {freq_distribution[0]}")
     distribution = {
         "bajos": float(round((freq_distribution[1] / freq_distribution[0]) * 100, 2)),
         "medios": float(round((freq_distribution[2] / freq_distribution[0]) * 100, 2)),
@@ -132,19 +135,24 @@ def save_json(fingerprint, songName: str):
     # Use json.dumps 
     print(f"✅ Huella digital guardada en: {ruta_json}")
 
-def readFingerprint(songName: str) -> list[tuple[float, float]]: # Fix to new fingerprint
+def readFingerprint(songName: str) -> FingerprintData:
     songName = songName.lower()
-    ruta_json = os.path.join("app", "services", "fingerprints", f"{songName}.json")
-    
-    with open(ruta_json, "r", encoding="utf-8") as file:
-        fingerprint_data = json.load(file)
 
-    frequency_pairs = [tuple(pair) for pair in fingerprint_data]
+    json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
+    with open(json_path, 'r', encoding='utf-8') as archivo:
+        datos = json.load(archivo)
 
-    return frequency_pairs
+    data = {
+        "bpm": datos.get("bpm"),
+        "frequencies": datos.get("frequencies", []),
+        "distribution": datos.get("distribution")
+    }
+    return data
 
 def main():
-    generate_fingerprint("oblivion")
+    generate_fingerprint("stop")
+    # data = readFingerprint("stop")
+
     
 if __name__ == "__main__":
     main()
