@@ -27,7 +27,10 @@ jobs:
       - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
-          echo "${{ vars.ENV_BACK }}" > ./bounsic-back/env/.env.dev
+          printf "%s" "${{ secrets.ENV_DEV_BACK }}" > ./bounsic-back/env/.env.dev
+      
+      - name: Verificar contenido del archivo .env.dev (debug temporal)
+        run: cat ./bounsic-back/env/.env.dev
 
       - name: Build and push backend Docker image
         uses: docker/build-push-action@v3
