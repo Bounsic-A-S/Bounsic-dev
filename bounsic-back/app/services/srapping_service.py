@@ -122,16 +122,17 @@ def descargar_audio(url):
 
 # 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):
+
     ydl_opts = {
-        "quiet": True,
-        "default_search": "ytsearch",  # Hace una búsqueda en YouTube
+        "quiet": False,
+        "verbose": True,
+        "default_search": "ytsearch",
         "noplaylist": True,
-        "cookiefile": "./cookies/cookies.txt", 
+        "cookiefile": "./cookies/cookies.txt",
         "http_headers": {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
         }
     }
-
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(f"ytsearch:{query}", download=False)
     
