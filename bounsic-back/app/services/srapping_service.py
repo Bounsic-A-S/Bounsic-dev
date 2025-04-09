@@ -128,9 +128,9 @@ def buscar_en_youtube(query):
         "verbose": True,
         "default_search": "ytsearch",
         "noplaylist": True,
-        "cookiefile": "./cookies/cookies.txt",
+        "cookiefile": "./cookies/www.youtube.com_cookies.txt",
         "http_headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         }
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
