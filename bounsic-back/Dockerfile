@@ -33,6 +33,7 @@ COPY --from=builder /install /usr/local
 # Copia el código fuente y archivo .env.dev
 COPY . .
 COPY env/.env.dev env/.env.dev
+ENV DOTENV_PATH=/env/.env.dev
 
 # Expón el puerto 8000
 EXPOSE 8000
