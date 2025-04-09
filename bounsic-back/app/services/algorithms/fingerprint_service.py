@@ -9,18 +9,18 @@ import matplotlib.pyplot as plt
 # from azure.storage.blob import BlobServiceClient
 # from app.provider import db
 
-class FrequencyData(TypedDict):
-    time: float
-    frequencies: float
-    amplitudes: float
-class DistributionData(TypedDict):
+class FrequencyRanges(TypedDict):
     bajos: float
     medios: float
     altos: float
+class FrequencyData(TypedDict):
+    time: float
+    frequencies: FrequencyRanges
+    amplitudes: FrequencyRanges
 class FingerprintData(TypedDict):
     bpm: float
     frequencies: List[FrequencyData]
-    distribution: DistributionData
+    distribution: FrequencyRanges
 
 def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_freqs: int = 1):
     try:
@@ -85,38 +85,94 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
     freq_distribution = [0, 0, 0, 0] # [Total, bajos, medios, altos]
 
     for t in range(0, D_dB.shape[1], frames_per_segment):
-        segment = D_dB[:, t:t+(frames_per_segment-1)]
+        segment = D_dB[:, t:t+(frames_per_segment)]
         # Average spectrum over the segment duration
-        avg_spectrum = np.mean(segment, axis=1)
 
+        avg_spectrum = np.max(segment, axis=1)
+        
         # Find dominant peaks
         pks, _ = find_peaks(
             avg_spectrum, 
             height=np.percentile(avg_spectrum, 95),
-            distance=10  # Minimum distance between peaks
+            # distance=10  # Minimum distance between peaks
         )
         avg_spectrum_norm = (avg_spectrum / max_global) * 100
 
         if len(pks) > 0:
+
+            low_peaks = []
+            mid_peaks = []
+            high_peaks = []
+
+            for p in pks:
+                freq = frequencies[p]
+                if freq < 200:
+                    low_peaks.append(p)
+                elif freq < 4000:
+                    mid_peaks.append(p)
+                else:
+                    high_peaks.append(p)
+
+            def get_dominant_peak(peaks):
+                if not peaks:
+                    return None
+                return max(peaks, key=lambda p: avg_spectrum[p])
+            
+            low_peak = get_dominant_peak(low_peaks)
+            mid_peak = get_dominant_peak(mid_peaks)
+            high_peak = get_dominant_peak(high_peaks)
+
             # Get top N frequencies by amplitude
-            top_freqs = sorted(pks, key=lambda p: avg_spectrum[p], reverse=True)[:top_n_freqs]
-            actualFreq = float(round(frequencies[top_freqs[0]], 1))
+            # top_freq = max(pks, key=lambda p: avg_spectrum[p])
+            # top_freqs = sorted(pks, key=lambda p: avg_spectrum[p], reverse=True)[:top_n_freqs]
+            # actualFreq = float(round(frequencies[top_freqs[0]], 1))
+
             fingerprint.append({
                 "time": float(round(t * hop_length   / sr, 3)),
-                "frequencies": actualFreq,
-                "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
+                'frequencies': {
+                    'bajo': float(round(frequencies[low_peak], 1)) if low_peak else None,
+                    'medio': float(round(frequencies[mid_peak], 1)) if mid_peak else None,
+                    'alto': float(round(frequencies[high_peak], 1)) if high_peak else None
+                },
+                'amplitudes': {
+                    'bajo': float(round(avg_spectrum[low_peak], 2)) if low_peak else None,
+                    'medio': float(round(avg_spectrum[mid_peak], 2)) if mid_peak else None,
+                    'alto': float(round(avg_spectrum[high_peak], 2)) if high_peak else None
+                }
+                # "frequencies": actualFreq,
+                # "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
             })
+
             # [20Hz ---------------200Hz--------------------4000Hz----------------24kHz]
             # |        Bajos         |         Medios         |       Agudos        |
-            if (actualFreq <= 200):
-                freq_distribution[1] += 1
-            elif (actualFreq <= 4000):
+
+            if (low_peak):
+                if (mid_peak):
+                    if (avg_spectrum[low_peak] > avg_spectrum[mid_peak]):
+                        freq_distribution[1] += 1
+                    else:
+                        freq_distribution[2] += 1
+                freq_distribution[0] += 1
+            elif (mid_peak):
+                freq_distribution[0] += 1
                 freq_distribution[2] += 1
-            else:
+
+
+            # if low_peak:
+            # if mid_peak:
+            if high_peak:
+                # freq_distribution[0] += 1
                 freq_distribution[3] += 1
+                # freq_distribution[0] += 1
+            # if (actualFreq <= 200):
+            #     freq_distribution[1] += 1
+            # elif (actualFreq <= 4000):
+            #     freq_distribution[2] += 1
+            # else:
+            #     freq_distribution[3] += 1
             # Total++
-            freq_distribution[0] += 1
-        
+            
+        else: print("   NO")
     distribution = {
         "bajos": float(round((freq_distribution[1] / freq_distribution[0]) * 100, 2)),
         "medios": float(round((freq_distribution[2] / freq_distribution[0]) * 100, 2)),
@@ -164,11 +220,24 @@ def graph_fingerpint(songName: str):
     plt.show()
 
 def main():
-    generate_fingerprint("genesis")
+
+    generate_fingerprint("era mentira")
     # data = readFingerprint("stop")
 
-    song_name = "Paramar - Los Prisioneros"
-    graph_fingerpint(song_name)
+    # song_name = "era mentira"
+    # graph_fingerpint(song_name)
+    directory = os.path.join("app", "services", "songs")
+    files = [f for f in os.listdir(directory) if f.lower().endswith(".mp3")]
+
+    for f in files:
+        song_name = os.path.splitext(f)[0]
+        print(f"🎵 Generando huella para: {song_name}")
+        success = generate_fingerprint(song_name)
+        if success:
+            print(f"✅ Huella generada para '{song_name}'")
+        else:
+            print(f"❌ Error al generar huella para '{song_name}'")
+    print("🧩 Procesamiento finalizado.")
     
 if __name__ == "__main__":
     main()
