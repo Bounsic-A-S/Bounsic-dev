@@ -1,0 +1,154 @@
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center z-50"
+>
+  <div class="flex items-center justify-center min-h-screen">
+    <div
+      class="relative w-[460px] h-[460px] flex items-center justify-center group"
+    >
+      <div class="absolute w-full h-full flex items-center justify-center">
+        <div
+          class="ring absolute w-full h-full rounded-full border-[3px] animate-spin-custom1 border-bounsic-red drop-shadow-[0_0_20px_red]"
+        ></div>
+      </div>
+      <div
+        class="ring absolute w-11/12 h-11/12 rounded-full border-[3px] animate-spin-custom2 border-cyan-200 drop-shadow-[0_0_20px_blue]"
+      ></div>
+      <div
+        class="ring absolute w-10/12 h-10/12 rounded-full border-[3px] animate-spin-custom3 border-bounsic-yellow drop-shadow-[0_0_20px_yellow]"
+      ></div>
+
+      <!-- Contenido del modal -->
+      <div
+        class="z-10 bg-bounsic-gray-4 border border-bounsic-gray-3/10 w-80 h-80 px-6 py-3 rounded-xl flex flex-col justify-center items-center text-white relative"
+      >
+        <button
+          (click)="close()"
+          class="z-20 absolute top-4 right-4 text-gray-300 hover:text-white cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <h2 class="text-lg font-semibold">
+          {{ isRegisterForm ? "Iniciar Sesión" : "Registrarse" }}
+        </h2>
+        <div class="h-[1px] w-11/12 bg-white my-4"></div>
+        <section *ngIf="isRegisterForm">
+          <p class="text-sm sm:text-base text-bounsic-gray-1 mb-1 text-center">
+            Inicio seguro con Azure
+          </p>
+          <p class="text-sm sm:text-base text-bounsic-gray-1 mb-6 text-center">
+            Tu cuenta, tu música. Conéctate con confianza.
+          </p>
+        </section>
+
+        <!-- Modified Registration Form Section -->
+        <section *ngIf="!isRegisterForm" class="w-full">
+          <form [formGroup]="registerForm">
+            <!-- Name field -->
+            <input
+              type="text"
+              formControlName="username"
+              placeholder="Nombre de usuario"
+              class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
+            />
+            <div
+              *ngIf="
+                registerForm.get('username')?.invalid &&
+                registerForm.get('username')?.touched
+              "
+              class="text-red-400 text-xs -mt-2 mb-2 px-4"
+            >
+              Necesitas un nombre
+            </div>
+
+            <!-- Email field -->
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="Email"
+              class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
+            />
+            <div
+              *ngIf="
+                registerForm.get('email')?.invalid &&
+                registerForm.get('email')?.touched
+              "
+              class="text-red-400 text-xs -mt-2 mb-2 px-4"
+            >
+              <span *ngIf="registerForm.get('email')?.errors?.['required']"
+                >Necesitas un Email</span
+              >
+              <span *ngIf="registerForm.get('email')?.errors?.['email']"
+                >Email no válido</span
+              >
+            </div>
+          </form>
+        </section>
+
+        <button
+          (click)="onLogin()"
+          
+          class="w-full py-2 rounded-full bg-white text-black font-semibold cursor-pointer hover:brightness-110 transition"
+          [disabled]="!isRegisterForm && (isSubmitting || registerForm.invalid)"
+        >
+          <span>{{ isRegisterForm ? "Ingresar" : "Crear cuenta" }}</span>
+          <span
+            *ngIf="!isRegisterForm && isSubmitting"
+            class="flex items-center justify-center"
+          >
+            <svg
+              class="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Procesando...
+          </span>
+        </button>
+
+        <div
+          class="flex justify-center w-full mt-4 text-xs text-bounsic-gray-1"
+        >
+          <span class="flex items-center gap-x-1">
+            <p>
+              {{ isRegisterForm ? "No tienes cuenta? " : "Ya tienes cuenta " }}
+            </p>
+            <button
+              class="text-xs text-bounsic-gray-1 underline hover:cursor-pointer"
+              (click)="toggleForms()"
+            >
+              {{ isRegisterForm ? "Registrarse" : "Iniciar Sesión" }}
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
