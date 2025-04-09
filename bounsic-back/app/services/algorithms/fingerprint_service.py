@@ -4,6 +4,7 @@ import librosa
 import json
 import numpy as np
 from scipy.signal import find_peaks
+import matplotlib.pyplot as plt
 # from app.provider import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
 # from azure.storage.blob import BlobServiceClient
 # from app.provider import db
@@ -82,7 +83,7 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
     fingerprint = []
     max_global = np.max(D_dB)
     freq_distribution = [0, 0, 0, 0] # [Total, bajos, medios, altos]
-    
+
     for t in range(0, D_dB.shape[1], frames_per_segment):
         segment = D_dB[:, t:t+(frames_per_segment-1)]
         # Average spectrum over the segment duration
@@ -105,8 +106,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
                 "frequencies": actualFreq,
                 "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
             })
-
-            #                           Frequencies range
             # [20Hz ---------------200Hz--------------------4000Hz----------------24kHz]
             # |        Bajos         |         Medios         |       Agudos        |
             if (actualFreq <= 200):
@@ -127,16 +126,15 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
     return fingerprint, distribution
 
 def save_json(fingerprint, songName: str):
-
-    ruta_json = os.path.join("app", "services", "fingerprints", f"{songName}.json")
-    with open(ruta_json, "w", encoding="utf-8") as f:
+    json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(fingerprint, f, indent=4)
 
     # Use json.dumps 
-    print(f"✅ Huella digital guardada en: {ruta_json}")
+    print(f"✅ Huella digital guardada en: {json_path}")
 
+# Read json
 def readFingerprint(songName: str) -> FingerprintData:
-    songName = songName.lower()
 
     json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
     with open(json_path, 'r', encoding='utf-8') as archivo:
@@ -149,10 +147,28 @@ def readFingerprint(songName: str) -> FingerprintData:
     }
     return data
 
+def graph_fingerpint(songName: str):
+    datos = readFingerprint(songName.split(" - ")[0].strip())
+    frecuencia_data = datos["frequencies"]
+
+    tiempos = [p["time"] for p in frecuencia_data]
+    frecuencias = [p["frequencies"] for p in frecuencia_data]
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(tiempos, frecuencias, color='royalblue', linewidth=1.5)
+    plt.title(f'{songName}')
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Frecuencia (Hz)')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 def main():
-    generate_fingerprint("stop")
+    generate_fingerprint("genesis")
     # data = readFingerprint("stop")
 
+    song_name = "Paramar - Los Prisioneros"
+    graph_fingerpint(song_name)
     
 if __name__ == "__main__":
     main()
