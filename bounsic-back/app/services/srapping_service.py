@@ -1,65 +1,66 @@
 import requests
-from bs4 import BeautifulSoup
 from pathlib import Path
 import yt_dlp
 import re
 from app.provider import get_ffmpeg_path
-import os
+import asyncio
+from playwright.async_api import async_playwright
+
+
 
 def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
     return re.sub(r'[<>:"/\\|?*]', '', text)
 
-def scrappingBueno(url):
+async def scrappingBueno(url):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context()
+        page = await context.new_page()
+        await page.goto(url, timeout=30000)
+        await page.wait_for_selector("h1.title", timeout=10000)
 
+        # ============ Meta info ============
+        title = await page.title()
+        description = await page.get_attribute('meta[name="description"]', "content") or "No encontrada"
+        thumbnail = await page.get_attribute('link[rel="image_src"]', "href") or "No encontrada"
+        channel_name = await page.get_attribute('link[itemprop="name"]', "content") or "No encontrado"
+        channel_id = await page.get_attribute('meta[itemprop="channelId"]', "content") or "No encontrado"
+        publish_date = await page.get_attribute('meta[itemprop="datePublished"]', "content") or "No encontrada"
+        keywords = await page.get_attribute('meta[name="keywords"]', "content")
+        tags = keywords.split(", ") if keywords else ["No hay etiquetas"]
 
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
+        # ============ Datos visibles en pantalla ============
+        title_text = await page.locator("h1.title").text_content() or "No disponible"
+        views_text = await page.locator("span.view-count").text_content() or "No disponible"
+        likes_text = await page.locator("yt-formatted-string#text.style-scope.ytd-toggle-button-renderer").nth(0).text_content() or "No disponible"
+        channel_url = await page.locator("ytd-channel-name a").get_attribute("href") or "No disponible"
+        subscriber_count = await page.locator("yt-formatted-string#owner-sub-count").text_content() or "No disponible"
 
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
+        # ============ HTML para inspección ============
+        body_html = await page.content()
 
-    # Extraer el título del video
-    title = soup.find("title").text if soup.find("title") else "Título no encontrado"
+        await browser.close()
 
-    # Extraer la descripción del video
-    description = soup.find("meta", {"name": "description"})
-    description = description["content"] if description else "Descripción no encontrada"
-
-    # Extraer la miniatura del video
-    thumbnail = soup.find("link", {"rel": "image_src"})
-    thumbnail = thumbnail["href"] if thumbnail else "Miniatura no encontrada"
-
-    # Extraer el nombre del canal
-    channel_name = soup.find("link", {"itemprop": "name"})
-    channel_name = channel_name["content"] if channel_name else "Canal no encontrado"
-
-    # Extraer la ID del canal
-    channel_id = soup.find("meta", {"itemprop": "channelId"})
-    channel_id = channel_id["content"] if channel_id else "ID de canal no encontrado"
-
-    # Extraer la fecha de publicación
-    publish_date = soup.find("meta", {"itemprop": "datePublished"})
-    publish_date = publish_date["content"] if publish_date else "Fecha de publicación no encontrada"
-
-    # Extraer etiquetas del video (tags)
-    tags = soup.find("meta", {"name": "keywords"})
-    tags = tags["content"].split(", ") if tags else ["No hay etiquetas"]
-
-    # Imprimir toda la página (para inspeccionar)
-    print(soup.prettify())
-
-    return {
-        "title": title,
-        "description": description,
-        "thumbnail": thumbnail,
-        "channel_name": channel_name,
-        "channel_id": channel_id,
-        "publish_date": publish_date,
-        "tags": tags
-    }
-
+        return {
+            "meta": {
+                "title": title,
+                "description": description,
+                "thumbnail": thumbnail,
+                "channel_name": channel_name,
+                "channel_id": channel_id,
+                "publish_date": publish_date,
+                "tags": tags
+            },
+            "rendered": {
+                "title_text": title_text,
+                "views_text": views_text,
+                "likes_text": likes_text,
+                "channel_url": f"https://www.youtube.com{channel_url}",
+                "subscriber_count": subscriber_count
+            },
+            "debug_html_snippet": body_html[:3000]  # Primeros 3000 caracteres del HTML para explorar
+        }
 
 
 
@@ -121,31 +122,22 @@ def descargar_audio(url):
         print(f"Error en la descarga: {e}")
         return None
 
-# 🔍 Scraping para buscar en YouTube
-def buscar_en_youtube(query):
-    print("DEBUG: Archivo cookies existe:", os.path.exists("cookies/cookies.txt"))
-    print("DEBUG: Archivos en carpeta cookies:", os.listdir("cookies"))
 
-    ydl_opts = {
-        "quiet": False,
-        "verbose": True,
-        "default_search": "ytsearch",
-        "noplaylist": True,
-        "cookiesfromfile": "./cookies/www.youtube.com_cookies.txt",
-        "http_headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-        }
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(f"ytsearch:{query}", download=False)
-    
-    if not info["entries"]:
-        return None
+async def buscar_en_youtube(query):
+    async with async_playwright() as p:  
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(f"https://www.youtube.com/results?search_query={query}")
+        await page.wait_for_selector("ytd-video-renderer a#video-title", timeout=10000)
 
-    first_video = info["entries"][0]  # Primer resultado de la búsqueda
-    video_url = first_video["webpage_url"]  # URL completa del video
+        first_result = await page.query_selector("ytd-video-renderer a#video-title")
+        url = "https://www.youtube.com" + await first_result.get_attribute("href")
 
-    return video_url
+        await browser.close()
+        return url
+
+
+
 
 
 def descargar_imagen(url, title):

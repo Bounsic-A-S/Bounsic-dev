@@ -8,7 +8,7 @@ router = APIRouter()
 async def web_scrapping(url: str = Query(..., title="URL del video de YouTube")):
 
     try:
-        scrapping_response,download_response = get_youtube_scrapping_request(url)
+        scrapping_response,download_response = await get_youtube_scrapping_request(url)
 
         return JSONResponse(content={
             "scraping_data": scrapping_response,
@@ -30,7 +30,7 @@ async def descarga_yu(url: str = Query(..., description="URL del video de YouTub
 @router.get("/youtube/search")
 async def buscar_youtube(q: str = Query(..., title="Término de búsqueda", description="Nombre de la canción o artista")):
     try:
-        video_url = search_youtube_request(q)
+        video_url =  await search_youtube_request(q)
         return {"query": q, "video_url": video_url}
 
     except Exception as e:
