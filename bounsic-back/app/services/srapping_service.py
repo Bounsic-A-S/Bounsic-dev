@@ -126,6 +126,10 @@ def buscar_en_youtube(query):
         "quiet": True,
         "default_search": "ytsearch",  # Hace una búsqueda en YouTube
         "noplaylist": True,
+        "cookiefile": "./cookies/cookies.txt", 
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        }
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
