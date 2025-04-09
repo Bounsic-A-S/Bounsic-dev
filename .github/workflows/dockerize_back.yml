@@ -27,7 +27,13 @@ jobs:
       - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
-          printf "%s" "${{ secrets.ENV_DEV_BACK }}" > ./bounsic-back/env/.env.dev
+        
+          # Mostrar el contenido procesado en los logs
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
+        
+          # Escribirlo en el archivo .env.dev
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+
       
       - name: Verificar contenido del archivo .env.dev (debug temporal)
         run: cat ./bounsic-back/env/.env.dev
