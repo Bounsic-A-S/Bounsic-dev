@@ -5,6 +5,7 @@ import { SongsCarouselComponent } from './songsCarousel/songs-carousel.component
 import { RouterModule } from '@angular/router';
 import { SafeChoiceListComponent } from './safeChoicesList/safe-choices-list.component';
 import { TrendingSongsComponent } from "./trendingSongs/trending-songs.component";
+import { ArtistListComponent } from "./artistList/artist_list.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +17,8 @@ import { TrendingSongsComponent } from "./trendingSongs/trending-songs.component
     RouterModule,
     SearchBarComponent,
     SafeChoiceListComponent,
-    TrendingSongsComponent
+    TrendingSongsComponent,
+    ArtistListComponent
 ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
