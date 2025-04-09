@@ -4,6 +4,7 @@ from pathlib import Path
 import yt_dlp
 import re
 from app.provider import get_ffmpeg_path
+import os
 
 def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
@@ -122,13 +123,15 @@ def descargar_audio(url):
 
 # 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):
+    print("DEBUG: Archivo cookies existe:", os.path.exists("cookies/cookies.txt"))
+    print("DEBUG: Archivos en carpeta cookies:", os.listdir("cookies"))
 
     ydl_opts = {
         "quiet": False,
         "verbose": True,
         "default_search": "ytsearch",
         "noplaylist": True,
-        "cookiefile": "./cookies/www.youtube.com_cookies.txt",
+        "cookiesfromfile": "./cookies/www.youtube.com_cookies.txt",
         "http_headers": {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         }

@@ -32,6 +32,8 @@ COPY --from=builder /install /usr/local
 
 # Copia el código fuente
 COPY . .
+COPY cookies/ ./cookies/
+
 
 # Expón el puerto 8000
 EXPOSE 8000
