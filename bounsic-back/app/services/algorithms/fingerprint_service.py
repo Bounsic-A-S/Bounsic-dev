@@ -50,16 +50,18 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         print(f"Frames per segment: {frames_per_segment}")
         print(f"Top n frequencies: {top_n_freqs}")
         bpm = float(np.array(bpm).item())
+        frequenciesData, distribution = _analyze_frequencies(
+            D_dB=D_dB, 
+            frequencies=frequencies,
+            frames_per_segment=frames_per_segment,
+            top_n_freqs=top_n_freqs,
+            hop_length=hop_length,
+            sr=sr
+        )
         fingerprint = {
             "bpm": float(round(bpm, 2)),
-            "frequencies": _analyze_frequencies(
-                D_dB=D_dB, 
-                frequencies=frequencies,
-                frames_per_segment=frames_per_segment,
-                top_n_freqs=top_n_freqs,
-                hop_length=hop_length,
-                sr=sr
-            )
+            "frequencies": frequenciesData,
+            "distribution": distribution
         }
 
         save_json(fingerprint=fingerprint, songName=songName)
@@ -75,13 +77,14 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
 def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop_length, sr):
     fingerprint = []
     max_global = np.max(D_dB)
+    freq_distribution = [0, 0, 0, 0] # [Total, bajos, medios, altos]
     
     for t in range(0, D_dB.shape[1], frames_per_segment):
         segment = D_dB[:, t:t+(frames_per_segment-1)]
         # Average spectrum over the segment duration
         avg_spectrum = np.mean(segment, axis=1)
-        
-        # Find prominent peaks
+
+        # Find dominant peaks
         pks, _ = find_peaks(
             avg_spectrum, 
             height=np.percentile(avg_spectrum, 95),
@@ -92,12 +95,33 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
         if len(pks) > 0:
             # Get top N frequencies by amplitude
             top_freqs = sorted(pks, key=lambda p: avg_spectrum[p], reverse=True)[:top_n_freqs]
+            actualFreq = float(round(frequencies[top_freqs[0]], 1))
             fingerprint.append({
-            'time': float(round(t * hop_length   / sr, 3)),
-            'frequencies': float(round(frequencies[top_freqs[0]], 1)),
-            'amplitudes': float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
-        })
-    return fingerprint
+                "time": float(round(t * hop_length   / sr, 3)),
+                "frequencies": actualFreq,
+                "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
+            })
+
+            #                           Frequencies range
+            # [20Hz ---------------200Hz--------------------4000Hz----------------24kHz]
+            # |        Bajos         |         Medios         |       Agudos        |
+            if (actualFreq <= 200):
+                freq_distribution[1] += 1
+            elif (actualFreq <= 4000):
+                freq_distribution[2] += 1
+            else:
+                freq_distribution[3] += 1
+            # Total++
+            freq_distribution[0] += 1
+        
+    print(f"Total freq = {freq_distribution[0]}")
+    distribution = {
+        "bajos": float(round((freq_distribution[1] / freq_distribution[0]) * 100, 2)),
+        "medios": float(round((freq_distribution[2] / freq_distribution[0]) * 100, 2)),
+        "altos": float(round((freq_distribution[3] / freq_distribution[0]) * 100, 2))
+    }
+
+    return fingerprint, distribution
 
 def save_json(fingerprint, songName: str):
 
