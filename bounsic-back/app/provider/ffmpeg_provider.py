@@ -5,8 +5,8 @@ def get_ffmpeg_path(base_path):
     os_system = platform.system()
 
     if os_system == "Windows":
-        ffmpeg_path = base_path / "ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"
-        ffprobe_path = base_path / "ffmpeg-7.1-essentials_build/bin/ffprobe.exe"
+        ffmpeg_path = base_path.parent.parent / "ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"
+        ffprobe_path = base_path.parent.parent / "ffmpeg-7.1-essentials_build/bin/ffprobe.exe"
     elif os_system == "Darwin":  # macOS
         ffmpeg_path = "/usr/local/bin/ffmpeg"
         ffprobe_path = "/usr/local/bin/ffprobe"

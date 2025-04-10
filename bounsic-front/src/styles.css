@@ -17,6 +17,8 @@
   /* background */
   --color-bounsic-bg-main-purple: #1e0d16;
   --color-bounsic-bg-main-purple-gray: #1a181a;
+  --color-bounsic-bg-main-purple-light: #0A0210;
+  --color-bounsic-bg-main-pink: #21031B;
   /* shadows */
   --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
 }
@@ -40,6 +42,17 @@
       var(--color-bounsic-bg-main-purple-gray)
     ),
     url('/background/PATTERNS.svg');
+  background-size: auto;
+  background-repeat: repeat;
+  background-position: center;
+  background-blend-mode: multiply, overlay;
+}
+
+.bg-bounsic-gradient-about{
+  background-image: 
+    radial-gradient(to center, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+    radial-gradient(to center, var(--color-bounsic-bg-main-purple-light), var(--color-bounsic-bg-main-pink)),
+    url('/background/dotPattern.svg');
   background-size: auto;
   background-repeat: repeat;
   background-position: center;
