@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request, Query
+from fastapi import APIRouter, HTTPException,Request, Query
 from fastapi.responses import JSONResponse
 from app.controllers import (
     get_song_by_artist_controller,
@@ -52,11 +52,12 @@ async def insert_bs():
         raise JSONResponse(status_code=500, detail="Error al insertar canciones")
     return JSONResponse(status_code=200,message= "Canciones procesadas",data=res)
 
-@router.put("/insert")
-async def create_song(request: Request):
-    return await insert_song_controller(request)
+@router.put("/insert/{track_name}")
+async def create_song(track_name: str):
+    result = await insert_song_controller(track_name)  # 👈 await aquí porque la función es async
 
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
 
-
-    
+    return result
     

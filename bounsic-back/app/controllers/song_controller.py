@@ -147,7 +147,7 @@ async def insert_bs_controller(url:str):
 
             except Exception as song_error:
                 results.append({"title": title, "artist": artist, "status": f"Error: {str(song_error)}"})
-                continue  # No detener el proceso por un error individual
+                continue  
         
         if os.path.exists(audio_path):
             os.remove(audio_path)
@@ -163,6 +163,6 @@ async def insert_bs_controller(url:str):
 
     
     
-async def insert_song_controller(request: Request):
-    body = await request.json()
-    return insert_song(body)
+async def insert_song_controller(track_name: str):
+    result = insert_song(track_name)  
+    return result
