@@ -21,6 +21,7 @@
   --color-bounsic-bg-main-pink: #21031B;
   /* shadows */
   --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  --shadow-bounsic-sidebar-user: 6px 6px 15px rgba(0, 0, 0, 0.25);
 }
 /* custom classes */
 .scroll-hidden::-webkit-scrollbar {
