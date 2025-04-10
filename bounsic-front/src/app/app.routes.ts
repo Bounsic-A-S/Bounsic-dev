@@ -25,6 +25,10 @@ export const routes: Routes = [
         path: 'library',
         component: LibraryComponent,
     },
+    // {
+    //     path:'settings/:user',
+    //     component: SettingsCOmponent,
+    // }
     {
         path: 'playlist/:id',
         component: PlaylistComponent,

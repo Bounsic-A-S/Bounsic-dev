@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { CommonModule } from '@angular/common';
 import { SongHeroComponent } from './song_hero/song_hero.component';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-playlist-detail',
   standalone: true,
@@ -15,7 +16,13 @@ import { SongHeroComponent } from './song_hero/song_hero.component';
   templateUrl: './playlist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlaylistComponent {
+export class PlaylistComponent implements OnInit {
+  constructor(private route: ActivatedRoute) {}
+  playlistId: string = '';
+  ngOnInit(): void {
+    this.playlistId = this.route.snapshot.paramMap.get('id') ?? '';
+    console.log(this.playlistId)
+  }
   public album = {
     id: 1,
     name: 'Top Hits',
