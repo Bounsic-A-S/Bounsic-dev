@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException, Query
 from fastapi.responses import JSONResponse
 from app.controllers import get_youtube_scrapping_request,get_youtube_download_request,search_youtube_request
+from app.provider.playwright_utils import youtube_search
+import urllib.parse
 
 router = APIRouter()
 
@@ -28,10 +30,10 @@ async def descarga_yu(url: str = Query(..., description="URL del video de YouTub
         return HTTPException(status_code=500, content={"detail": str(e)})
     
 @router.get("/youtube/search")
-async def buscar_youtube(q: str = Query(..., title="Término de búsqueda", description="Nombre de la canción o artista")):
+async def search_youtube(q: str):
     try:
-        video_url =  await search_youtube_request(q)
-        return {"query": q, "video_url": video_url}
-
+        decoded_query = urllib.parse.unquote(q)
+        results = await youtube_search(decoded_query)
+        return {"results": results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,9 +1,17 @@
 # app/__init__.py
+import asyncio
+import sys
 from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
 from pathlib import Path
 
+
+# Configuración CRÍTICA para Windows - debe ejecutarse primero
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    loop = asyncio.ProactorEventLoop()
+    asyncio.set_event_loop(loop)
 
 # Cargar variables de entorno desde .env.dev
 dotenv_path = Path(__file__).resolve().parent.parent / "env" / ".env.dev"
@@ -11,7 +19,6 @@ if not load_dotenv(dotenv_path):
     print(f"⚠️ No se pudo cargar el archivo {dotenv_path}")
 
 app = FastAPI()
-
 
 # Leer variables de entorno
 env_host = os.getenv("HOST", "127.0.0.1")
@@ -22,9 +29,18 @@ os.environ["PYTHONPYCACHEPREFIX"] = os.path.abspath("./.pycache_project")
 
 print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
 
-# Opcional: Importar y registrar routers aquí
-from app.routes import bert_router, crawl_router, scrapping_router,song_router, db_router,health_router,artist_router
-
+# --------------------------
+# Importar routers
+# --------------------------
+from app.routes import (
+    bert_router, 
+    crawl_router, 
+    scrapping_router,
+    song_router, 
+    db_router,
+    health_router,
+    artist_router
+)
 
 # app.include_router(bert_router, prefix="/bert", tags=["BERT NLP"])
 app.include_router(crawl_router, prefix="/crawl", tags=["Crawling"])

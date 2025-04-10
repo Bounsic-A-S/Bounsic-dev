@@ -12,55 +12,149 @@ def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
     return re.sub(r'[<>:"/\\|?*]', '', text)
 
+
 async def scrappingBueno(url):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context()
+        print("🚀 Iniciando navegador...")
+        browser = await p.chromium.launch(headless=False)  # Cambiado a False para depuración
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        )
         page = await context.new_page()
-        await page.goto(url, timeout=30000)
-        await page.wait_for_selector("h1.title", timeout=10000)
+        
+        try:
+            print(f"🌐 Navegando a URL: {url}")
+            await page.goto(url, timeout=60000)
+            
+            # Espera a que el contenido principal esté visible
+            print("⏳ Esperando a que cargue el contenido...")
+            try:
+                await page.wait_for_selector("h1.title", state="visible", timeout=30000)
+                print("✅ Contenido principal cargado")
+            except Exception as e:
+                print(f"❌ No se encontró h1.title: {str(e)}")
+                print("📄 HTML de la página (primeros 1000 caracteres):")
+                print((await page.content())[:1000])
+                raise
 
-        # ============ Meta info ============
-        title = await page.title()
-        description = await page.get_attribute('meta[name="description"]', "content") or "No encontrada"
-        thumbnail = await page.get_attribute('link[rel="image_src"]', "href") or "No encontrada"
-        channel_name = await page.get_attribute('link[itemprop="name"]', "content") or "No encontrado"
-        channel_id = await page.get_attribute('meta[itemprop="channelId"]', "content") or "No encontrado"
-        publish_date = await page.get_attribute('meta[itemprop="datePublished"]', "content") or "No encontrada"
-        keywords = await page.get_attribute('meta[name="keywords"]', "content")
-        tags = keywords.split(", ") if keywords else ["No hay etiquetas"]
+            # ============ [DEBUG] Mostrar metadatos disponibles ============
+            print("\n🔍 Buscando metadatos...")
+            meta_tags = await page.query_selector_all('meta')
+            print(f"📊 {len(meta_tags)} meta tags encontrados en la página")
+            for i, tag in enumerate(meta_tags[:10]):  # Mostrar solo los primeros 10
+                name = await tag.get_attribute("name") or await tag.get_attribute("itemprop") or "sin nombre"
+                content = await tag.get_attribute("content") or "sin contenido"
+                print(f"  {i+1}. {name} = {content}")
 
-        # ============ Datos visibles en pantalla ============
-        title_text = await page.locator("h1.title").text_content() or "No disponible"
-        views_text = await page.locator("span.view-count").text_content() or "No disponible"
-        likes_text = await page.locator("yt-formatted-string#text.style-scope.ytd-toggle-button-renderer").nth(0).text_content() or "No disponible"
-        channel_url = await page.locator("ytd-channel-name a").get_attribute("href") or "No disponible"
-        subscriber_count = await page.locator("yt-formatted-string#owner-sub-count").text_content() or "No disponible"
+            # ============ Función auxiliar con depuración ============
+            async def get_meta_attr(selector, attr, nombre=""):
+                try:
+                    print(f"\n🔎 Buscando: {nombre} ({selector})")
+                    element = await page.query_selector(selector)
+                    if not element:
+                        print(f"⚠️ Elemento no encontrado: {selector}")
+                        return "No encontrado"
+                    
+                    value = await element.get_attribute(attr)
+                    print(f"✔️ Encontrado: {value}")
+                    return value or "No encontrado"
+                except Exception as e:
+                    print(f"❌ Error al obtener {selector}: {str(e)}")
+                    return "No encontrado"
 
-        # ============ HTML para inspección ============
-        body_html = await page.content()
+            # ============ Meta info ============
+            print("\n📦 Extrayendo metadatos...")
+            title = await page.title()
+            print(f"📌 Título de la página: {title}")
+            
+            description = await get_meta_attr('meta[name="description"]', "content", "Descripción")
+            thumbnail = await get_meta_attr('link[rel="image_src"]', "href", "Miniatura")
+            channel_name = await get_meta_attr('link[itemprop="name"]', "content", "Nombre del canal")
+            channel_id = await get_meta_attr('meta[itemprop="channelId"]', "content", "ID del canal")
+            publish_date = await get_meta_attr('meta[itemprop="datePublished"]', "content", "Fecha de publicación")
+            
+            keywords = await get_meta_attr('meta[name="keywords"]', "content", "Palabras clave")
+            tags = keywords.split(", ") if keywords and keywords != "No encontrado" else ["No hay etiquetas"]
 
-        await browser.close()
+            # ============ [DEBUG] Mostrar selectores importantes ============
+            print("\n👀 Verificando selectores clave:")
+            selectores_clave = {
+                "Título visible": "h1.title",
+                "Visitas": "span.view-count",
+                "Likes": "yt-formatted-string#text.style-scope.ytd-toggle-button-renderer",
+                "URL del canal": "ytd-channel-name a",
+                "Suscriptores": "yt-formatted-string#owner-sub-count"
+            }
+            
+            for nombre, selector in selectores_clave.items():
+                exists = await page.query_selector(selector)
+                print(f"  {'✅' if exists else '❌'} {nombre.ljust(15)}: {selector}")
 
-        return {
-            "meta": {
-                "title": title,
-                "description": description,
-                "thumbnail": thumbnail,
-                "channel_name": channel_name,
-                "channel_id": channel_id,
-                "publish_date": publish_date,
-                "tags": tags
-            },
-            "rendered": {
-                "title_text": title_text,
-                "views_text": views_text,
-                "likes_text": likes_text,
-                "channel_url": f"https://www.youtube.com{channel_url}",
-                "subscriber_count": subscriber_count
-            },
-            "debug_html_snippet": body_html[:3000]  # Primeros 3000 caracteres del HTML para explorar
-        }
+            # ============ Datos visibles ============
+            print("\n📊 Extrayendo datos visibles...")
+            title_locator = page.locator("h1.title")
+            title_text = await title_locator.text_content() if await title_locator.count() > 0 else "No disponible"
+            print(f"  Título: {title_text}")
+
+            views_locator = page.locator("span.view-count")
+            views_text = await views_locator.text_content() if await views_locator.count() > 0 else "No disponible"
+            print(f"  Visitas: {views_text}")
+
+            likes_locator = page.locator("yt-formatted-string#text.style-scope.ytd-toggle-button-renderer").nth(0)
+            likes_text = await likes_locator.text_content() if await likes_locator.count() > 0 else "No disponible"
+            print(f"  Likes: {likes_text}")
+
+            channel_url_locator = page.locator("ytd-channel-name a")
+            channel_url = await channel_url_locator.get_attribute("href") if await channel_url_locator.count() > 0 else "No disponible"
+            print(f"  URL del canal: {channel_url}")
+
+            subs_locator = page.locator("yt-formatted-string#owner-sub-count")
+            subscriber_count = await subs_locator.text_content() if await subs_locator.count() > 0 else "No disponible"
+            print(f"  Suscriptores: {subscriber_count}")
+
+            # ============ HTML para inspección ============
+            body_html = await page.content()
+            print("\n🔧 Extracción completada")
+
+            await browser.close()
+
+            return {
+                "meta": {
+                    "title": title,
+                    "description": description,
+                    "thumbnail": thumbnail,
+                    "channel_name": channel_name,
+                    "channel_id": channel_id,
+                    "publish_date": publish_date,
+                    "tags": tags
+                },
+                "rendered": {
+                    "title_text": title_text,
+                    "views_text": views_text,
+                    "likes_text": likes_text,
+                    "channel_url": f"https://www.youtube.com{channel_url}" if channel_url != "No disponible" else "No disponible",
+                    "subscriber_count": subscriber_count
+                },
+                "debug_html_snippet": body_html[:3000]
+            }
+
+        except Exception as e:
+            print(f"\n🔥 ERROR CRÍTICO: {str(e)}")
+            print("🔄 Intentando capturar HTML para diagnóstico...")
+            try:
+                error_html = await page.content()
+                with open("error_debug.html", "w", encoding="utf-8") as f:
+                    f.write(error_html)
+                print("📄 Se guardó HTML de error en 'error_debug.html'")
+            except:
+                print("❌ No se pudo capturar el HTML")
+            
+            await browser.close()
+            return {
+                "error": str(e),
+                "message": "Consulta el archivo error_debug.html para diagnóstico"
+            }
+
 
 
 

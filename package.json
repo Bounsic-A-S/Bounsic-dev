@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "install:frontend": "cd bounsic-front && bun install",
-    "install:backend": "cd bounsic-back && powershell -Command \"python -m venv venv; .\\venv\\Scripts\\Activate.ps1; pip install -r requirements.txt; python -m playwright install chromium\"",
+    "install:backend": "cd bounsic-back && powershell -Command \"python -m venv venv; .\\venv\\Scripts\\Activate.ps1; pip install -r requirements.txt; playwright install\"",
     "install:backend_linux": "cd bounsic-back && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
     "install": "bun run install:frontend && bun run install:backend",
     "start:frontend": "cd bounsic-front && bun run start",

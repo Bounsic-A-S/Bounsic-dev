@@ -38,6 +38,9 @@ RUN apt-get update && apt-get install -y \
 # Copia solo las dependencias de Python ya instaladas
 COPY --from=builder /install /usr/local
 
+# Instala playwright y navegador Chromium en la imagen final
+RUN pip install --no-cache-dir playwright && playwright install chromium
+
 # Copia el código fuente
 COPY . .
 
