@@ -1,5 +1,5 @@
 import os
-from typing import List, TypedDict
+from typing import List, TypedDict, cast
 import librosa
 import json
 import numpy as np
@@ -8,19 +8,22 @@ import matplotlib.pyplot as plt
 # from app.provider import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
 # from azure.storage.blob import BlobServiceClient
 # from app.provider import db
-
-class FrequencyRanges(TypedDict):
+class FrequencyRangesData(TypedDict):
+    bajos: List[float]
+    medios: List[float]
+    altos: List[float]
+class FrequencyData(TypedDict):
+    time: List[float]
+    frequencies: FrequencyRangesData
+    amplitudes: FrequencyRangesData
+class DistributionData(TypedDict):
     bajos: float
     medios: float
     altos: float
-class FrequencyData(TypedDict):
-    time: float
-    frequencies: FrequencyRanges
-    amplitudes: FrequencyRanges
 class FingerprintData(TypedDict):
     bpm: float
-    frequencies: List[FrequencyData]
-    distribution: FrequencyRanges
+    data: FrequencyData
+    distribution: DistributionData
 
 def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_freqs: int = 1):
     try:
@@ -65,7 +68,7 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         )
         fingerprint = {
             "bpm": float(round(bpm, 2)),
-            "frequencies": frequenciesData,
+            "data": frequenciesData,
             "distribution": distribution
         }
 
@@ -83,6 +86,18 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
     fingerprint = []
     max_global = np.max(D_dB)
     freq_distribution = [0, 0, 0, 0] # [Total, bajos, medios, altos]
+
+    # Times segments taken
+    freq_times = []
+    # Frequencies in ranges
+    freq_bajos = []
+    freq_medios = []
+    freq_altos = []
+    # Amplitudes of frequencies
+    amp_bajos = []
+    amp_medios = []
+    amp_altos = []
+    
 
     for t in range(0, D_dB.shape[1], frames_per_segment):
         segment = D_dB[:, t:t+(frames_per_segment)]
@@ -127,21 +142,46 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             # top_freqs = sorted(pks, key=lambda p: avg_spectrum[p], reverse=True)[:top_n_freqs]
             # actualFreq = float(round(frequencies[top_freqs[0]], 1))
 
-            fingerprint.append({
-                "time": float(round(t * hop_length   / sr, 3)),
-                'frequencies': {
-                    'bajo': float(round(frequencies[low_peak], 1)) if low_peak else None,
-                    'medio': float(round(frequencies[mid_peak], 1)) if mid_peak else None,
-                    'alto': float(round(frequencies[high_peak], 1)) if high_peak else None
-                },
-                'amplitudes': {
-                    'bajo': float(round(avg_spectrum[low_peak], 2)) if low_peak else None,
-                    'medio': float(round(avg_spectrum[mid_peak], 2)) if mid_peak else None,
-                    'alto': float(round(avg_spectrum[high_peak], 2)) if high_peak else None
-                }
-                # "frequencies": actualFreq,
-                # "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
-            })
+            # Bajos
+            if low_peak:
+                freq_bajos.append(float(round(frequencies[low_peak], 1)))
+                amp_bajos.append(float(round(avg_spectrum[low_peak], 2)))
+            else:
+                freq_bajos.append(0)
+                amp_bajos.append(0)
+            # Medios
+            if mid_peak:
+                freq_medios.append(float(round(frequencies[mid_peak], 1)))
+                amp_medios.append(float(round(avg_spectrum[mid_peak], 2)))
+            else:
+                freq_medios.append(0)
+                amp_bajos.append(0)
+            # Altos
+            if high_peak:
+                freq_altos.append(float(round(frequencies[high_peak], 1)))
+                amp_altos.append(float(round(avg_spectrum[high_peak], 2)))
+            else:
+                freq_altos.append(0)
+                amp_altos.append(0)
+
+            freq_times.append(float(round(t * hop_length   / sr, 3)))
+            
+
+            # fingerprint.append({
+            #     "time": float(round(t * hop_length   / sr, 3)),
+            #     'frequencies': {
+            #         'bajo': float(round(frequencies[low_peak], 1)) if low_peak else None,
+            #         'medio': float(round(frequencies[mid_peak], 1)) if mid_peak else None,
+            #         'alto': float(round(frequencies[high_peak], 1)) if high_peak else None
+            #     },
+            #     'amplitudes': {
+            #         'bajo': float(round(avg_spectrum[low_peak], 2)) if low_peak else None,
+            #         'medio': float(round(avg_spectrum[mid_peak], 2)) if mid_peak else None,
+            #         'alto': float(round(avg_spectrum[high_peak], 2)) if high_peak else None
+            #     }
+            #     # "frequencies": actualFreq,
+            #     # "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
+            # })
 
             # [20Hz ---------------200Hz--------------------4000Hz----------------24kHz]
             # |        Bajos         |         Medios         |       Agudos        |
@@ -157,29 +197,30 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
                 freq_distribution[0] += 1
                 freq_distribution[2] += 1
 
-
-            # if low_peak:
-            # if mid_peak:
             if high_peak:
-                # freq_distribution[0] += 1
                 freq_distribution[3] += 1
-                # freq_distribution[0] += 1
-            # if (actualFreq <= 200):
-            #     freq_distribution[1] += 1
-            # elif (actualFreq <= 4000):
-            #     freq_distribution[2] += 1
-            # else:
-            #     freq_distribution[3] += 1
-            # Total++
-            
-        else: print("   NO")
+
     distribution = {
         "bajos": float(round((freq_distribution[1] / freq_distribution[0]) * 100, 2)),
         "medios": float(round((freq_distribution[2] / freq_distribution[0]) * 100, 2)),
         "altos": float(round((freq_distribution[3] / freq_distribution[0]) * 100, 2))
     }
+    
+    data = {
+        "times": freq_times,
+        "frequencies": {
+            "bajos": freq_bajos,
+            "medios": freq_medios,
+            "altos": freq_altos
+        },
+        "amplitudes": {
+            "bajos": amp_bajos,
+            "medios": amp_medios,
+            "altos": amp_altos
+        }
+    }
 
-    return fingerprint, distribution
+    return data, distribution
 
 def save_json(fingerprint, songName: str):
     json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
@@ -193,15 +234,18 @@ def save_json(fingerprint, songName: str):
 def readFingerprint(songName: str) -> FingerprintData:
 
     json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
-    with open(json_path, 'r', encoding='utf-8') as archivo:
-        datos = json.load(archivo)
+    # with open(json_path, 'r', encoding='utf-8') as archivo:
+    #     datos = json.load(archivo)
 
-    data = {
-        "bpm": datos.get("bpm"),
-        "frequencies": datos.get("frequencies", []),
-        "distribution": datos.get("distribution")
-    }
-    return data
+    # data = {
+    #     "bpm": datos.get("bpm"),
+    #     "data": datos.get("data", []),
+    #     "distribution": datos.get("distribution")
+    # }
+    # return data
+    with open(json_path, "r", encoding="utf-8") as file:
+        raw_data = json.load(file)
+    return cast(FingerprintData, raw_data)
 
 def graph_fingerpint(songName: str):
     datos = readFingerprint(songName.split(" - ")[0].strip())
@@ -221,11 +265,12 @@ def graph_fingerpint(songName: str):
 
 def main():
 
-    generate_fingerprint("era mentira")
+    # generate_fingerprint("take on me")
     # data = readFingerprint("stop")
-
+    
     # song_name = "era mentira"
     # graph_fingerpint(song_name)
+
     directory = os.path.join("app", "services", "songs")
     files = [f for f in os.listdir(directory) if f.lower().endswith(".mp3")]
 
