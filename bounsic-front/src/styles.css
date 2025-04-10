@@ -50,14 +50,20 @@
 
 .bg-bounsic-gradient-about {
   background-image: 
-    radial-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-    radial-gradient(var(--color-bounsic-bg-main-purple-light), var(--color-bounsic-bg-main-pink)),
+    radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    radial-gradient(
+      circle at center,  /* Gradiente circular centrado */
+      var(--color-bounsic-bg-main-pink),
+      var(--color-bounsic-bg-main-purple-light)
+    ),
     url('/background/dotPattern.svg');
-  background-size: auto;
-  background-repeat: repeat;
-  background-position: center;
-  background-blend-mode: multiply, overlay;
+  background-size: auto, cover, 105%;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-position: center, center, initial;
+  background-blend-mode: overlay;
+  background-attachment: scroll, scroll, fixed; 
 }
+
 
 
 
