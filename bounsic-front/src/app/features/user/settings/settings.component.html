@@ -17,7 +17,10 @@
                         <li class="px-6 py-2">Notificaciones</li>
                         <li class="px-6 py-2">Plan</li>
                         <li class="px-6 py-2">Reproducción</li>
-                        <li class="px-6 py-2">Apariencia</li>
+                        <li class="px-6 py-2">
+                            <a routerLink="appearance" routerLinkActive="font-bold">Apariencia</a>
+
+                        </li>
                         <li class="px-6 py-2">Idioma</li>
                     </ul>
                 </nav>
@@ -29,106 +32,6 @@
     </aside>
     <!-- Main content -->
     <main class="flex-1 h-screen overflow-hidden flex items-center justify-center px-10 lg:px-20">
-        <div class="container mx-auto px-4">
-            <h1 class="text-3xl font-medium mb-8">Información de la cuenta</h1>
-
-            <div class="flex">
-                <!-- Left column - Account details -->
-                <div class="flex-1 pr-8">
-                    <!-- Email -->
-                    <div class="mb-8">
-                        <label for="email" class="text-bounsic-gray-2 mb-1 block">Correo electrónico</label>
-                        <div
-                            class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <input type="email" id="email" value="correoEjemplo_2023@gmail.com"
-                                class="bg-transparent text-white w-full focus:outline-none">
-                            <button class="text-bounsic-gray-3 ml-2">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Username -->
-                    <div class="mb-8">
-                        <label for="username" class="text-bounsic-gray-2 mb-1 block">Nombre de usuario</label>
-                        <div
-                            class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <input type="text" id="username" value="John Doe"
-                                class="bg-transparent text-white w-full focus:outline-none">
-                            <button class="text-gray-400 ml-2">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Birthday -->
-                    <div class="mb-8">
-                        <label for="birthday" class="text-bounsic-gray-2 mb-1 block">Cumpleaños</label>
-                        <div
-                            class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <input type="date" id="birthday" placeholder="Agregar una fecha"
-                                class="bg-transparent text-bounsic-gray-3 w-full focus:outline-none filter invert">
-                            <button class="text-gray-400 ml-2">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Phone -->
-                    <div class="mb-8">
-                        <label for="phone" class="text-bounsic-gray-2 mb-1 block">Número de teléfono</label>
-                        <div
-                            class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <input type="tel" id="phone" placeholder="Agregar un número de teléfono"
-                                class="bg-transparent text-bounsic-gray-3 w-full focus:outline-none">
-                            <button class="text-gray-400 ml-2">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Country -->
-                    <div class="mb-8">
-                        <label for="country" class="text-bounsic-gray-2 mb-1 block">País</label>
-                        <div
-                            class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <select id="country" class="bg-transparent text-white w-full focus:outline-none">
-                                <option value="colombia" selected>Colombia</option>
-                                <option value="mexico">México</option>
-                                <option value="spain">España</option>
-                                <option value="argentina">Argentina</option>
-                                <option value="chile">Chile</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Plan -->
-                    <div class="mb-8">
-                        <label for="plan" class="text-bounsic-gray-2 mb-1 block">Plan</label>
-                        <div
-                            class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200">
-                            <select id="plan" class="bg-transparent text-white w-full focus:outline-none">
-                                <option value="premium" selected>Premium Individual</option>
-                                <option value="family">Premium Familiar</option>
-                                <option value="free">Gratuito</option>
-                            </select>
-                            <button class="text-gray-400 ml-2">
-                                <i class="fas fa-star"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right column - Profile picture (kept as original) -->
-                <div class="w-64 flex flex-col items-center">
-                    <div class="w-48 h-48 rounded-full overflow-hidden mb-4">
-                        <img src="https://i.pinimg.com/736x/96/90/d6/9690d606e95dbf571b2698983f49dfca.jpg"
-                            alt="Profile picture" class="w-full h-full object-cover">
-                    </div>
-                    <h2 class="text-3xl font-bold">Username</h2>
-                    <p class="text-gray-400 text-sm">Miembro desde, Feb. 27 2023</p>
-                </div>
-            </div>
-        </div>
+        <router-outlet></router-outlet>
     </main>
 </body>
