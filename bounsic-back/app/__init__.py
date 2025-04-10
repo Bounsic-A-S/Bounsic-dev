@@ -32,11 +32,14 @@ os.environ["PYTHONPYCACHEPREFIX"] = os.path.abspath("./.pycache_project")
 
 print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
 
-from app.routes import bert_router, crawl_router, scrapping_router, song_router, db_router, health_router, artist_router
+from app.routes import bert_router, crawl_router, scrapping_router,song_router, db_router,health_router,artist_router,spotify_router,playlist_router
 
+# app.include_router(bert_router, prefix="/bert", tags=["BERT NLP"])
 app.include_router(crawl_router, prefix="/crawl", tags=["Crawling"])
 app.include_router(scrapping_router, prefix="/scrapping", tags=["Scrapping"])
 app.include_router(song_router, prefix="/song", tags=["Song"])
 app.include_router(db_router, prefix="/db", tags=["dbMongo"])
 app.include_router(health_router, prefix="/health", tags=["Health Chck App"])
 app.include_router(artist_router, prefix="/artist", tags=["Artist"])
+app.include_router(spotify_router, prefix="/spotify", tags=["Spotify"])
+app.include_router(playlist_router, prefix="/playlist", tags=["Playlist"])
