@@ -17,6 +17,8 @@
   /* background */
   --color-bounsic-bg-main-purple: #1e0d16;
   --color-bounsic-bg-main-purple-gray: #1a181a;
+  --color-bounsic-bg-main-purple-light: #0A0210;
+  --color-bounsic-bg-main-pink: #21031B;
   /* shadows */
   --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
 }
@@ -45,6 +47,23 @@
   background-position: center;
   background-blend-mode: multiply, overlay;
 }
+
+.bg-bounsic-gradient-about {
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    radial-gradient(
+      circle at center,  /* Gradiente circular centrado */
+      var(--color-bounsic-bg-main-pink),
+      var(--color-bounsic-bg-main-purple-light)
+    ),
+    url('/background/dotPattern.svg');
+  background-size: auto, cover, 105%;
+  background-repeat: repeat, no-repeat, repeat;
+  background-position: center, center, initial;
+  background-blend-mode: overlay;
+  background-attachment: scroll, scroll, fixed; 
+}
+
 
 
 
