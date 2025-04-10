@@ -4,6 +4,10 @@ from azure.storage.blob import BlobServiceClient
 from app.provider import db
 from app.provider import DatabaseFacade
 import re
+from bson import ObjectId
+from datetime import datetime
+from app.services.srapping_service import scrappingBueno,buscar_en_youtube,descargar_audio
+from app.services.spotify_service import get_artist_and_genre_by_track, get_album_images
 
 
 def getSongByTitle(song_title:str):
@@ -102,7 +106,6 @@ def insert_image(file_url: str, blob_name: str):
 
 def mysql_db():
     db_facade = DatabaseFacade()
-    # Perform a database operation
     results = db_facade.execute_query("SELECT VERSION()")
     if results:
         version = results.fetchone()
@@ -110,3 +113,65 @@ def mysql_db():
         return version[0]
     else:
         return None
+    
+def insert_song(track_name: str):
+    try:
+        song_data = generar_song_data(track_name)
+
+        if not song_data:
+            return {"error": "No se pudo generar la información de la canción"}
+
+        result = db["songs"].insert_one(song_data)
+        song_id = result.inserted_id
+
+        album = db["albums"].find_one({"name": song_data["album"]})
+
+        if album:
+            db["albums"].update_one(
+                {"_id": album["_id"]},
+                {"$push": {"songs": {"song_id": song_id}}}
+            )
+
+        return {"message": "Song inserted", "song_id": str(song_id)}
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+
+def generar_song_data(track_name):
+    video_url = buscar_en_youtube(track_name)
+    if not video_url:
+        print("No se encontró el video en YouTube.")
+        return None
+
+    metadata = scrappingBueno(video_url)
+    info_extra = get_artist_and_genre_by_track(track_name)
+
+    if not metadata or not info_extra:
+        print("No se pudo obtener metadata o info extra.")
+        return None
+
+    imagenes_album = get_album_images(info_extra["album"], info_extra["artist_name"])
+    img_url = imagenes_album[0]["url"] if imagenes_album else None
+
+    descarga = descargar_audio(video_url)
+    mp3_url = descarga["audio"] if descarga and "audio" in descarga else None
+
+    if not mp3_url:
+        print("No se pudo descargar el audio.")
+        return None
+
+    release_year = int(metadata["publish_date"][:4]) if metadata.get("publish_date") and metadata["publish_date"] != "Fecha de publicación no encontrada" else 0
+
+    song_data = {
+        "artist": info_extra["artist_name"],
+        "title": info_extra["track_name"],
+        "album": info_extra["album"],
+        "img_url": img_url,
+        "mp3_url": mp3_url,
+        "release_year": release_year,
+        "genres": [{"genre": g} for g in info_extra.get("genres", [])],
+        "fingerprint": []
+    }
+
+    return song_data
+
