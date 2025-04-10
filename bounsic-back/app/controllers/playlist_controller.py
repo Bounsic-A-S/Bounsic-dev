@@ -1,5 +1,5 @@
-from fastapi import HTTPException
-from app.services import getPlaylistById
+from fastapi import HTTPException, Request
+from app.services import getPlaylistById,getAllPlaylists
 
 def get_playlist_by_id_controller(playlist_id: str):
     result = getPlaylistById(playlist_id)
@@ -10,3 +10,5 @@ def get_playlist_by_id_controller(playlist_id: str):
     
     return result
 
+async def get_all_playlists_controller(request: Request):
+    return getAllPlaylists()

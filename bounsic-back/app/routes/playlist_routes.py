@@ -1,9 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from app.controllers import get_playlist_by_id_controller
+from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller
 
 router = APIRouter()
+
+
+@router.get("/all")
+async def get_all_playlists(request: Request):
+    return await get_all_playlists_controller(request)
 
 @router.get("/{playlist_id}")
 def get_playlist_by_id(playlist_id: str):
@@ -23,3 +28,5 @@ def get_playlist_by_id(playlist_id: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")
+    
+

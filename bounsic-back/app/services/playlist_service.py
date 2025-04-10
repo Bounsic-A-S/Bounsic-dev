@@ -34,3 +34,23 @@ def getPlaylistById(playlist_id: str):
         return {"error": "Database error", "details": str(e)}
     except Exception as e:
         return {"error": "Unexpected error", "details": str(e)}
+
+def getAllPlaylists():
+    try:
+        playlists_collection = db["playlists"]
+
+        playlists = list(playlists_collection.find())
+
+        for playlist in playlists:
+            playlist["_id"] = str(playlist["_id"])
+            if "songs" in playlist:
+                playlist["songs"] = [
+                    {"song_id": str(song["song_id"])} for song in playlist["songs"]
+                ]
+
+        return playlists
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+    except Exception as e:
+        return {"error": "Unexpected error", "details": str(e)}

@@ -5,5 +5,5 @@ from .song_service import insert_image,getSongByTitle,getSongByArtist,getSongByG
 from .db_service import get_all_songs,insert_one_song
 from .artist_service import getSongsByArtist, getDesc
 from .spotify_service import get_album_images,get_artist_and_genre_by_track
-from .playlist_service import getPlaylistById
+from .playlist_service import getPlaylistById,getAllPlaylists
 
