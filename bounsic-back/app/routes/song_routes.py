@@ -5,7 +5,7 @@ from app.controllers import (
     get_song_by_title_controller,
     get_songs_by_genre_controller,
     get_song_image_controller,
-    insert_bs_controller
+    insert_bs_controller,insert_song_controller
 )
 
 router = APIRouter()
@@ -51,6 +51,10 @@ async def insert_bs():
     if "error" in res:
         raise JSONResponse(status_code=500, detail="Error al insertar canciones")
     return JSONResponse(status_code=200,message= "Canciones procesadas",data=res)
+
+@router.put("/insert")
+async def create_song(request: Request):
+    return await insert_song_controller(request)
 
 
 

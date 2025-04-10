@@ -1,5 +1,6 @@
 
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image
+from fastapi import Request
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
 import re
 import json
@@ -162,3 +163,6 @@ async def insert_bs_controller(url:str):
 
     
     
+async def insert_song_controller(request: Request):
+    body = await request.json()
+    return insert_song(body)

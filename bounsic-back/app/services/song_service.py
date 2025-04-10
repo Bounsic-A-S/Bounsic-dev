@@ -5,6 +5,8 @@ from azure.storage.blob import BlobServiceClient
 from app.provider import db
 from app.provider import DatabaseFacade
 import re
+from bson import ObjectId
+from datetime import datetime
 
 
 def getSongByTitle(song_title:str):
@@ -111,3 +113,36 @@ def mysql_db():
         return version[0]
     else:
         return None
+    
+def insert_song(body: dict):
+    try:
+        # Insertar la canción
+        result = db["songs"].insert_one({
+            "artist": body["artist"],
+            "title": body["title"],
+            "album": body["album"],
+            "img_url": body["img_url"],
+            "mp3_url": body["mp3_url"],
+            "release_year": body["release_year"],
+            "genres": body.get("genres", []),
+            "fingerprint": body.get("fingerprint", [])
+        })
+
+        song_id = result.inserted_id
+
+        # Buscar si ya existe el álbum por nombre
+        album = db["albums"].find_one({"name": body["album"]})
+
+        if album:
+            # Si existe, insertar el ID de la canción al arreglo de songs
+            db["albums"].update_one(
+                {"_id": album["_id"]},
+                {"$push": {"songs": {"song_id": song_id}}}
+            )
+
+        return {"message": "Song inserted", "song_id": str(song_id)}
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+
+

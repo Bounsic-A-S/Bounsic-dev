@@ -6,4 +6,5 @@ from .db_routes import router as db_router
 from .health_routes import router as health_router
 from .artist_routes import router as artist_router
 from .spotify_routes import router as spotify_router
+from .playlist_routes import router as playlist_router
 
