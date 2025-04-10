@@ -43,21 +43,9 @@ export class LibraryComponent implements OnInit {
     private defaultPlaylists: Playlist[] = [
         {
             id: 1,
-            title: 'Psychedelic Beats',
-            songCount: 20,
-            coverUrl: 'https://i.pinimg.com/736x/8f/fe/0d/8ffe0d1ef650cfcbf114bcc48527eedc.jpg'
-        },
-        {
-            id: 2,
-            title: 'You can don omar',
-            songCount: 17,
-            coverUrl: 'https://i.pinimg.com/736x/62/a1/fd/62a1fdfd53b8ca8c9136af99ec6c41ed.jpg'
-        },
-        {
-            id: 3,
-            title: '# Tec',
-            songCount: 79,
-            coverUrl: 'https://i.pinimg.com/736x/d8/1a/31/d81a315aabbbb422b7d2501cc1702beb.jpg'
+            title: 'Not found',
+            songCount: 0,
+            coverUrl: 'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg'
         }
     ];
 
