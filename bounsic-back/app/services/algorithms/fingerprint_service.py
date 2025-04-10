@@ -49,7 +49,6 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         # ...        ...  ...  ...  ...  ...  ...   
         # sr/2       [dB1, dB2, dB3, dB4, dB5, ...]  
 
-        # D_normalized = D / np.max(D)  # Normaliza en escala lineal
         D_dB = librosa.amplitude_to_db(D, ref=0)
         
         # Segment size
@@ -97,12 +96,10 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
     amp_bajos = []
     amp_medios = []
     amp_altos = []
-    
 
     for t in range(0, D_dB.shape[1], frames_per_segment):
         segment = D_dB[:, t:t+(frames_per_segment)]
         # Average spectrum over the segment duration
-
         avg_spectrum = np.max(segment, axis=1)
         
         # Find dominant peaks
@@ -137,11 +134,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             mid_peak = get_dominant_peak(mid_peaks)
             high_peak = get_dominant_peak(high_peaks)
 
-            # Get top N frequencies by amplitude
-            # top_freq = max(pks, key=lambda p: avg_spectrum[p])
-            # top_freqs = sorted(pks, key=lambda p: avg_spectrum[p], reverse=True)[:top_n_freqs]
-            # actualFreq = float(round(frequencies[top_freqs[0]], 1))
-
             # Bajos
             if low_peak:
                 freq_bajos.append(float(round(frequencies[low_peak], 1)))
@@ -165,23 +157,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
                 amp_altos.append(0)
 
             freq_times.append(float(round(t * hop_length   / sr, 3)))
-            
-
-            # fingerprint.append({
-            #     "time": float(round(t * hop_length   / sr, 3)),
-            #     'frequencies': {
-            #         'bajo': float(round(frequencies[low_peak], 1)) if low_peak else None,
-            #         'medio': float(round(frequencies[mid_peak], 1)) if mid_peak else None,
-            #         'alto': float(round(frequencies[high_peak], 1)) if high_peak else None
-            #     },
-            #     'amplitudes': {
-            #         'bajo': float(round(avg_spectrum[low_peak], 2)) if low_peak else None,
-            #         'medio': float(round(avg_spectrum[mid_peak], 2)) if mid_peak else None,
-            #         'alto': float(round(avg_spectrum[high_peak], 2)) if high_peak else None
-            #     }
-            #     # "frequencies": actualFreq,
-            #     # "amplitudes": float("{:.2f}".format(avg_spectrum_norm[top_freqs[0]]))
-            # })
 
             # [20Hz ---------------200Hz--------------------4000Hz----------------24kHz]
             # |        Bajos         |         Medios         |       Agudos        |
@@ -227,22 +202,11 @@ def save_json(fingerprint, songName: str):
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(fingerprint, f, indent=4)
 
-    # Use json.dumps 
+    # Use json.dumps
     print(f"✅ Huella digital guardada en: {json_path}")
 
-# Read json
 def readFingerprint(songName: str) -> FingerprintData:
-
     json_path = os.path.join("app", "services", "fingerprints", f"{songName}.json")
-    # with open(json_path, 'r', encoding='utf-8') as archivo:
-    #     datos = json.load(archivo)
-
-    # data = {
-    #     "bpm": datos.get("bpm"),
-    #     "data": datos.get("data", []),
-    #     "distribution": datos.get("distribution")
-    # }
-    # return data
     with open(json_path, "r", encoding="utf-8") as file:
         raw_data = json.load(file)
     return cast(FingerprintData, raw_data)
@@ -262,27 +226,3 @@ def graph_fingerpint(songName: str):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-def main():
-
-    # generate_fingerprint("take on me")
-    # data = readFingerprint("stop")
-    
-    # song_name = "era mentira"
-    # graph_fingerpint(song_name)
-
-    directory = os.path.join("app", "services", "songs")
-    files = [f for f in os.listdir(directory) if f.lower().endswith(".mp3")]
-
-    for f in files:
-        song_name = os.path.splitext(f)[0]
-        print(f"🎵 Generando huella para: {song_name}")
-        success = generate_fingerprint(song_name)
-        if success:
-            print(f"✅ Huella generada para '{song_name}'")
-        else:
-            print(f"❌ Error al generar huella para '{song_name}'")
-    print("🧩 Procesamiento finalizado.")
-    
-if __name__ == "__main__":
-    main()

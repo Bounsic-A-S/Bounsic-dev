@@ -73,13 +73,10 @@ def load_fingerprints(without: str, directory="fingerprints") -> dict[str, Finge
             if (song_name == without): 
                 continue
             try:
-                # song = readFingerprint(song_name)
-                # song[song_name] = song_name  # opcional: añade el nombre
                 fingerprints[song_name] = readFingerprint(song_name)
-                # fingerprints.append(song)
             except Exception as e:
-                print(f"Error al leer {file}: {e}")            
-            
+                print(f"Error al leer {file}: {e}")
+                
     return fingerprints
 
 def main():

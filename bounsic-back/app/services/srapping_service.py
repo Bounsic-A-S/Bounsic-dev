@@ -172,3 +172,36 @@ def descargar_imagen(url, title):
     return None  # Retorna None si la descarga falla
 
 
+def get_lyrics(song_name: str, artist: str):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+    url = "https://www.letras.com"
+    song_name = song_name.replace(" ", "-")
+    artist = artist.replace(" ", "-")
+    url = f"{url}/{artist}/{song_name}/"
+
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        lyric_div = soup.find("div", class_="lyric-original")
+        if lyric_div:
+            lyrics = "\n\n".join([p.get_text("\n") for p in lyric_div.find_all("p")])
+        else:
+            lyrics = "Letra no encontrada"
+
+        return lyrics
+
+    except Exception as e:
+        print(f"Error al procesar la URL {url}: {str(e)}")
+        return str(e)
+    
+if __name__ == "__main__":
+
+    lyrics = get_lyrics("otro atardecer", "bad bunny")
+    
+    if lyrics:
+        print(lyrics)
+    
