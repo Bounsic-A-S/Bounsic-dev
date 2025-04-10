@@ -13,11 +13,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '@app/services/auth/auth.service';
+import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,ClickOutsideDirective],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

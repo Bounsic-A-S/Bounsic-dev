@@ -23,14 +23,15 @@ import {
   RedirectRequest,
 } from '@azure/msal-browser';
 import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, LogIn, LogOut, Heart } from 'lucide-angular';
+import { LucideAngularModule, LogIn, LogOut, Heart, Settings } from 'lucide-angular';
 import { AuthComponent } from "@app/auth/auth.component";
+import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, AuthComponent],
+  imports: [CommonModule, RouterModule, LucideAngularModule, AuthComponent,ClickOutsideDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {
@@ -44,6 +45,7 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
   readonly Heart = Heart;
   readonly loginIcon = LogIn;
   readonly logoutIcon = LogOut;
+  readonly settingsIcon = Settings;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,

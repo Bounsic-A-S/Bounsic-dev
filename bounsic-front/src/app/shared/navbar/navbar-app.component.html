@@ -2,8 +2,7 @@
   <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
 
   <nav
-    class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-1 shadow-bounsic-navbar"
-  >
+    class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-1 shadow-bounsic-navbar">
     <!-- Logo -->
     <a
       routerLink="/dashboard"
@@ -50,8 +49,10 @@
         <!-- Menú desplegable -->
         <div
           *ngIf="isLoggingToggled"
-          class="absolute right-0 mt-2 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg"
-        >
+          class="absolute right-0 mt-6 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg"
+          clickOutside (clickOutside)="toggleLogin()"
+          (click)="toggleLogin()"
+          >
           <!-- Usuario no autenticado -->
           <ng-container *ngIf="!userProfile">
             <button
@@ -72,33 +73,65 @@
 
           <!-- Usuario autenticado -->
           <ng-container *ngIf="userProfile">
-            <div class="px-4 py-2 border-b border-gray-800">
-              <div class="flex items-center">
-                <div
-                  class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center mr-2"
-                >
-                  <span class="text-sm font-medium">{{
-                    userProfile.name.charAt(0)
-                  }}</span>
-                </div>
-                <div class="truncate">
-                  <p class="text-sm font-medium">{{ userProfile.name }}</p>
+            <!-- User Profile Button -->
+            <article class="w-full text-left">
+              <div class="px-4 py-1.5">
+                <div class="flex items-center">
+                  <!-- Avatar - Improved with conditional image support -->
+                  <div *ngIf="userProfile.profileImage; else initialAvatar" 
+                       class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
+                    <img [src]="userProfile.profileImage" alt="Profile" class="h-full w-full object-cover">
+                  </div>
+                  <ng-template #initialAvatar>
+                    <div class="flex-shrink-0 size-8 rounded-full bg-gray-700 flex items-center justify-center mr-3 border border-gray-600">
+                      <span class="text-sm font-medium text-white">{{ userProfile.name.charAt(0).toUpperCase() }}</span>
+                    </div>
+                  </ng-template>
+                  
+                  <!-- User Info - Added email -->
+                  <div class="truncate">
+                    <p class="text-sm font-medium text-white">{{ userProfile.name }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ userProfile.email }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </article>
+            
+            <!-- First Divider -->
+            <div class="h-[1px] bg-bounsic-gray-3 mx-3 my-1"></div>
+            
+            <!-- Settings Button - Made consistent with other buttons -->
+            <button class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <lucide-icon
+                    [img]="settingsIcon" 
+                    class="my-icon"
+                    [size]="20"
+                    [strokeWidth]="1.5"
+                  ></lucide-icon>
+                </div>
+                <div class="truncate">
+                  <p class="text-sm font-medium">Configuración</p>
+                </div>
+              </div>
+            </button>
             <button
               (click)="logout()"
-              class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
+              class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
               role="menuitem"
             >
-              <lucide-icon
-                [img]="logoutIcon"
-                class="my-icon mr-2"
-                [size]="16"
-                [strokeWidth]="3"
-              >
-              </lucide-icon>
-              Cerrar sesión
+              <div class="flex items-center">
+                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <lucide-icon
+                    [img]="logoutIcon"
+                    class="my-icon"
+                    [size]="20"
+                    [strokeWidth]="1.5"
+                  ></lucide-icon>
+                </div>
+                <span class="text-sm font-medium">Cerrar sesión</span>
+              </div>
             </button>
           </ng-container>
         </div>

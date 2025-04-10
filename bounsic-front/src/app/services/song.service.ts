@@ -11,7 +11,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
   getTest(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/bert`);
+    return this.http.get(`${this.apiUrl}/health`);
   }
   getData(title:string): Observable<any> {
     return this.http.get(`${this.apiUrl}/song/title/${title}`);
