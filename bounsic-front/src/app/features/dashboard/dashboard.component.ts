@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { SafeChoiceListComponent } from './safeChoicesList/safe-choices-list.component';
 import { TrendingSongsComponent } from "./trendingSongs/trending-songs.component";
 import { ArtistListComponent } from "./artistList/artist_list.component";
+import { LastMonthSongsComponent } from "./lastMonthSongs/last-month-songs.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +19,8 @@ import { ArtistListComponent } from "./artistList/artist_list.component";
     SearchBarComponent,
     SafeChoiceListComponent,
     TrendingSongsComponent,
-    ArtistListComponent
+    ArtistListComponent,
+    LastMonthSongsComponent
 ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
