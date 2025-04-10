@@ -58,7 +58,7 @@
     ),
     url('/background/dotPattern.svg');
   background-size: auto, cover, 105%;
-  background-repeat: repeat, no-repeat, no-repeat;
+  background-repeat: repeat, no-repeat, repeat;
   background-position: center, center, initial;
   background-blend-mode: overlay;
   background-attachment: scroll, scroll, fixed; 

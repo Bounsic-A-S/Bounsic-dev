@@ -1,7 +1,7 @@
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { LandingNavBarComponent } from '../landing/navbar/navbar.component';
+import { LandingNavBarComponent } from '@app/features/landing/navbar/navbar.component';
 
 @Component({
     selector: 'app-about-us', // Nombre del componente
