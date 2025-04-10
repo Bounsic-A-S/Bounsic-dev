@@ -54,7 +54,7 @@ async def insert_bs():
 
 @router.put("/insert/{track_name}")
 async def create_song(track_name: str):
-    result = await insert_song_controller(track_name)  # 👈 await aquí porque la función es async
+    result = await insert_song_controller(track_name) 
 
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
