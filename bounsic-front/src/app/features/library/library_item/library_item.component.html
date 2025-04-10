@@ -1,4 +1,4 @@
-<article class="cursor-pointer">
+<article class="cursor-pointer" (click)="goToPlaylist()">
   <div class="aspect-square rounded-xl overflow-hidden mb-2 size-36 md:size-44 xl:size-48">
     <img [src]="playlist.coverUrl" alt="{{ playlist.title }}" class="w-full h-full object-cover" />
   </div>
@@ -7,3 +7,4 @@
     {{ playlist.songCount }} Canciones
   </p>
 </article>
+<p>{{playlist}}</p>
