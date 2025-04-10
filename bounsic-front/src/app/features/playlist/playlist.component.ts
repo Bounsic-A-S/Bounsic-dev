@@ -15,6 +15,7 @@ interface Song {
   album: string;
   cover: string;
   duration: string;
+  mp3Url:string;
 }
 
 interface PlaylistDetail {
@@ -64,12 +65,13 @@ export class PlaylistComponent implements OnInit {
           imageUrl: response.img_url || '',
           totalSongs: response.songs?.length || 0,
           totalDuration: this.calculateTotalDuration(response.songs || []),
-          songs: (response.songs || []).map((song: { _id: any; id: any; title: any; artist: any; album: any; img_url: any; cover: any; duration: any; },i: number) => ({
+          songs: (response.songs || []).map((song: { _id: any; id: any; title: any; artist: any; album: any; img_url: any; mp3_url:any, cover: any; duration: any; },i: number) => ({
             id:i+1,
             title: song.title || '',
             artist: song.artist || '',
             album: song.album || '',
             cover: song.img_url || song.cover || '',
+            mp3Url: song.mp3_url || '',
             duration: song.duration || '0:00'
           }))
         })),
