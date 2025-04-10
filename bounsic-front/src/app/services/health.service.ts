@@ -6,11 +6,11 @@ import { environment } from '../../environments/environment.dev';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class HealthService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-  getData(title:string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/song/title/${title}`);
+  getHealth(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/health`);
   }
 }
