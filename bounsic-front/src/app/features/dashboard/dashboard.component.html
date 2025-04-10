@@ -1,5 +1,5 @@
 <main-navbar></main-navbar>
-<main class="bg-black text-white p-8 pt-11 mt-20">
+<main class="bg-bounsic-gradient text-white p-8 pt-11 mt-14">
   <!-- Header Section -->
   <section class="max-w-4xl mx-auto text-center mb-12">
     <h1 class="text-xl sm:text-2xl mb-6">
@@ -9,21 +9,29 @@
     <dashboard-searchBar></dashboard-searchBar>
   </section>
   <!-- Carousel songs -->
-  <section class="max-w-6xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h2 class="sm:text-xl mb-4">Nuevos descubrimientos</h2>
-    <h3 class="text-xl sm:text-3xl font-bold mb-6">Podría interesarte...</h3>
+  <section class="max-w-6xl 2xl:max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+    <h2 class="text-sm sm:text-xl mb-2">Nuevos descubrimientos</h2>
+    <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">Podría interesarte...</h3>
     <dashboard-songsCarousel></dashboard-songsCarousel>
   </section>
 
   <!-- Safe Choices Section -->
-  <section class="max-w-6xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h3 class="text-xl sm:text-2xl font-bold mb-6">Podría interesarte...</h3>
+  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+    <h3 class="text-lg sm:text-2xl font-bold mb-6">Elecciones seguras</h3>
     <dashboard-safe-choice-list></dashboard-safe-choice-list>
   </section>
 
-  <section class="max-w-6xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h2 class="sm:text-2xl mb-4">Esta semana</h2>
-    <h3 class="text-xl sm:text-3xl font-bold mb-6">Tendencias</h3>
+  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+    <h2 class="text-sm sm:text-xl mb-2">Esta semana</h2>
+    <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">Tendencias</h3>
     <dashboard-trending-songs></dashboard-trending-songs>
+  </section>
+  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+    <h3 class="text-lg sm:text-xl xl:text-2xl mb-6">Último mes</h3>
+    <dashboard-last-month-songs></dashboard-last-month-songs>
+  </section>
+  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+    <h2 class="text-xl sm:text-2xl xl:text-3xl font-bold mb-6">Artistas que podrían interesarte</h2>
+    <dashboard-artist-list></dashboard-artist-list>
   </section>
 </main>

@@ -32,8 +32,6 @@ logs/
 .ipynb_checkpoints/
 
 # Docker y compilaciones
-Dockerfile
-*.dockerignore
 dist/
 build/
 *.egg-info/

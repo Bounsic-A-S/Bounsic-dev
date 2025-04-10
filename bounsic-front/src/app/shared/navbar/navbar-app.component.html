@@ -1,40 +1,71 @@
-<header class="fixed top-0 left-0 w-full z-10 bg-black">
-  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-4">
+<header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4">
+  <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
+
+  <nav
+    class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-1 shadow-bounsic-navbar">
     <!-- Logo -->
-    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer">
+    <a
+      routerLink="/dashboard"
+      class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer"
+    >
       <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-24" />
     </a>
 
     <!-- Navigation Links -->
-    <div class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32">
-      <a routerLink="/ayuda" routerLinkActive="text-white"
-        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+    <div
+      class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32"
+    >
+      <a
+        routerLink="/ayuda"
+        routerLinkActive="text-white"
+        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
+      >
         Tendencias
       </a>
-      <a routerLink="/library" routerLinkActive="text-white"
-        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+      <a
+        routerLink="/library"
+        routerLinkActive="text-white"
+        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
+      >
         Biblioteca
       </a>
-      <div routerLink="/buscar" routerLinkActive="text-white"
-        class="text-md text-white/90 hover:text-white transition-colors">
-        <input class="w-20" type="text" name="" id="" placeholder="Buscar..." />
+      <div class="text-md text-white/90 hover:text-white transition-colors">
+        <input class="w-24" type="text" name="" id="" placeholder="Buscar..." />
       </div>
-
       <!-- Dropdown -->
       <div class="relative">
         <!-- Botón para abrir el menú -->
-        <button (click)="toggleLogin()" class="bg-black text-white rounded-md flex items-center">
-          <div class="rounded-full bg-purple-600 size-10 cursor-pointer"></div>
+        <button
+          (click)="toggleLogin()"
+          class="text-white rounded-md flex items-center"
+        >
+          <div
+            class="rounded-full w-10 h-10 overflow-hidden flex items-center justify-center cursor-pointer"
+          >
+            <img src="/User.svg" alt="user-icon" class="size-5 invert" />
+          </div>
         </button>
 
         <!-- Menú desplegable -->
-        <div *ngIf="isLoggingToggled" class="absolute right-0 mt-2 w-48 bg-black text-white shadow-lg rounded-lg">
+        <div
+          *ngIf="isLoggingToggled"
+          class="absolute right-0 mt-6 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg"
+          clickOutside (clickOutside)="toggleLogin()"
+          (click)="toggleLogin()"
+          >
           <!-- Usuario no autenticado -->
           <ng-container *ngIf="!userProfile">
-            <button (click)="loginRedirect()"
+            <button
+              (click)="openModal()"
               class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
-              role="menuitem">
-              <lucide-icon [img]="loginIcon" class="my-icon mr-2" [size]="16" [strokeWidth]="3">
+              role="menuitem"
+            >
+              <lucide-icon
+                [img]="loginIcon"
+                class="my-icon mr-2"
+                [size]="16"
+                [strokeWidth]="3"
+              >
               </lucide-icon>
               Iniciar sesión
             </button>
@@ -42,22 +73,65 @@
 
           <!-- Usuario autenticado -->
           <ng-container *ngIf="userProfile">
-            <div class="px-4 py-2 border-b border-gray-800">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center mr-2">
-                  <span class="text-sm font-medium">{{ userProfile.name.charAt(0) }}</span>
-                </div>
-                <div class="truncate">
-                  <p class="text-sm font-medium">{{ userProfile.name }}</p>
+            <!-- User Profile Button -->
+            <article class="w-full text-left">
+              <div class="px-4 py-1.5">
+                <div class="flex items-center">
+                  <!-- Avatar - Improved with conditional image support -->
+                  <div *ngIf="userProfile.profileImage; else initialAvatar" 
+                       class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
+                    <img [src]="userProfile.profileImage" alt="Profile" class="h-full w-full object-cover">
+                  </div>
+                  <ng-template #initialAvatar>
+                    <div class="flex-shrink-0 size-8 rounded-full bg-gray-700 flex items-center justify-center mr-3 border border-gray-600">
+                      <span class="text-sm font-medium text-white">{{ userProfile.name.charAt(0).toUpperCase() }}</span>
+                    </div>
+                  </ng-template>
+                  
+                  <!-- User Info - Added email -->
+                  <div class="truncate">
+                    <p class="text-sm font-medium text-white">{{ userProfile.name }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ userProfile.email }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <button (click)="logout()"
-              class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
-              role="menuitem">
-              <lucide-icon [img]="logoutIcon" class="my-icon mr-2" [size]="16" [strokeWidth]="3">
-              </lucide-icon>
-              Cerrar sesión
+            </article>
+            
+            <!-- First Divider -->
+            <div class="h-[1px] bg-bounsic-gray-3 mx-3 my-1"></div>
+            
+            <!-- Settings Button - Made consistent with other buttons -->
+            <button class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <lucide-icon
+                    [img]="settingsIcon" 
+                    class="my-icon"
+                    [size]="20"
+                    [strokeWidth]="1.5"
+                  ></lucide-icon>
+                </div>
+                <div class="truncate">
+                  <p class="text-sm font-medium">Configuración</p>
+                </div>
+              </div>
+            </button>
+            <button
+              (click)="logout()"
+              class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
+              role="menuitem"
+            >
+              <div class="flex items-center">
+                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <lucide-icon
+                    [img]="logoutIcon"
+                    class="my-icon"
+                    [size]="20"
+                    [strokeWidth]="1.5"
+                  ></lucide-icon>
+                </div>
+                <span class="text-sm font-medium">Cerrar sesión</span>
+              </div>
             </button>
           </ng-container>
         </div>
@@ -65,36 +139,67 @@
     </div>
 
     <!-- Mobile menu button -->
-    <button class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20" (click)="toggleMobileMenu()">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    <button
+      class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20"
+      (click)="toggleMobileMenu()"
+    >
+      <svg
+        class="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
       </svg>
     </button>
   </nav>
 
   <!-- Mobile menu -->
-  <div *ngIf="isMobileMenuOpen" class="md:hidden absolute w-full border-t border-white/10 bg-black">
+  <div
+    *ngIf="isMobileMenuOpen"
+    class="md:hidden absolute w-full border-t border-white/10 bg-bounsic-gray-4"
+  >
     <div class="px-4 py-3 space-y-3">
-      <a routerLink="/ayuda" routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors">
+      <a
+        routerLink="/ayuda"
+        routerLinkActive="text-white"
+        class="block text-sm text-white/90 hover:text-white transition-colors"
+      >
         Tendencias
       </a>
-      <a routerLink="/library" routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors">
+      <a
+        routerLink="/library"
+        routerLinkActive="text-white"
+        class="block text-sm text-white/90 hover:text-white transition-colors"
+      >
         Biblioteca
       </a>
-      <a routerLink="/buscar" routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors">
+      <a
+        routerLink="/buscar"
+        routerLinkActive="text-white"
+        class="block text-sm text-white/90 hover:text-white transition-colors"
+      >
         <input type="text" name="" id="" placeholder="Buscar..." />
       </a>
 
       <!-- Mobile Login / Logout -->
-      <button *ngIf="!userProfile" (click)="loginRedirect()"
-        class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors">
+      <button
+        *ngIf="!userProfile"
+        (click)="loginRedirect()"
+        class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
+      >
         Iniciar sesión
       </button>
-      <button *ngIf="userProfile" (click)="logout()"
-        class="block text-sm text-white/90 hover:text-red-600 transition-colors">
+      <button
+        *ngIf="userProfile"
+        (click)="logout()"
+        class="block text-sm text-white/90 hover:text-red-600 transition-colors"
+      >
         Cerrar sesión
       </button>
     </div>

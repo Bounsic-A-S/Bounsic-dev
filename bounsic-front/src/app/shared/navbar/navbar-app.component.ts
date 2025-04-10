@@ -1,18 +1,38 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
-import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest, RedirectRequest } from '@azure/msal-browser';
+import {
+  MSAL_GUARD_CONFIG,
+  MsalBroadcastService,
+  MsalGuardConfiguration,
+  MsalService,
+} from '@azure/msal-angular';
+import {
+  AuthenticationResult,
+  EventMessage,
+  EventType,
+  InteractionStatus,
+  PopupRequest,
+  RedirectRequest,
+} from '@azure/msal-browser';
 import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, LogIn, LogOut, Heart } from 'lucide-angular';
-
+import { LucideAngularModule, LogIn, LogOut, Heart, Settings } from 'lucide-angular';
+import { AuthComponent } from "@app/auth/auth.component";
+import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule,RouterModule,LucideAngularModule],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule, RouterModule, LucideAngularModule, AuthComponent,ClickOutsideDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
@@ -25,6 +45,7 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
   readonly Heart = Heart;
   readonly loginIcon = LogIn;
   readonly logoutIcon = LogOut;
+  readonly settingsIcon = Settings;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -32,7 +53,16 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
     private authService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router
-  ) { }
+  ) {}
+  isModalOpen = false; // Controla si el modal está abierto o cerrado
+
+  openModal() {
+    this.isModalOpen = true; // Abre el modal
+  }
+
+  closeModal() {
+    this.isModalOpen = false; // Cierra el modal
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -45,7 +75,11 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
     // Manejar eventos de cuenta
     this.msalBroadcastService.msalSubject$
       .pipe(
-        filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+        filter(
+          (msg: EventMessage) =>
+            msg.eventType === EventType.ACCOUNT_ADDED ||
+            msg.eventType === EventType.ACCOUNT_REMOVED
+        ),
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
@@ -60,7 +94,9 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
     // Manejar eventos de estado de autenticación
     this.msalBroadcastService.inProgress$
       .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
+        filter(
+          (status: InteractionStatus) => status === InteractionStatus.None
+        ),
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
@@ -91,7 +127,9 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
 
   loginRedirect(): void {
     if (this.msalGuardConfig.authRequest) {
-      this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest);
+      this.authService.loginRedirect({
+        ...this.msalGuardConfig.authRequest,
+      } as RedirectRequest);
     } else {
       this.authService.loginRedirect();
     }
@@ -99,13 +137,15 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
 
   loginPopup(): void {
     if (this.msalGuardConfig.authRequest) {
-      this.authService.loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
+      this.authService
+        .loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
         .subscribe((response: AuthenticationResult) => {
           this.authService.instance.setActiveAccount(response.account);
           this.setLoginDisplay(); // Actualizar el estado después del login
         });
     } else {
-      this.authService.loginPopup()
+      this.authService
+        .loginPopup()
         .subscribe((response: AuthenticationResult) => {
           this.authService.instance.setActiveAccount(response.account);
           this.setLoginDisplay();
@@ -115,12 +155,11 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
 
   logout(popup?: boolean): void {
     if (popup) {
-      this.authService.logoutPopup({ mainWindowRedirectUri: "/" });
+      this.authService.logoutPopup({ mainWindowRedirectUri: '/' });
     } else {
       this.authService.logoutRedirect();
     }
-    this.userProfile = null; 
-
+    this.userProfile = null;
   }
 
   ngOnDestroy(): void {
@@ -130,11 +169,9 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
 
   toggleLogin(): void {
     this.isLoggingToggled = !this.isLoggingToggled;
-
   }
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
-
   }
 }
