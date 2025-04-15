@@ -5,10 +5,21 @@ import { RouterModule } from '@angular/router';
   selector: 'app-user-settings',
   standalone: true,
   imports: [
-    CommonModule,RouterModule,
+    CommonModule, RouterModule,
   ],
   templateUrl: './settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
+  menuItems = [
+    { label: 'Account', route: 'account' },
+    { label: 'Privacidad' },
+    { label: 'Conexiones' },
+    { label: 'Notificaciones' },
+    { label: 'Plan' },
+    { label: 'Reproducción' },
+    { label: 'Apariencia', route: 'appearance' },
+    { label: 'Idioma' }
+  ];
+
 }
