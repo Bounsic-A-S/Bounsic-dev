@@ -6,11 +6,14 @@ import { environment } from '../../environments/environment.dev';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class PlaylistService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-  getData(title:string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/song/title/${title}`);
+  getAllPlaylist(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/playlist/all`);
+  }
+  getPlaylistById(id:string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/playlist/${id}`);
   }
 }

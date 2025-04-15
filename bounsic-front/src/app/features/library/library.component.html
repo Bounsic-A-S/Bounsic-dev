@@ -8,7 +8,7 @@
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
         <!-- Playlist Cards -->
-        <library-item *ngFor="let playlist of playlists" [playlist]="playlist">
+        <library-item *ngFor="let playlist of playlistsT$ | async" [playlist]="playlist">
         </library-item>
 
         <!-- Add Playlist Button -->

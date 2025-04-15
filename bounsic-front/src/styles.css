@@ -49,7 +49,7 @@
   background-blend-mode: multiply, overlay;
 }
 
-.bg-bounsic-gradient-about {
+@utility bg-bounsic-gradient-about {
   background-image: 
     radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
     radial-gradient(
@@ -63,6 +63,15 @@
   background-position: center, center, initial;
   background-blend-mode: overlay;
   background-attachment: scroll, scroll, fixed; 
+}
+@utility bg-bounsic-gradient-about-mobile {
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    radial-gradient(
+      circle at center,  /* Gradiente circular centrado */
+      var(--color-bounsic-bg-main-pink),
+      var(--color-bounsic-bg-main-purple-light)
+    )
 }
 
 
