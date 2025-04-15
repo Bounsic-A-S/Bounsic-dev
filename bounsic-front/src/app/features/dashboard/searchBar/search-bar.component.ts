@@ -1,11 +1,11 @@
 // search-filter.component.ts
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'dashboard-searchBar',
   templateUrl: 'search-bar.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule,TranslateModule],
 })
 export class SearchBarComponent {
   searchQuery: string = '';

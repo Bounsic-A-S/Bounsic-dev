@@ -20,17 +20,17 @@
         routerLinkActive="text-white"
         class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
       >
-        Tendencias
+        {{'BOUNSIC.NAVBAR.TRENDING'  | translate}}
       </a>
       <a
         routerLink="/library"
         routerLinkActive="text-white"
         class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
       >
-        Biblioteca
+        {{'BOUNSIC.NAVBAR.LIBRARY'  | translate}}
       </a>
       <div class="text-md text-white/90 hover:text-white transition-colors">
-        <input class="w-24" type="text" name="" id="" placeholder="Buscar..." />
+        <input class="w-24" type="text" name="" id="" placeholder="{{'BOUNSIC.NAVBAR.SEARCH'  | translate}}" />
       </div>
       <!-- Dropdown -->
       <div class="relative">
@@ -67,7 +67,7 @@
                 [strokeWidth]="3"
               >
               </lucide-icon>
-              Iniciar sesión
+              {{'BOUNSIC.NAVBAR.SIGNIN'  | translate}}
             </button>
           </ng-container>
 
@@ -171,14 +171,14 @@
         routerLinkActive="text-white"
         class="block text-sm text-white/90 hover:text-white transition-colors"
       >
-        Tendencias
+        {{"BOUNSIC.NAVBAR.TRENDING"  | translate}}
       </a>
       <a
         routerLink="/library"
         routerLinkActive="text-white"
         class="block text-sm text-white/90 hover:text-white transition-colors"
       >
-        Biblioteca
+        {{"BOUNSIC.NAVBAR.LIBRARY"  | translate}}
       </a>
       <a
         routerLink="/buscar"
@@ -194,7 +194,7 @@
         (click)="loginRedirect()"
         class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
       >
-        Iniciar sesión
+        {{"BOUNSIC.NAVBAR.SIGNIN"  | translate}}
       </button>
       <button
         *ngIf="userProfile"
