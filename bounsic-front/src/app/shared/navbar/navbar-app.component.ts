@@ -35,6 +35,7 @@ import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {
+
   isMobileMenuOpen = false;
   userProfile: any = null;
   isLoggingToggled = false;
@@ -55,7 +56,9 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
   isModalOpen = false; // Controla si el modal está abierto o cerrado
-
+  goToSettings() {
+    this.router.navigate(['/settings']);
+  }
   openModal() {
     this.isModalOpen = true; // Abre el modal
   }

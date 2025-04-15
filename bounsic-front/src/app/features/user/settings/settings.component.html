@@ -2,7 +2,15 @@
   <!-- Sidebar -->
   <aside class="w-[14vw] flex flex-col shadow-bounsic-sidebar-user">
     <!-- Back button -->
-    <div class="p-4"></div>
+    <button class="p-4 cursor-pointer" (click)="goBack()">
+      <lucide-icon
+        [img]="leftArrow"
+        class="my-icon"
+        [size]="24"
+        [strokeWidth]="3"
+      >
+      </lucide-icon>
+    </button>
     <nav class="flex-1">
       <ul class="space-y-4 py-4">
         <ng-container *ngFor="let item of menuItems">
