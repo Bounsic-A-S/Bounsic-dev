@@ -27,7 +27,10 @@
       "TRENDING": "Trending",
       "LIBRARY": "Library",
       "SEARCH": "Search...",
-      "SIGNIN": "Sign In"
+      "SIGNIN": "Sign In",
+      "SIGNOUT": "Sign Out",
+      "SETTINGS": "Settings"
+
     },
     "DASHBOARD": {
       "TITLE1": "Turn the radio based on a song",
@@ -70,7 +73,7 @@
       "BUTTON": "Create Account",
       "TEXT4": "Already have an account?"
     },
-    "SETINGS": {
+    "SETTINGS": {
       "ACCOUNT": {
         "TITLE1": "Account Information",
         "EMAIL": "Email Address",

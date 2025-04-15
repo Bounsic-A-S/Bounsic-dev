@@ -27,7 +27,9 @@
       "TRENDING": "Tendencias",
       "LIBRARY": "Biblioteca",
       "SEARCH": "Buscar...",
-      "SIGNIN": "Iniciar Sesión"
+      "SIGNIN": "Iniciar Sesión",
+      "SIGNOUT": "Cerrar Sesión",
+      "SETTINGS": "Configuración"
     },
     "DASHBOARD": {
       "TITLE1": "Inicia la radio a partir de una canción",
@@ -70,7 +72,7 @@
       "BUTTON": "Crear cuenta",
       "TEXT4": "Ya tienes una cuenta?"
     },
-    "SETINGS": {
+    "SETTINGS": {
       "ACCOUNT": {
         "TITLE1": "Información de la cuenta",
         "EMAIL": "Correo electrónico",

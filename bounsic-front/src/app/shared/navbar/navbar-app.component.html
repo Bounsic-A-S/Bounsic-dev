@@ -113,7 +113,7 @@
                   ></lucide-icon>
                 </div>
                 <div class="truncate">
-                  <p class="text-sm font-medium">Configuración</p>
+                  <p class="text-sm font-medium">{{'BOUNSIC.NAVBAR.SETTINGS'  | translate}}</p>
                 </div>
               </div>
             </button>
@@ -131,7 +131,7 @@
                     [strokeWidth]="1.5"
                   ></lucide-icon>
                 </div>
-                <span class="text-sm font-medium">Cerrar sesión</span>
+                <span class="text-sm font-medium">{{'BOUNSIC.NAVBAR.SIGNOUT'  | translate}}</span>
               </div>
             </button>
           </ng-container>
@@ -171,21 +171,21 @@
         routerLinkActive="text-white"
         class="block text-sm text-white/90 hover:text-white transition-colors"
       >
-        {{"BOUNSIC.NAVBAR.TRENDING"  | translate}}
+        {{'BOUNSIC.NAVBAR.TRENDING'  | translate}}
       </a>
       <a
         routerLink="/library"
         routerLinkActive="text-white"
         class="block text-sm text-white/90 hover:text-white transition-colors"
       >
-        {{"BOUNSIC.NAVBAR.LIBRARY"  | translate}}
+        {{'BOUNSIC.NAVBAR.LIBRARY'  | translate}}
       </a>
       <a
         routerLink="/buscar"
         routerLinkActive="text-white"
         class="block text-sm text-white/90 hover:text-white transition-colors"
       >
-        <input type="text" name="" id="" placeholder="Buscar..." />
+        <input type="text" name="" id="" placeholder="{{'BOUNSIC.NAVBAR.SEARCH'  | translate}}" />
       </a>
 
       <!-- Mobile Login / Logout -->
@@ -194,14 +194,14 @@
         (click)="loginRedirect()"
         class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
       >
-        {{"BOUNSIC.NAVBAR.SIGNIN"  | translate}}
+        {{'BOUNSIC.NAVBAR.SIGNIN'  | translate}}
       </button>
       <button
         *ngIf="userProfile"
         (click)="logout()"
         class="block text-sm text-white/90 hover:text-red-600 transition-colors"
       >
-        Cerrar sesión
+        {{'BOUNSIC.NAVBAR.SIGNOUT'  | translate}}
       </button>
     </div>
   </div>

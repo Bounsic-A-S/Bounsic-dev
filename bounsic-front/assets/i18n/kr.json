@@ -27,7 +27,9 @@
       "TRENDING": "인기",
       "LIBRARY": "라이브러리",
       "SEARCH": "검색...",
-      "SIGNIN": "로그인"
+      "SIGNIN": "로그인",
+      "SIGNOUT": "로그아웃",
+      "SETTINGS": "설정"
     },
     "DASHBOARD": {
       "TITLE1": "노래를 기반으로 라디오를 틀어보세요",
@@ -70,7 +72,7 @@
       "BUTTON": "계정 만들기",
       "TEXT4": "이미 계정이 있나요?"
     },
-    "SETINGS": {
+    "SETTINGS": {
       "ACCOUNT": {
         "TITLE1": "계정 정보",
         "EMAIL": "이메일 주소",
