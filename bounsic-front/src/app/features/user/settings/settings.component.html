@@ -2,7 +2,7 @@
   <!-- Sidebar -->
   <aside class="w-[14vw] flex flex-col shadow-bounsic-sidebar-user">
     <!-- Back button -->
-    <div class="p-4"><</div>
+    <div class="p-4"></div>
     <nav class="flex-1">
       <ul class="space-y-4 py-4">
         <ng-container *ngFor="let item of menuItems">
@@ -40,7 +40,9 @@
     </div>
   </aside>
   <!-- Main content -->
-  <main class="h-screen w-full container mx-auto grid px-10">
-    <router-outlet></router-outlet>
+  <main class="h-screen w-full container mx-auto px-10">
+    <div class="container mx-auto px-4 mt-[10vh]">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </body>
