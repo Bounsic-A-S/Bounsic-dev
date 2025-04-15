@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { HealthService } from '@app/services/health.service';
 import { catchError } from 'rxjs/operators';
 import { of, firstValueFrom } from 'rxjs';
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule,TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LandingNavBarComponent implements OnInit {
