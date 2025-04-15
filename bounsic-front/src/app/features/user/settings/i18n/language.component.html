@@ -2,9 +2,9 @@
 <div
 class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 w-1/2">
 <select id="language" class="bg-bounsic-gray-4 text-white w-full focus:outline-none" (change)="changeLanguage($event)">
-  <option value="es">Español</option>
-  <option value="en">English</option>
-  <option value="kr">Korean</option>
+  <option [selected]="actualLang === 'es'" value="es">Español</option>
+  <option [selected]="actualLang === 'en'" value="en">English</option>
+  <option [selected]="actualLang === 'kr'" value="kr">Korean</option>
 </select>
 </div>
 

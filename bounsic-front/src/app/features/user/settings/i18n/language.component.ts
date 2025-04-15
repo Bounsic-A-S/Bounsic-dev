@@ -18,11 +18,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class LanguageComponent {
     constructor(private translateService: TranslateService) {}
+    public actualLang = localStorage.getItem('language') || 'es';
 
     changeLanguage(event: Event) {
       if (event.target) {
         const changeEvent = event.target as HTMLInputElement;
         this.translateService.use(changeEvent.value);
+        localStorage.setItem('language', changeEvent.value);
       }
     }
 }

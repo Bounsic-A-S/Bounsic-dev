@@ -39,7 +39,7 @@ export const appConfig: ApplicationConfig = {
     MsalGuard,
     MsalBroadcastService,
     importProvidersFrom(TranslateModule.forRoot({
-      defaultLanguage: 'es',
+      defaultLanguage: localStorage.getItem('language') || 'es',
       loader: {
         provide: TranslateLoader,
         useFactory: translateLoaderFactory,
