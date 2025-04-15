@@ -7,7 +7,7 @@ import { LucideAngularModule, ChevronLeft } from 'lucide-angular';
   selector: 'app-user-settings',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     RouterModule,
     LucideAngularModule
   ],
@@ -17,7 +17,7 @@ import { LucideAngularModule, ChevronLeft } from 'lucide-angular';
 export class SettingsComponent {
   public leftArrow = ChevronLeft;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   goBack(): void {
     this.router.navigate(['/dashboard']);
@@ -31,7 +31,7 @@ export class SettingsComponent {
     { label: 'Plan' },
     { label: 'Reproducción' },
     { label: 'Apariencia', route: 'appearance' },
-    { label: 'Idioma' }
-  ];  
+    { label: 'Idioma', route: 'language' }
+  ];
 
 }
