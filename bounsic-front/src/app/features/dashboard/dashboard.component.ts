@@ -7,7 +7,7 @@ import { SafeChoiceListComponent } from './safeChoicesList/safe-choices-list.com
 import { TrendingSongsComponent } from "./trendingSongs/trending-songs.component";
 import { ArtistListComponent } from "./artistList/artist_list.component";
 import { LastMonthSongsComponent } from "./lastMonthSongs/last-month-songs.component";
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -16,11 +16,11 @@ import { LastMonthSongsComponent } from "./lastMonthSongs/last-month-songs.compo
     SearchBarComponent,
     SongsCarouselComponent,
     RouterModule,
-    SearchBarComponent,
     SafeChoiceListComponent,
     TrendingSongsComponent,
     ArtistListComponent,
-    LastMonthSongsComponent
+    LastMonthSongsComponent,
+    TranslateModule
 ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -26,12 +26,13 @@ import { Router, RouterModule } from '@angular/router';
 import { LucideAngularModule, LogIn, LogOut, Heart, Settings } from 'lucide-angular';
 import { AuthComponent } from "@app/auth/auth.component";
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
-
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, AuthComponent,ClickOutsideDirective],
+  imports: [CommonModule, RouterModule, LucideAngularModule, 
+    AuthComponent,ClickOutsideDirective,TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarAppComponent implements OnInit, OnDestroy {
@@ -55,7 +56,9 @@ export class NavbarAppComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
   isModalOpen = false; // Controla si el modal está abierto o cerrado
-
+  goToSettings() {
+    this.router.navigate(['/settings']);
+  }
   openModal() {
     this.isModalOpen = true; // Abre el modal
   }

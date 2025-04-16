@@ -4,7 +4,7 @@ import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { LibraryItemComponent } from './library_item/library_item.component';
 import { PlaylistService } from '@app/services/playlist.service';
 import { catchError, map, of, Observable } from 'rxjs';
-
+import { TranslateModule } from '@ngx-translate/core';
 interface Playlist {
     id: number;
     title: string;
@@ -16,7 +16,7 @@ interface Playlist {
     selector: 'app-library',
     standalone: true,
     templateUrl: './library.component.html',
-    imports: [NavbarAppComponent, CommonModule, LibraryItemComponent],
+    imports: [NavbarAppComponent, CommonModule, LibraryItemComponent, TranslateModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibraryComponent implements OnInit {

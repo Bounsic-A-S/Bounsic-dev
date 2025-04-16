@@ -14,11 +14,12 @@ import {
 } from '@angular/forms';
 import { AuthService } from '@app/services/auth/auth.service';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,ClickOutsideDirective],
+  imports: [CommonModule, ReactiveFormsModule,ClickOutsideDirective,TranslateModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

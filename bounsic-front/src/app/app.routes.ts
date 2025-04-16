@@ -9,6 +9,7 @@ import { SettingsComponent } from './features/user/settings/setting.component';
 import { SettingsAccountComponent } from './features/user/settings/account/account.component';
 import { SettingsAppearanceComponent } from './features/user/settings/color/appearance.component';
 import { AboutUsComponent } from './features/landing/about/about.component';
+import { LanguageComponent } from './features/user/settings/i18n/language.component';
 
 
 export const routes: Routes = [
@@ -40,7 +41,7 @@ export const routes: Routes = [
             // { path: 'plan', component: PlanComponent },
             // { path: 'playback', component: PlaybackComponent },
             { path: 'appearance', component: SettingsAppearanceComponent },
-            // { path: 'language', component: LanguageComponent }
+            { path: 'language', component: LanguageComponent }
           ]
     },
     {

@@ -43,15 +43,15 @@
           </svg>
         </button>
         <h2 class="text-lg font-semibold">
-          {{ isRegisterForm ? "Iniciar Sesión" : "Registrarse" }}
+          {{ isRegisterForm ? ('BOUNSIC.LOGIN.TITLE1' | translate) : ('BOUNSIC.REGISTER.TITLE1' | translate) }}
         </h2>
         <div class="h-[1px] w-11/12 bg-white my-4"></div>
         <section *ngIf="isRegisterForm">
           <p class="text-sm sm:text-base text-bounsic-gray-1 mb-1 text-center">
-            Inicio seguro con Azure
+            {{ 'BOUNSIC.LOGIN.TEXT1' | translate }}
           </p>
           <p class="text-sm sm:text-base text-bounsic-gray-1 mb-6 text-center">
-            Tu cuenta, tu música. Conéctate con confianza.
+            {{ 'BOUNSIC.LOGIN.TEXT2' | translate }}
           </p>
         </section>
 
@@ -62,7 +62,7 @@
             <input
               type="text"
               formControlName="username"
-              placeholder="Nombre de usuario"
+              placeholder="{{ 'BOUNSIC.REGISTER.TEXT1' | translate }}"
               class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
             <div
@@ -72,14 +72,14 @@
               "
               class="text-red-400 text-xs -mt-2 mb-2 px-4"
             >
-              Necesitas un nombre
+              {{'BOUNSIC.REGISTER.TEXT1_ERR' | translate}}
             </div>
 
             <!-- Email field -->
             <input
               type="email"
               formControlName="email"
-              placeholder="Email"
+              placeholder="{{ 'BOUNSIC.REGISTER.TEXT2' | translate }}"
               class="text-sm w-full mb-3 px-4 py-2 rounded-lg bg-zinc-800 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/20"
             />
             <div
@@ -90,10 +90,10 @@
               class="text-red-400 text-xs -mt-2 mb-2 px-4"
             >
               <span *ngIf="registerForm.get('email')?.errors?.['required']"
-                >Necesitas un Email</span
+                >{{ 'BOUNSIC.REGISTER.TEXT2_ERR' | translate }}</span
               >
               <span *ngIf="registerForm.get('email')?.errors?.['email']"
-                >Email no válido</span
+                >{{ 'BOUNSIC.REGISTER.TEXT2_ERR_2' | translate }}</span
               >
             </div>
           </form>
@@ -105,7 +105,7 @@
           class="w-full py-2 rounded-full bg-white text-black font-semibold cursor-pointer hover:brightness-110 transition"
           [disabled]="!isRegisterForm && (isSubmitting || registerForm.invalid)"
         >
-          <span>{{ isRegisterForm ? "Ingresar" : "Crear cuenta" }}</span>
+          <span>{{ isRegisterForm ? ('BOUNSIC.LOGIN.BUTTON' | translate) : ('BOUNSIC.REGISTER.BUTTON' | translate) }}</span>
           <span
             *ngIf="!isRegisterForm && isSubmitting"
             class="flex items-center justify-center"
@@ -139,13 +139,13 @@
         >
           <span class="flex items-center gap-x-1">
             <p>
-              {{ isRegisterForm ? "No tienes cuenta? " : "Ya tienes cuenta " }}
+              {{ isRegisterForm ? ('BOUNSIC.LOGIN.TEXT3' | translate) : ('BOUNSIC.REGISTER.TEXT3' | translate) }}
             </p>
             <button
               class="text-xs text-bounsic-gray-1 underline hover:cursor-pointer"
               (click)="toggleForms()"
             >
-              {{ isRegisterForm ? "Registrarse" : "Iniciar Sesión" }}
+              {{ isRegisterForm ? ('BOUNSIC.REGISTER.TITLE1' | translate) : ('BOUNSIC.LOGIN.TITLE1' | translate) }}
             </button>
           </span>
         </div>
