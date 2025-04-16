@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LandingNavBarComponent } from '@app/features/landing/navbar/navbar.component';
-import { ApiService } from '@app/services/song.service';
+import { HealthService } from '@app/services/health.service';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
 
@@ -9,7 +9,7 @@ describe('LandingNavBarComponent', () => {
   let fixture: ComponentFixture<LandingNavBarComponent>;
 
   const mockApiService = {
-    getTest: () => of('Bounsic works in testing!'),
+    getHealth: () => of('Bounsic works in testing!'),
   };
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('LandingNavBarComponent', () => {
       imports: [LandingNavBarComponent],
       providers: [
         provideRouter([]),
-        { provide: ApiService, useValue: mockApiService },
+        { provide: HealthService, useValue: mockApiService },
       ],
     }).compileComponents();
 

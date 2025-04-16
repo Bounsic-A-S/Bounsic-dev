@@ -1,0 +1,20 @@
+name: Deploy to Azure
+
+on:
+  workflow_run:
+    workflows: ["Dockerize Frontend"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Frontend to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'bounsic-front-nginx'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3CCD7D22BA9147A6B28572F8F693B975 }}
+          images: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}'

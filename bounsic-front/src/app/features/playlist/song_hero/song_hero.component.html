@@ -1,5 +1,5 @@
 <article
-  class="text-white w-full p-4 flex flex-row items-start gap-4 md:flex-col md:items-start md:gap-2 md:w-[300px]"
+  class="text-white w-fit p-4 flex flex-row items-start gap-4 md:flex-col md:items-start md:mx-2 md:gap-2"
 >
   <div class="flex justify-center drop-shadow-lg">
     <img
@@ -12,12 +12,12 @@
   <div class="flex-1 md:w-full md:flex md:flex-col md:justify-between">
     <section class="text-left">
       <h3 class="text-2xl mb-2 text-nowrap font-semibold md:mb-1 sm:text-4xl md:text-xl ">Playlist privada</h3>
-      <p class="text-sm text-nowrap text-gray-400">{{ totalSongs }} Canciones</p>
-      <p class="text-sm text-nowrap text-gray-400">Actualizada en Enero 2025</p>
+      <p class="text-sm text-nowrap text-bounsic-gray-1">{{ totalSongs }} {{'BOUNSIC.PLAYLIST.SONGS' | translate}}</p>
+      <p class="text-sm text-nowrap text-bounsic-gray-1">{{'BOUNSIC.PLAYLIST.ID.UPDATED' | translate}} Enero 2025</p>
     </section>
 
     <section class="mt-2 text-left">
-      <p class="text-sm text-gray-400">Duración:</p>
+      <p class="text-sm text-bounsic-gray-1">{{'BOUNSIC.PLAYLIST.ID.LENGTH' | translate}}</p>
       <p class="text-sm">{{ formattedDuration }}</p>
     </section>
 
@@ -25,7 +25,7 @@
       <button
         class="bg-white text-black px-4 py-1 rounded-full text-sm text-nowrap font-semibold hover:scale-105 transition-transform"
       >
-        Reproducir Mix
+        {{'BOUNSIC.PLAYLIST.ID.PLAYMIX' | translate}}
       </button>
       <button
         class="border border-gray-500 text-gray-500 px-2 py-1 rounded-full text-sm hover:bg-gray-800 transition-colors"

@@ -1,8 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-    --color-bounsic-gray: #0F0F0F;
-  }
+  /* fonts */
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  /* colors */
+  /* black & white levels , scale 1-4 , low -> strong */
+  --color-bounsic-gray-1: #b8b7b7;
+  --color-bounsic-gray-2: #a7a7a7;
+  --color-bounsic-gray-3: #6c6c6c;
+  --color-bounsic-gray-4: #141313;
+  /* main */
+  --color-bounsic-red: #df0e50;
+  --color-bounsic-yellow: #f6a618;
+  /* background */
+  --color-bounsic-bg-main-purple: #1e0d16;
+  --color-bounsic-bg-main-purple-gray: #1a181a;
+  --color-bounsic-bg-main-purple-light: #0A0210;
+  --color-bounsic-bg-main-pink: #21031B;
+  /* shadows */
+  --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  --shadow-bounsic-sidebar-user: 6px 6px 15px rgba(0, 0, 0, 0.25);
+}
+/* custom classes */
 .scroll-hidden::-webkit-scrollbar {
   display: none;
 }
@@ -10,4 +31,103 @@
 .scroll-hidden {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+/* bg */
+.bg-bounsic-gradient {
+  background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+    linear-gradient(
+      to bottom,
+      var(--color-bounsic-bg-main-purple),
+      var(--color-bounsic-bg-main-purple-gray)
+    ),
+    url('/background/PATTERNS.svg');
+  background-size: auto;
+  background-repeat: repeat;
+  background-position: center;
+  background-blend-mode: multiply, overlay;
+}
+
+@utility bg-bounsic-gradient-about {
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    radial-gradient(
+      circle at center,  /* Gradiente circular centrado */
+      var(--color-bounsic-bg-main-pink),
+      var(--color-bounsic-bg-main-purple-light)
+    ),
+    url('/background/dotPattern.svg');
+  background-size: auto, cover, 105%;
+  background-repeat: repeat, no-repeat, repeat;
+  background-position: center, center, initial;
+  background-blend-mode: overlay;
+  background-attachment: scroll, scroll, fixed; 
+}
+@utility bg-bounsic-gradient-about-mobile {
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    radial-gradient(
+      circle at center,  /* Gradiente circular centrado */
+      var(--color-bounsic-bg-main-pink),
+      var(--color-bounsic-bg-main-purple-light)
+    )
+}
+
+
+
+
+/* FONTS */
+
+/* ROBOTO (MAIN) */
+@font-face {
+  font-family: "Roboto";
+  src: url("assets/fonts/roboto/Roboto-Bold.woff2")
+      format("woff2"),
+    url("assets/fonts/roboto/Roboto-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("assets/fonts/roboto/Roboto-Regular.woff2")
+      format("woff2"),
+    url("assets/fonts/roboto/Roboto-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("assets/fonts/roboto/Roboto-Thin.woff2")
+      format("woff2"),
+    url("assets/fonts/roboto/Roboto-Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* POPPINS */
+
+@font-face {
+  font-family: "Poppins";
+  src: url("assets/fonts/poppins/Poppins-Black.woff2")
+      format("woff2"),
+    url("assets/fonts/poppins/Poppins-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("assets/fonts/poppins/Poppins-Bold.woff2")
+      format("woff2"),
+    url("assets/fonts/poppins/Poppins-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }

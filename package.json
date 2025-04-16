@@ -24,12 +24,14 @@
   "scripts": {
     "install:frontend": "cd bounsic-front && bun install",
     "install:backend": "cd bounsic-back && powershell -Command python -m venv venv && powershell -Command \"venv\\Scripts\\activate;pip install -r requirements.txt\"",
+    "install:backend_linux": "cd bounsic-back && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
     "install": "bun run install:frontend && bun run install:backend",
     "start:frontend": "cd bounsic-front && bun run start",
     "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
-    "start": "concurrently \"bun run start:frontend\" \"bun run start:backend\"",
+    "start:backend_linux": "cd bounsic-back && source venv/bin/activate && python -m app.main",
+    "start": "concurrently \"bun run start:frontend\" \"bun run start:backend_linux\"",
     "test:frontend": "cd bounsic-front && bun run test",
-    "test:frontend_linux":"cd bounsic-front && export CHROME_BIN=/snap/bin/chromium && bun run test",
+    "test:frontend_linux": "cd bounsic-front && export CHROME_BIN=/snap/bin/chromium && bun run test",
     "test:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;pytest\"",
     "test": "concurrently \"bun run test:frontend\" \"bun run test:backend\""
   },

@@ -1,10 +1,35 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { CommonModule } from '@angular/common';
 import { SongHeroComponent } from './song_hero/song_hero.component';
+import { ActivatedRoute } from '@angular/router';
+import { PlaylistService } from '@app/services/playlist.service';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+
+interface Song {
+  id: number;
+  title: string;
+  artist: string;
+  album: string;
+  cover: string;
+  duration: string;
+  mp3Url:string;
+}
+
+interface PlaylistDetail {
+  id: number | string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  totalSongs: number;
+  totalDuration: string;
+  songs: Song[];
+}
+
 @Component({
-  selector: 'app-playlist-detail',
+  selector: 'app-playlist',
   standalone: true,
   imports: [
     NavbarAppComponent,
@@ -15,125 +40,63 @@ import { SongHeroComponent } from './song_hero/song_hero.component';
   templateUrl: './playlist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlaylistComponent {
-  public album = {
-    id: 1,
-    name: 'Top Hits',
-    description: 'Top Hits of the Week',
-    imageUrl: '',
-    totalSongs: 7,
-    totalDuration: '30:00',
-    songs: [
-      {
-        id: 1,
-        title: 'Yellow',
-        artist: 'Coldplay',
-        album: 'Parachutes',
-        cover:
-          'https://i.pinimg.com/736x/9a/5d/ec/9a5dec457d79fb2916fda52c6f831652.jpg',
-        duration: '4:30',
-      },
-      {
-        id: 2,
-        title: 'Creep',
-        artist: 'Radiohead',
-        album: 'Pablo Honey',
-        cover:
-          'https://i.pinimg.com/736x/4c/b9/78/4cb9781154d0dd1a316d5b45124f0912.jpg',
-        duration: '3:59',
-      },
-      {
-        id: 3,
-        title: 'Boulevard of Broken Dreams',
-        artist: 'Green Day',
-        album: 'American Idiot',
-        cover:
-          'https://i.pinimg.com/736x/ae/b9/70/aeb970e9c064d436bda11462fc889489.jpg',
-        duration: '4:20',
-      },
-      {
-        id: 4,
-        title: 'Take Me to Church',
-        artist: 'Hozier',
-        album: 'Hozier',
-        cover:
-          'https://i.pinimg.com/736x/a6/47/91/a64791f712cb10397610c83aa2612895.jpg',
-        duration: '4:01',
-      },
-      {
-        id: 5,
-        title: 'Believer',
-        artist: 'Imagine Dragons',
-        album: 'Evolve',
-        cover:
-          'https://i.pinimg.com/736x/5b/4c/ed/5b4ced22923bd1c1353d28213bffad03.jpg',
-        duration: '3:24',
-      },
-      {
-        id: 6,
-        title: 'Uptown Funk',
-        artist: 'Mark Ronson ft. Bruno Mars',
-        album: 'Uptown Special',
-        cover:
-          'https://i.pinimg.com/736x/6c/f6/7f/6cf67f7ed6227a20b15035bd57d8927f.jpg',
-        duration: '4:30',
-      },
-      {
-        id: 7,
-        title: "Can't Stop",
-        artist: 'Red Hot Chili Peppers',
-        album: 'By the Way',
-        cover:
-          'https://i.pinimg.com/736x/c7/dc/60/c7dc60cfeaab1c085d3bba491826a06b.jpg',
-        duration: '4:29',
-      }, {
-        id: 8,
-        title: "Smells Like Teen Spirit",
-        artist: "Nirvana",
-        album: "Nevermind",
-        cover: "https://i.pinimg.com/736x/66/4e/1d/664e1d976aea5b6fde0c6c09f4a48572.jpg",
-        duration: "5:01"
-      },
-      {
-        id: 9,
-        title: "Somebody That I Used to Know",
-        artist: "Gotye ft. Kimbra",
-        album: "Making Mirrors",
-        cover: "https://i.pinimg.com/736x/05/90/02/05900242bf89234a36fc1d8dfd83d0de.jpg",
-        duration: "4:04"
-      },
-      {
-        id: 10,
-        title: "Counting Stars",
-        artist: "OneRepublic",
-        album: "Native",
-        cover: "https://i.pinimg.com/736x/bc/e2/0c/bce20c8a2786659b119555d45884ccd0.jpg",
-        duration: "4:17"
-      },
-      {
-        id: 11,
-        title: "Clocks",
-        artist: "Coldplay",
-        album: "A Rush of Blood to the Head",
-        cover: "https://i.pinimg.com/736x/e9/89/50/e98950fc61a295ca2c653681f6dc728e.jpg",
-        duration: "5:07"
-      },
-      {
-        id: 12,
-        title: "Shape of You",
-        artist: "Ed Sheeran",
-        album: "÷ (Divide)",
-        cover: "https://i.pinimg.com/736x/52/75/fb/5275fbf6f58f84ae522e29e434aa893d.jpg",
-        duration: "3:53"
-      },
-      {
-        id: 13,
-        title: "Radioactive",
-        artist: "Imagine Dragons",
-        album: "Night Visions",
-        cover: "https://i.pinimg.com/736x/62/ec/04/62ec049bb30969e8ef154d6aca5bd274.jpg",
-        duration: "3:06"
+export class PlaylistComponent implements OnInit {
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private playlistService = inject(PlaylistService);
+
+  playlistId$: Observable<string | null> = this.route.paramMap.pipe(
+    map(params => params.get('id'))
+  );
+
+  album$: Observable<PlaylistDetail | undefined> = this.playlistId$.pipe(
+    tap(id => console.log('Playlist ID:', id)),
+    switchMap(playlistId => {
+      if (!playlistId) {
+        console.log('No playlist ID provided');
+        return of(undefined);
       }
-    ],
-  };
+      console.log('Fetching playlist with ID:', playlistId);
+      return this.playlistService.getPlaylistById(playlistId).pipe(
+        tap(response => console.log('API Response:', response)),
+        map(response => ({
+          id: response.id,
+          name: response.name || response.title || 'Untitled Playlist',
+          description: response.description ?? '',
+          imageUrl: response.img_url || '',
+          totalSongs: response.songs?.length || 0,
+          totalDuration: this.calculateTotalDuration(response.songs || []),
+          songs: (response.songs || []).map((song: { _id: any; id: any; title: any; artist: any; album: any; img_url: any; mp3_url:any, cover: any; duration: any; },i: number) => ({
+            id:i+1,
+            title: song.title || '',
+            artist: song.artist || '',
+            album: song.album || '',
+            cover: song.img_url || song.cover || '',
+            mp3Url: song.mp3_url || '',
+            duration: song.duration || '0:00'
+          }))
+        })),
+        catchError(error => {
+          console.error('Error fetching playlist:', error);
+          return of(undefined);
+        })
+      );
+    })
+  );
+
+  private calculateTotalDuration(songs: any[]): string {
+    if (!songs || songs.length === 0) return '0:00';
+    const totalSeconds = songs.reduce((acc, song) => {
+      const duration = song.duration || '0:00';
+      const [minutes, seconds] = duration.split(':').map(Number);
+      return acc + (minutes * 60 + (seconds || 0));
+    }, 0);
+    
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  ngOnInit(): void {
+    // The subscription is handled automatically by the async pipe in the template
+  }
 }
