@@ -6,3 +6,4 @@ from .scrapping_controller import get_youtube_scrapping_request,search_youtube_r
 from .artist_controller import get_artist_desc_controller, get_songs_by_artist_controller
 from .spotify_controller import get_album_cover_controller,get_track_info_controller
 from .playlist_controller import get_playlist_by_id_controller,get_all_playlists_controller
+from .mysql_controller import MySQLController
