@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { LandingTextComponent } from '@app/features/landing/tittle/tittle.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('LandingTextComponent', () => {
     let component: LandingTextComponent;
@@ -8,7 +9,7 @@ describe('LandingTextComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [LandingTextComponent],
+            imports: [LandingTextComponent,TranslateModule.forRoot()],
         }).compileComponents();
 
         fixture = TestBed.createComponent(LandingTextComponent);

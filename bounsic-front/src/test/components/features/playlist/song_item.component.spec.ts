@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayListSongItemComponent } from '@app/features/playlist/playlist_song_item/playlist_song.component';
+import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 
 describe('PlayListSongItemComponent', () => {
@@ -8,7 +9,7 @@ describe('PlayListSongItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayListSongItemComponent, LucideAngularModule],
+      imports: [PlayListSongItemComponent, LucideAngularModule,TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayListSongItemComponent);

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SongHeroComponent } from '@app/features/playlist/song_hero/song_hero.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('SongHeroComponent', () => {
   let component: SongHeroComponent;
@@ -7,7 +8,7 @@ describe('SongHeroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SongHeroComponent],
+      imports: [SongHeroComponent,TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SongHeroComponent);

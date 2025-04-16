@@ -3,6 +3,7 @@ import { LandingNavBarComponent } from '@app/features/landing/navbar/navbar.comp
 import { HealthService } from '@app/services/health.service';
 import { of } from 'rxjs';
 import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('LandingNavBarComponent', () => {
   let component: LandingNavBarComponent;
@@ -14,7 +15,7 @@ describe('LandingNavBarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LandingNavBarComponent],
+      imports: [LandingNavBarComponent,TranslateModule.forRoot()],
       providers: [
         provideRouter([]),
         { provide: HealthService, useValue: mockApiService },
