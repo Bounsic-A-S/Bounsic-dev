@@ -1,18 +1,36 @@
-<body class="min-h-screen flex text-white bg-bounsic-gray-4">
-  <!-- Sidebar -->
-  <aside class="w-[14vw] flex flex-col shadow-bounsic-sidebar-user">
-    <!-- Back button -->
-    <button class="p-4 cursor-pointer" (click)="goBack()">
+<body class="min-h-screen flex text-white bg-bounsic-gray-4 relative">
+
+  <button
+    class="absolute w-auto top-4 left-4 z-20 md:hidden p-2 rounded cursor-pointer hover:bg-bounsic-gray-3/60"
+    (click)="toggleSidebar()"
+    clickOutside (clickOutside)="closeSideBar()"
+    aria-label="Abrir menú"
+  >
+    <lucide-icon [img]="menuIcon" [size]="24" [strokeWidth]="3"></lucide-icon>
+  </button>
+
+  <aside
+    [ngClass]="{
+      'translate-x-0': sideBarOpen,
+      '-translate-x-full': !sideBarOpen
+    }"
+    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[36vw] md:w-[14vw]
+     bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10
+      transform transition-transform duration-300 ease-in-out flex flex-col"
+      
+  >
+    <button class="p-4 cursor-pointer hidden md:block" (click)="goBack()">
       <lucide-icon
         [img]="leftArrow"
         class="my-icon"
         [size]="24"
         [strokeWidth]="3"
-      >
-      </lucide-icon>
+      ></lucide-icon>
     </button>
-    <nav class="flex-1">
-      <ul class="space-y-4 py-4">
+    
+
+    <nav class="flex-1 overflow-y-auto scroll-hidden">
+      <ul class="space-y-4 py-4 mt-16 md:mt-0">
         <ng-container *ngFor="let item of menuItems">
           <li
             *ngIf="item.route; else staticItem"
@@ -30,16 +48,14 @@
           </li>
 
           <ng-template #staticItem>
-            <li class="px-6 py-2">
-              {{ item.label }}
-            </li>
+            <li class="px-6 py-2">{{ item.label }}</li>
           </ng-template>
         </ng-container>
       </ul>
     </nav>
 
-    <!-- Logo at bottom -->
-    <div class="p-6 flex justify-center text-white">
+    <!-- Logo -->
+    <div class="p-6 flex justify-center">
       <img
         class="size-12"
         src="/logo/svg/logoBounsic_reduced.svg"
@@ -47,10 +63,10 @@
       />
     </div>
   </aside>
-  <!-- Main content -->
-  <main class="h-screen w-full container mx-auto px-10">
-    <div class="container mx-auto px-4 mt-[10vh]">
-      <router-outlet></router-outlet>
-    </div>
+
+  <!-- Contenido principal scrollable -->
+  <main class="flex-1 max-h-screen overflow-y-auto pt-20 md:pt-[10vh] px-4 md:px-10">
+    <router-outlet></router-outlet>
   </main>
+
 </body>

@@ -1,26 +1,33 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { LucideAngularModule, ChevronLeft } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, Menu } from 'lucide-angular';
+import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    LucideAngularModule
-  ],
+  imports: [CommonModule, RouterModule, LucideAngularModule, ClickOutsideDirective],
   templateUrl: './settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
   public leftArrow = ChevronLeft;
+  public menuIcon = Menu;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
+
+  public sideBarOpen = true;
 
   goBack(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  toggleSidebar(): void {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
+  closeSideBar(): void {
+    this.sideBarOpen = false;
   }
 
   menuItems = [
@@ -31,7 +38,6 @@ export class SettingsComponent {
     { label: 'Plan' },
     { label: 'Reproducción' },
     { label: 'Apariencia', route: 'appearance' },
-    { label: 'Idioma', route: 'language' }
+    { label: 'Idioma', route: 'language' },
   ];
-
 }
