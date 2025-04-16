@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule, ChevronLeft, Menu } from 'lucide-angular';
@@ -27,8 +27,15 @@ export class SettingsComponent {
     this.sideBarOpen = !this.sideBarOpen;
   }
   closeSideBar(): void {
-    this.sideBarOpen = false;
+    if(window.innerWidth < 768){
+      this.sideBarOpen = false;
+    }
   }
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.sideBarOpen = event.target.innerWidth > 768;
+  }
+
 
   menuItems = [
     { label: 'Account', route: 'account' },
