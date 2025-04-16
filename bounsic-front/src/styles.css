@@ -82,9 +82,9 @@
 /* ROBOTO (MAIN) */
 @font-face {
   font-family: "Roboto";
-  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Bold.woff2")
+  src: url("assets/fonts/roboto/Roboto-Bold.woff2")
       format("woff2"),
-    url("/bounsic-front/assets/fonts/roboto/Roboto-Bold.woff") format("woff");
+    url("assets/fonts/roboto/Roboto-Bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -92,9 +92,9 @@
 
 @font-face {
   font-family: "Roboto";
-  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Regular.woff2")
+  src: url("assets/fonts/roboto/Roboto-Regular.woff2")
       format("woff2"),
-    url("/bounsic-front/assets/fonts/roboto/Roboto-Regular.woff") format("woff");
+    url("assets/fonts/roboto/Roboto-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -102,9 +102,9 @@
 
 @font-face {
   font-family: "Roboto";
-  src: url("/bounsic-front/assets/fonts/roboto/Roboto-Thin.woff2")
+  src: url("assets/fonts/roboto/Roboto-Thin.woff2")
       format("woff2"),
-    url("/bounsic-front/assets/fonts/roboto/Roboto-Thin.woff") format("woff");
+    url("assets/fonts/roboto/Roboto-Thin.woff") format("woff");
   font-weight: 100;
   font-style: normal;
   font-display: swap;
@@ -114,9 +114,9 @@
 
 @font-face {
   font-family: "Poppins";
-  src: url("/bounsic-front/assets/fonts/poppins/Poppins-Black.woff2")
+  src: url("assets/fonts/poppins/Poppins-Black.woff2")
       format("woff2"),
-    url("/bounsic-front/assets/fonts/poppins/Poppins-Black.woff") format("woff");
+    url("assets/fonts/poppins/Poppins-Black.woff") format("woff");
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -124,9 +124,9 @@
 
 @font-face {
   font-family: "Poppins";
-  src: url("/bounsic-front/assets/fonts/poppins/Poppins-Bold.woff2")
+  src: url("assets/fonts/poppins/Poppins-Bold.woff2")
       format("woff2"),
-    url("/bounsic-front/assets/fonts/poppins/Poppins-Bold.woff") format("woff");
+    url("assets/fonts/poppins/Poppins-Bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
   font-display: swap;

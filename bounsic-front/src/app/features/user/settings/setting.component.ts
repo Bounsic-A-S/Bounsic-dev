@@ -3,11 +3,18 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule, ChevronLeft, Menu } from 'lucide-angular';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, ClickOutsideDirective],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LucideAngularModule,
+    TranslateModule,
+    ClickOutsideDirective
+  ],
   templateUrl: './settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,13 +45,13 @@ export class SettingsComponent {
 
 
   menuItems = [
-    { label: 'Account', route: 'account' },
-    { label: 'Privacidad' },
-    { label: 'Conexiones' },
-    { label: 'Notificaciones' },
-    { label: 'Plan' },
-    { label: 'Reproducción' },
-    { label: 'Apariencia', route: 'appearance' },
-    { label: 'Idioma', route: 'language' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.ACCOUNT', route: 'account' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PRIVACY' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.CONNECTIONS' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.NOTIFICATIONS' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAN' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAYER' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PREFERENCES', route: 'appearance' },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.LANGUAGE', route: 'language' }
   ];
 }
