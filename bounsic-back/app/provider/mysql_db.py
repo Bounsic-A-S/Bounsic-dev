@@ -54,7 +54,7 @@ class DatabaseFacade:
     def release_connection(self, connection):
         if connection:
             connection.close()  # Para mysql.connector, close() devuelve la conexión al pool
-            
+
     def execute_query(self, query, params=None):
         connection = self.get_connection()
         if connection:
@@ -69,12 +69,18 @@ class DatabaseFacade:
                     # Para consultas SELECT, devolver los resultados
                     result = cursor.fetchall()
                     return result
-                else:
-                    # Para INSERT, UPDATE, DELETE, devolver filas afectadas
+                elif query_type == "INSERT":
+                    # Para INSERT, hacer commit y devolver información incluyendo el último ID
                     connection.commit()
                     return {
                         "rowcount": cursor.rowcount,
                         "lastrowid": cursor.lastrowid
+                    }
+                else:
+                    # Para UPDATE, DELETE, hacer commit y devolver filas afectadas
+                    connection.commit()
+                    return {
+                        "rowcount": cursor.rowcount
                     }
                     
             except mysql.connector.Error as err:
@@ -85,6 +91,6 @@ class DatabaseFacade:
             finally:
                 cursor.close()
                 if connection.is_connected():
-                    connection.close()  # Con mysql.connector usamos close() para devolver al pool
+                    connection.close()
         return None
 

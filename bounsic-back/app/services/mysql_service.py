@@ -310,19 +310,24 @@ class MySQLSongService:
             print.error(f"get_playlists_by_user error: {e}")
             return None
 
-    def insert_playlist( data):
+    def insert_playlist(data):
         try:
             query = "INSERT INTO Bounsic_Playlist (plist_name, playlist_desc, playlist_mongo_id) VALUES (%s, %s, %s)"
             values = (data["plist_name"], data.get("playlist_desc"), data["playlist_mongo_id"])
             result = MySQLSongService._db.execute_query(query, values)
 
             if "user_id" in data and result:
-                playlist_id = MySQLSongService._db.last_insert_id()
-                MySQLSongService._db.execute_query("INSERT INTO Bounsic_User_Playlists (user_id, playlist_id) VALUES (%s, %s)", (data["user_id"], playlist_id))
+                # Obtener el ID directamente del resultado
+                playlist_id = result["lastrowid"]
+                
+                MySQLSongService._db.execute_query(
+                    "INSERT INTO Bounsic_User_Playlists (user_id, playlist_id) VALUES (%s, %s)", 
+                    (data["user_id"], playlist_id)
+                )
 
             return result
         except Exception as e:
-            print.error(f"insert_playlist error: {e}")
+            print(f"insert_playlist error: {e}")
             return False
 
     def update_playlist( playlist_id, data):
