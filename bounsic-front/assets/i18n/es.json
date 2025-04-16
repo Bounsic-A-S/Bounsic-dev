@@ -57,6 +57,16 @@
       "PLAYLISTS": "Playlists",
       "LIKES": "Me gustas"
     },
+    "PLAYLIST": {
+      "PLAYLIST": "Listas de reproducción",
+      "LIKES": "Me gustas",
+      "SONGS":"Canciones",
+      "ID":{
+        "UPDATED":"Actualizada en",
+        "PLAYMIX":"Play mix",
+        "LENGTH":"Duración"
+      }
+    },
     "LOGIN": {
       "TITLE1": "Inciar Sesión",
       "TEXT1": "Inicio seguro con Azure",
@@ -67,12 +77,25 @@
     "REGISTER": {
       "TITLE1": "Registrarse",
       "TEXT1": "Nombre de usuario",
+      "TEXT1_ERR": "Necesitas un nombre de usuario",
       "TEXT2": "Email",
+      "TEXT2_ERR": "Necesitas un Email",
+      "TEXT2_ERR_2":"Email no válido",
       "TEXT3": "Contraseña",
       "BUTTON": "Crear cuenta",
       "TEXT4": "Ya tienes una cuenta?"
     },
     "SETTINGS": {
+      "SIDEBAR":{
+        "ACCOUNT":"Cuenta",
+        "PRIVACY":"Privacidad",
+        "CONNECTIONS":"Conexiones",
+        "NOTIFICATIONS":"Notificaciones",
+        "PLAN":"Plan",
+        "PLAYER":"Reproducción",
+        "PREFERENCES":"Apariencia",
+        "LANGUAGE":"Idioma"
+      },
       "ACCOUNT": {
         "TITLE1": "Información de la cuenta",
         "EMAIL": "Correo electrónico",
@@ -88,7 +111,13 @@
       "NOTIFICATIONS": {},
       "PLAN": {},
       "PLAYER": {},
-      "PREFERENCES": {},
+      "PREFERENCES": {
+        "TITLE": "Temas",
+        "GRADIENTS": "Degradados",
+        "SOLID_COLORS": "Colores sólidos",
+        "BASIC": "Básico",
+        "FONT_SIZE": "Tamaño de la fuente"
+      },
       "LANGUAGE": {
         "TITLE": "Idioma",
         "WELCOME": "Bienvenido a"

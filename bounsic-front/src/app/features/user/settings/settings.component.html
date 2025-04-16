@@ -25,13 +25,13 @@
             }"
           >
             <a [routerLink]="item.route" class="block w-full">
-              {{ item.label }}
+              {{ item.label | translate }}
             </a>
           </li>
 
           <ng-template #staticItem>
             <li class="px-6 py-2">
-              {{ item.label }}
+              {{ item.label | translate }}
             </li>
           </ng-template>
         </ng-container>

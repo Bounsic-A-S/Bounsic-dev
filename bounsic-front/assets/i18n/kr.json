@@ -57,6 +57,16 @@
       "PLAYLISTS": "재생목록",
       "LIKES": "좋아요"
     },
+    "PLAYLIST": {
+      "PLAYLIST": "재생목록",
+      "LIKES": "좋아요",
+      "SONGS":"노래",
+      "ID":{
+        "UPDATED":"수정된",
+        "PLAYMIX":"플레이믹스",
+        "LENGTH":"길이"
+      }
+    },
     "LOGIN": {
       "TITLE1": "로그인",
       "TEXT1": "Azure로 로그인",
@@ -67,12 +77,25 @@
     "REGISTER": {
       "TITLE1": "회원가입",
       "TEXT1": "사용자 이름",
+      "TEXT1_ERR": "사용자 이름이 필요합니다",
       "TEXT2": "이메일",
+      "TEXT2_ERR": "이메일이 필요합니다",
+      "TEXT2_ERR_2":"이메일이 유효하지 않습니다",
       "TEXT3": "비밀번호",
       "BUTTON": "계정 만들기",
       "TEXT4": "이미 계정이 있나요?"
     },
     "SETTINGS": {
+      "SIDEBAR":{
+        "ACCOUNT":"계정",
+        "PRIVACY":"프라이버시",
+        "CONNECTIONS":"연결",
+        "NOTIFICATIONS":"알림",
+        "PLAN":"플랜",
+        "PLAYER":"생식",
+        "PREFERENCES":"외관",
+        "LANGUAGE":"언어"
+      },
       "ACCOUNT": {
         "TITLE1": "계정 정보",
         "EMAIL": "이메일 주소",
@@ -88,7 +111,13 @@
       "NOTIFICATIONS": {},
       "PLAN": {},
       "PLAYER": {},
-      "PREFERENCES": {},
+      "PREFERENCES": {
+        "TITLE": "테마",
+        "GRADIENTS": "그라디언트",
+        "SOLID_COLORS": "단색",
+        "BASIC": "기본",
+        "FONT_SIZE": "폰트 크기"
+      },
       "LANGUAGE": {
         "TITLE": "언어",
         "WELCOME": "환영합니다"
