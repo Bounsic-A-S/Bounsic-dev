@@ -1,4 +1,4 @@
-name: Deploy Backend to Azure
+name: Deploy Backend to Azure (DISABLED)
 
 on:
   workflow_run:
@@ -8,7 +8,8 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ false }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
