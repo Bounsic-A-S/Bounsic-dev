@@ -1,0 +1,27 @@
+    <!-- Control Buttons -->
+    <div class="flex items-center justify-end gap-4">
+        <button class="text-gray-400 hover:text-white">
+          <lucide-icon [img]="List" class="my-icon" [size]="24"></lucide-icon>
+        </button>
+        <!-- Mute/Unmute -->
+      <button (click)="toggleMute.emit()" class="text-gray-400 hover:text-white">
+        <lucide-icon
+          [name]="isMuted ? VolumeX : Volume2"
+          class="size-6 text-slate-500"
+        />
+      </button>
+      </div>
+
+          <!-- Volume Control -->
+    <div class="flex items-center gap-2 w-36 ml-4">
+      <lucide-icon name="Volume2" class="h-5 w-5 text-slate-500" />
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        [value]="volume"
+        (input)="onVolumeChange_($event)"
+        class="w-full accent-indigo-600"
+      />
+    </div>

@@ -1,61 +1,81 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { LucideAngularModule, Heart, MoreVertical, SkipBack, SkipForward, Play, Pause, List, Volume2 } from 'lucide-angular';
-import { PlayerBarComponent } from "./playbar/playbar.component";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { LucideAngularModule, Heart, MoreVertical } from 'lucide-angular';
+import { PlayerBarComponent } from './playbar/playbar.component';
+import { PlayerBarControllersComponent } from './controllers/playbar-controllers.component';
 @Component({
   selector: 'player-music',
   standalone: true,
-  imports: [LucideAngularModule, CommonModule, PlayerBarComponent],
+  imports: [
+    LucideAngularModule,
+    CommonModule,
+    PlayerBarComponent,
+    PlayerBarControllersComponent,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './music-player.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerMusicComponent {
-  // @ViewChild('audio') audioRef!: ElementRef<HTMLAudioElement>;
   readonly Heart = Heart;
   readonly MoreVertical = MoreVertical;
-  readonly SkipBack = SkipBack;
-  readonly SkipForward = SkipForward;
-  readonly Play = Play;
-  readonly Pause = Pause;
-  readonly List = List
-  readonly Volume2 = Volume2;
+  isPlaying = signal(false);
+  isMuted = signal(false);
+  volume = signal(1); // 1.0 = 100%
+  duration = signal(0);
+  currentTime = signal(0);
 
+  @ViewChild('audio', { static: true }) audioRef!: ElementRef<HTMLAudioElement>;
 
-  isPlaying = false;
-  progress = 0;
-  currentTime = 0;
-  duration = 0;
+  ngAfterViewInit() {
+    const audio = this.audioRef.nativeElement;
 
-  togglePlay() {
-    // const audio = this.audioRef.nativeElement;
-    // this.isPlaying ? audio.pause() : audio.play();
-    this.isPlaying = !this.isPlaying;
+    audio.addEventListener('play', () => this.isPlaying.set(true));
+    audio.addEventListener('pause', () => this.isPlaying.set(false));
+    audio.addEventListener('volumechange', () => this.isMuted.set(audio.muted));
+    // tracker on the song
+    audio.addEventListener('loadedmetadata', () => {
+      this.duration.set(audio.duration);
+    });
+
+    // Actualiza tiempo actual cada vez que cambie
+    audio.addEventListener('timeupdate', () => {
+      this.currentTime.set(audio.currentTime);
+    });
   }
 
-  // updateTime() {
-  //   const audio = this.audioRef.nativeElement;
-  //   this.currentTime = audio.currentTime;
-  //   this.progress = (audio.currentTime / audio.duration) * 100;
-  // }
-
-  // setDuration() {
-  //   this.duration = this.audioRef.nativeElement.duration;
-  // }
-
-  // seek(event: any) {
-  //   const audio = this.audioRef.nativeElement;
-  //   const newTime = (event.target.value / 100) * audio.duration;
-  //   audio.currentTime = newTime;
-  // }
-
-  nextSong() {
-    console.log('Siguiente canción');
+  togglePlayPause() {
+    const audio = this.audioRef.nativeElement;
+    audio.paused ? audio.play() : audio.pause();
   }
 
-  prevSong() {
-    console.log('Canción anterior');
+  toggleMute() {
+    const audio = this.audioRef.nativeElement;
+    audio.muted = !audio.muted;
+  }
+  onVolumeChange(vol: number) {
+    const audio = this.audioRef.nativeElement;
+    audio.volume = vol;
+    this.volume.set(vol);
+  }
+  formatTime(time: number): string {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
+  skip(seconds: number) {
+    const audio = this.audioRef.nativeElement;
+    audio.currentTime += seconds;
+  }
+  onSeek(value: number) {
+    this.audioRef.nativeElement.currentTime = value;
+  }
 }
-
-
