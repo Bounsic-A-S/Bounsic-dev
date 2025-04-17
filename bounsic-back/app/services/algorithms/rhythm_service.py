@@ -83,7 +83,7 @@ def main():
     song_name = "genesis"
     recomendations = get_alikes(song_name)
 
-    print(f"\nBest recomendations for {song_name}")
+    print(f"\nBest recomendations for {song_name}  with min_alike=0.7")
     for recom in recomendations:
         print(f"({recom['alike']}%) song: {recom['name']}\n")
 

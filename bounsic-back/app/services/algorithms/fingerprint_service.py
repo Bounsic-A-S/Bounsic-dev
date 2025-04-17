@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 # from app.provider import AZURE_CONNECTION_STRING, AZURE_CONTAINER_NAME
 # from azure.storage.blob import BlobServiceClient
 # from app.provider import db
+
 class FrequencyRangesData(TypedDict):
     bajos: List[float]
     medios: List[float]
@@ -41,19 +42,17 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
         n_fft = 2048  # More frequency bins
         hop_length = n_fft // 4
         D = np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop_length))
-        # Frecuencia  1    2    3    4    5    ...   n_frames
+        # Frequencies  1    2    3    4    5    ...   n_frames
         # ---------------------------------------------------
-        # 0 Hz       [dB1, dB2, dB3, dB4, dB5, ...]  
-        # 100 Hz     [dB1, dB2, dB3, dB4, dB5, ...]  
-        # 200 Hz     [dB1, dB2, dB3, dB4, dB5, ...]  
-        # ...        ...  ...  ...  ...  ...  ...   
-        # sr/2       [dB1, dB2, dB3, dB4, dB5, ...]  
-
+        # 0 Hz       [dB1, dB2, dB3, dB4, dB5, ...]
+        # 100 Hz     [dB1, dB2, dB3, dB4, dB5, ...]
+        # 200 Hz     [dB1, dB2, dB3, dB4, dB5, ...]
+        # ...        ...  ...  ...  ...  ...  ... 
+        # sr/2       [dB1, dB2, dB3, dB4, dB5, ...]
         D_dB = librosa.amplitude_to_db(D, ref=0)
         
         # Segment size
         frames_per_segment = int(segment_duration * sr / hop_length)
-        
         frequencies = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
 
         bpm = float(np.array(bpm).item())
@@ -109,7 +108,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             # distance=10  # Minimum distance between peaks
         )
         avg_spectrum_norm = (avg_spectrum / max_global) * 100
-
         if len(pks) > 0:
 
             low_peaks = []
@@ -194,7 +192,6 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             "altos": amp_altos
         }
     }
-
     return data, distribution
 
 def save_json(fingerprint, songName: str):
@@ -202,7 +199,7 @@ def save_json(fingerprint, songName: str):
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(fingerprint, f, indent=4)
 
-    # Use json.dumps
+    # Use json.dumps to store in data base
     print(f"✅ Huella digital guardada en: {json_path}")
 
 def readFingerprint(songName: str) -> FingerprintData:
@@ -211,6 +208,7 @@ def readFingerprint(songName: str) -> FingerprintData:
         raw_data = json.load(file)
     return cast(FingerprintData, raw_data)
 
+# Old function, Not adapted to new fingerprint
 def graph_fingerpint(songName: str):
     datos = readFingerprint(songName.split(" - ")[0].strip())
     frecuencia_data = datos["frequencies"]
