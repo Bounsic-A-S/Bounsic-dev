@@ -1,58 +1,30 @@
-<div
-  class="bg-black text-white h-full w-full mx-auto flex items-center justify-between px-6"
->
+<div class="bg-black text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1  items-center justify-between gap-6">
+
   <!-- Song Info -->
   <div class="flex items-center gap-4">
     <img
       src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
       alt="Cover"
-      class="size-12 sm:size-16 rounded-md object-cover"
+      class="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-cover flex-shrink-0"
     />
-    <div class="flex-1 truncate">
-      <h3 class="text-base md:text-lg font-semibold">No One Noticed</h3>
-      <p class="text-xs sm:text-sm text-gray-400">The Marias</p>
+    <div class="min-w-0">
+      <h3 class="text-base sm:text-lg font-semibold truncate">No One Noticed</h3>
+      <p class="text-sm text-gray-400 truncate">The Marias</p>
     </div>
-    <div class="flex flex-col sm:flex-row gap-4 px-2 sm:px-4">
-      <button class="text-gray-400 hover:text-white">
-        <lucide-angular
-          [img]="Heart"
-          class="my-icon"
-          [size]="20"
-        ></lucide-angular>
+    <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
+      <button class="text-gray-400 hover:text-white transition-colors">
+        <lucide-angular [img]="Heart" class="my-icon" [size]="20"></lucide-angular>
       </button>
-      <button class="hidden sm:block text-gray-400 hover:text-white">
-        <lucide-angular
-          [img]="MoreVertical"
-          class="my-icon"
-          [size]="20"
-        ></lucide-angular>
+      <button class="hidden sm:block text-gray-400 hover:text-white transition-colors">
+        <lucide-angular [img]="MoreVertical" class="my-icon" [size]="20"></lucide-angular>
       </button>
     </div>
   </div>
 
   <!-- Controls -->
-  <div
-    class="flex flex-col justify-center items-center w-full max-w-96 xl:max-w-xl"
-  >
-    <player-music-playbar></player-music-playbar>
+
+  <div class="flex justify-center w-full sm:w-auto max-w-full">
+    <player-music-playbar class="w-full"></player-music-playbar>
   </div>
 
-  <!-- Extra Controls -->
-  <div class="flex items-center justify-end gap-4">
-    <button class="text-gray-400 hover:text-white">
-      <lucide-angular [img]="List" class="my-icon" [size]="24"></lucide-angular>
-    </button>
-    <button class="text-gray-400 hover:text-white">
-      <lucide-angular
-        [img]="Volume2"
-        class="my-icon"
-        [size]="24"
-      ></lucide-angular>
-    </button>
-  </div>
-
-  <!-- Audio Element -->
-  <!-- <audio #audio (timeupdate)="updateTime()" (loadedmetadata)="setDuration()">
-    <source [src]="song.url" type="audio/mpeg" />
-  </audio> -->
 </div>

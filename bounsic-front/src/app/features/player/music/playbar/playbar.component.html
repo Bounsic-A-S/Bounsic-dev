@@ -16,6 +16,7 @@
 
   <!-- Control Bar -->
   <media-control-bar class="flex items-center gap-4 w-full h-20 px-4 shadow-xl">
+
     <!-- Seek Backward -->
     <button (click)="skip(-10)">
       <lucide-icon [name]="SkipBack" class="w-7 h-7 text-slate-500" />
@@ -29,42 +30,29 @@
       <lucide-icon [name]="isPlaying() ? Pause : Play" class="w-5 h-5" />
     </button>
 
-    <!-- Seek Forward (not working or at least not now) -->
+    <!-- Seek Forward -->
     <button (click)="skip(10)">
       <lucide-icon [name]="SkipForward" class="w-7 h-7 text-slate-500" />
     </button>
 
+    <!-- Divider -->
     <div class="hidden md:block h-8 border-l border-slate-700/10 mx-4"></div>
 
     <!-- Time Display -->
-    <media-time-display class="text-slate-500 text-sm"></media-time-display>
-
-    <!-- Desktop Time Range -->
-    <media-time-range
-      class="hidden md:block h-2 w-48 m-2 rounded-md bg-slate-50"
-      style="--media-range-bar-color: rgb(79 70 229)"
-    >
-      <media-preview-time-display
-        slot="preview"
-        class="text-slate-600 text-xs"
-      ></media-preview-time-display>
-    </media-time-range>
-
-    <!-- Duration Display -->
-    <media-duration-display
-      class="hidden md:block text-slate-500 text-sm"
-    ></media-duration-display>
-
-    <!-- Mute/Unmute -->
-    <button (click)="toggleMute()">
-      <lucide-icon
-        [name]="isMuted() ? VolumeX : Volume2"
-        class="h-5 w-5 text-slate-500"
-      />
-    </button>
-
-    <!-- Sound control -->
-    <div class="flex items-center gap-2 w-36 ml-4">
+    <div class="flex items-center gap-2 w-48 md:w-64">
+      <span class="text-xs text-gray-500">{{ formatTime(currentTime()) }}</span>
+      <input
+        type="range"
+        min="0"
+        [max]="duration()"
+        [value]="currentTime()"
+        (input)="onSeek($event)"
+        class="w-full accent-indigo-600 transition-all duration-200"
+      >
+      <span class="text-xs text-gray-500">{{ formatTime(duration()) }}</span>
+    </div>
+    <!-- Volume Control -->
+    <!-- <div class="flex items-center gap-2 w-36 ml-4">
       <lucide-icon name="Volume2" class="h-5 w-5 text-slate-500" />
       <input
         type="range"
@@ -75,6 +63,20 @@
         (input)="onVolumeChange($event)"
         class="w-full accent-indigo-600"
       />
+    </div> -->
+
+    <!-- Control Buttons -->
+    <div class="flex items-center justify-end gap-4">
+      <button class="text-gray-400 hover:text-white">
+        <lucide-icon [img]="List" class="my-icon" [size]="24"></lucide-icon>
+      </button>
+      <!-- Mute/Unmute -->
+    <button (click)="toggleMute()" class="text-gray-400 hover:text-white">
+      <lucide-icon
+        [name]="isMuted() ? VolumeX : Volume2"
+        class="size-6 text-slate-500"
+      />
+    </button>
     </div>
   </media-control-bar>
 </media-controller>
