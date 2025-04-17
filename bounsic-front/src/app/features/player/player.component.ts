@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { PlayerSong } from './info/song/song.component';
 import { PlayerLyricsComponent } from './lyrics/lyrics.component';
-import { PlayerBarComponent } from "./bar/player-bar.component";
 import { SongListComponent } from "./info/song_list/song-list.component";
+import { PlayerMusicComponent } from "./music/music-player.component";
+import { PlayerBarComponent } from "./music/playbar/playbar.component";
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [NavbarAppComponent, PlayerSong, PlayerLyricsComponent, PlayerBarComponent, SongListComponent],
+  imports: [NavbarAppComponent, PlayerSong, PlayerLyricsComponent, PlayerMusicComponent, SongListComponent, PlayerBarComponent],
   templateUrl: './player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

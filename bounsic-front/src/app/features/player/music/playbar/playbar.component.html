@@ -1,0 +1,80 @@
+<media-controller
+  audio
+  class="container flex"
+  style="
+    --media-background-color: transparent;
+    --media-control-background: transparent;
+    --media-control-hover-background: transparent;
+  "
+>
+  <audio
+    #audio
+    slot="media"
+    src="https://stream.mux.com/O4h5z00885HEucNNa1rV02wZapcGp01FXXoJd35AHmGX7g/audio.m4a"
+    crossorigin
+  ></audio>
+
+  <!-- Control Bar -->
+  <media-control-bar class="flex items-center gap-4 w-full h-20 px-4 shadow-xl">
+    <!-- Seek Backward -->
+    <button (click)="skip(-10)">
+      <lucide-icon [name]="SkipBack" class="w-7 h-7 text-slate-500" />
+    </button>
+
+    <!-- Play/Pause -->
+    <button
+      (click)="togglePlayPause()"
+      class="h-10 w-10 mx-3 rounded-full bg-slate-700 text-white flex items-center justify-center"
+    >
+      <lucide-icon [name]="isPlaying() ? Pause : Play" class="w-5 h-5" />
+    </button>
+
+    <!-- Seek Forward (not working or at least not now) -->
+    <button (click)="skip(10)">
+      <lucide-icon [name]="SkipForward" class="w-7 h-7 text-slate-500" />
+    </button>
+
+    <div class="hidden md:block h-8 border-l border-slate-700/10 mx-4"></div>
+
+    <!-- Time Display -->
+    <media-time-display class="text-slate-500 text-sm"></media-time-display>
+
+    <!-- Desktop Time Range -->
+    <media-time-range
+      class="hidden md:block h-2 w-48 m-2 rounded-md bg-slate-50"
+      style="--media-range-bar-color: rgb(79 70 229)"
+    >
+      <media-preview-time-display
+        slot="preview"
+        class="text-slate-600 text-xs"
+      ></media-preview-time-display>
+    </media-time-range>
+
+    <!-- Duration Display -->
+    <media-duration-display
+      class="hidden md:block text-slate-500 text-sm"
+    ></media-duration-display>
+
+    <!-- Mute/Unmute -->
+    <button (click)="toggleMute()">
+      <lucide-icon
+        [name]="isMuted() ? VolumeX : Volume2"
+        class="h-5 w-5 text-slate-500"
+      />
+    </button>
+
+    <!-- Sound control -->
+    <div class="flex items-center gap-2 w-36 ml-4">
+      <lucide-icon name="Volume2" class="h-5 w-5 text-slate-500" />
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        [value]="volume()"
+        (input)="onVolumeChange($event)"
+        class="w-full accent-indigo-600"
+      />
+    </div>
+  </media-control-bar>
+</media-controller>

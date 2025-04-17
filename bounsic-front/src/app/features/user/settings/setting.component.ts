@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
-  public leftArrow = ChevronLeft;
+  readonly leftArrow = ChevronLeft;
 
   constructor(private router: Router) { }
 
