@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rocola Bounsic</title>
+</head>
+<body>
+  <h1>Rocola Bounsic 🎵</h1>
+
+  <audio id="audioPlayer" controls autoplay>
+    <source id="audioSource" src="http://localhost:4000/stream/BTS (방탄소년단) 'Savage Love' (Laxed – Siren Beat) [BTS Remix] Lyric Video.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+  </audio>
+
+  <br>
+  <button onclick="prevSong()">⏮️ Anterior canción</button>
+  <button onclick="nextSong()">⏭️ Siguiente canción</button>
+
+  <script>
+    const songs = [
+      "BTS (방탄소년단) 'Savage Love' (Laxed – Siren Beat) [BTS Remix] Lyric Video.mp3",
+      "DJ Snake - Taki Taki ft. Selena Gomez, Ozuna, Cardi B (Official Music Video).mp3",
+      "Dua Lipa - Don't Start Now (Official Music Video).mp3"
+    ];
+    let currentIndex = 0;
+
+    function playSong(index) {
+      const audio = document.getElementById("audioPlayer");
+      const source = document.getElementById("audioSource");
+      source.src = `http://localhost:4000/stream/${songs[index]}`;
+      audio.load();
+      audio.play();
+    }
+
+    function nextSong() {
+      currentIndex = (currentIndex + 1) % songs.length;
+      playSong(currentIndex);
+    }
+
+    function prevSong() {
+      currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+      playSong(currentIndex);
+    }
+  </script>
+</body>
+</html>
