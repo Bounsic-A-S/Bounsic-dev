@@ -12,7 +12,7 @@ import { LucideAngularModule, Volume2, VolumeX, List } from 'lucide-angular';
 @Component({
   selector: 'player-music-playbar-controllers',
   standalone: true,
-  imports: [LucideAngularModule, CommonModule,HoverExitDirective],
+  imports: [LucideAngularModule, CommonModule, HoverExitDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './playbar-controllers.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,8 +35,7 @@ export class PlayerBarControllersComponent {
     this.isVolumeOpen = true;
   }
   closeVolume() {
-    console.log('bye');
-    this.isVolumeOpen = false;
+    if (this.isVolumeOpen) this.isVolumeOpen = false;
   }
   onVolumeChange_(event: Event) {
     const value = (event.target as HTMLInputElement).value;

@@ -39,6 +39,7 @@ export class PlayerMusicComponent implements OnChanges {
   volume = signal(1);
   duration = signal(0);
   currentTime = signal(0);
+  lastVolume = 0;
 
   @ViewChild('audio', { static: true }) audioRef!: ElementRef<HTMLAudioElement>;
 
@@ -73,7 +74,13 @@ export class PlayerMusicComponent implements OnChanges {
 
   toggleMute() {
     const audio = this.audioRef.nativeElement;
+    this.lastVolume = (audio.volume);
     audio.muted = !audio.muted;
+    if (audio.muted) {
+      this.volume.set(0);
+    } else {
+      this.volume.set(this.lastVolume);
+    }
   }
 
   onVolumeChange(vol: number) {
