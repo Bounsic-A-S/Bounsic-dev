@@ -4,12 +4,17 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
   signal,
   ViewChild,
 } from '@angular/core';
-import { LucideAngularModule, Heart, MoreVertical } from 'lucide-angular';
+import { Heart, LucideAngularModule, MoreVertical } from 'lucide-angular';
 import { PlayerBarComponent } from './playbar/playbar.component';
 import { PlayerBarControllersComponent } from './controllers/playbar-controllers.component';
+// ... (tus imports)
+
 @Component({
   selector: 'player-music',
   standalone: true,
@@ -23,12 +28,15 @@ import { PlayerBarControllersComponent } from './controllers/playbar-controllers
   templateUrl: './music-player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerMusicComponent {
+export class PlayerMusicComponent implements OnChanges {
+  @Input() song: string | null = null;
+
   readonly Heart = Heart;
   readonly MoreVertical = MoreVertical;
+
   isPlaying = signal(false);
   isMuted = signal(false);
-  volume = signal(1); // 1.0 = 100%
+  volume = signal(1);
   duration = signal(0);
   currentTime = signal(0);
 
@@ -40,15 +48,22 @@ export class PlayerMusicComponent {
     audio.addEventListener('play', () => this.isPlaying.set(true));
     audio.addEventListener('pause', () => this.isPlaying.set(false));
     audio.addEventListener('volumechange', () => this.isMuted.set(audio.muted));
-    // tracker on the song
     audio.addEventListener('loadedmetadata', () => {
       this.duration.set(audio.duration);
     });
-
-    // Actualiza tiempo actual cada vez que cambie
     audio.addEventListener('timeupdate', () => {
       this.currentTime.set(audio.currentTime);
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['song'] && this.song && this.audioRef) {
+      const audio = this.audioRef.nativeElement;
+      audio.src = this.song;
+      audio.load();
+      // Opcional: auto play
+      // audio.play();
+    }
   }
 
   togglePlayPause() {
@@ -60,11 +75,13 @@ export class PlayerMusicComponent {
     const audio = this.audioRef.nativeElement;
     audio.muted = !audio.muted;
   }
+
   onVolumeChange(vol: number) {
     const audio = this.audioRef.nativeElement;
     audio.volume = vol;
     this.volume.set(vol);
   }
+
   formatTime(time: number): string {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -75,6 +92,7 @@ export class PlayerMusicComponent {
     const audio = this.audioRef.nativeElement;
     audio.currentTime += seconds;
   }
+
   onSeek(value: number) {
     this.audioRef.nativeElement.currentTime = value;
   }
