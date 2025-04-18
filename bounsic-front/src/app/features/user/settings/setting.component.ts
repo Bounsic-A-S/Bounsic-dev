@@ -19,8 +19,9 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
-  public leftArrow = ChevronLeft;
-  public menuIcon = Menu;
+
+  readonly leftArrow = ChevronLeft;
+  readonly menuIcon = Menu;
 
   constructor(private router: Router) {}
 
