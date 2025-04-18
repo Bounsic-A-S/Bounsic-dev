@@ -16,10 +16,10 @@
   ></audio>
 
   <!-- Layout con los subcomponentes -->
-  <div class="bg-black text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1 items-center justify-between gap-6">
+  <div class="bg-bounsic-gray-4 text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1 items-center justify-between gap-6">
     
     <!-- Song Info -->
-    <div class="flex items-center gap-4">
+    <div class="flex justify-center items-center gap-4">
       <img
         src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
         alt="Cover"
@@ -27,20 +27,20 @@
       />
       <div class="min-w-0">
         <h3 class="text-base sm:text-lg font-semibold truncate">No One Noticed</h3>
-        <p class="text-sm text-gray-400 truncate">The Marias</p>
+        <p class="text-sm text-bounsic-gray-2 truncate">The Marias</p>
       </div>
       <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
-        <button class="text-gray-400 hover:text-white transition-colors">
+        <button class="text-bounsic-gray-2 hover:text-white transition-colors">
           <lucide-angular [img]="Heart" class="my-icon" [size]="20"></lucide-angular>
         </button>
-        <button class="hidden sm:block text-gray-400 hover:text-white transition-colors">
+        <button class="hidden sm:block text-bounsic-gray-2 hover:text-white transition-colors">
           <lucide-angular [img]="MoreVertical" class="my-icon" [size]="20"></lucide-angular>
         </button>
       </div>
     </div>
 
     <!-- Playbar -->
-    <div class="flex justify-center w-full sm:w-auto max-w-full">
+    <div class="flex items-center justify-center w-full sm:w-auto max-w-full">
       <player-music-playbar 
       [isPlaying]="isPlaying()"
       [currentTime]="currentTime()"
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Controllers -->
-    <div class="flex justify-center w-full sm:w-auto max-w-full">
+    <div class="flex items-center justify-center w-full sm:w-auto max-w-full">
       <player-music-playbar-controllers
       [isMuted]="isMuted()"
       [volume]="volume()"

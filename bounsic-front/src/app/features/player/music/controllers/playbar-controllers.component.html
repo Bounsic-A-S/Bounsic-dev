@@ -1,20 +1,28 @@
-    <!-- Control Buttons -->
-    <div class="flex items-center justify-end gap-4">
-        <button class="text-gray-400 hover:text-white">
-          <lucide-icon [img]="List" class="my-icon" [size]="24"></lucide-icon>
-        </button>
-        <!-- Mute/Unmute -->
-      <button (click)="toggleMute.emit()" class="text-gray-400 hover:text-white">
-        <lucide-icon
-          [name]="isMuted ? VolumeX : Volume2"
-          class="size-6 text-slate-500"
-        />
-      </button>
-      </div>
+<!-- Control Buttons -->
+<div class="flex items-center justify-end gap-4 py-10" (hoverExit)="closeVolume()">
+  <!-- Lista -->
+  <button class="text-bounsic-gray-2 hover:text-white">
+    <lucide-icon [img]="List" class="my-icon" [size]="24"></lucide-icon>
+  </button>
 
-          <!-- Volume Control -->
-    <div class="flex items-center gap-2 w-36 ml-4">
-      <lucide-icon name="Volume2" class="h-5 w-5 text-slate-500" />
+  <!-- Mute/Unmute + Volume -->
+  <div class="flex items-center">
+    <!-- Mute Button -->
+    <button
+      (click)="toggleMute.emit()"
+      (mouseenter)="openVolume()"
+      class="text-bounsic-gray-2 hover:text-white transition duration-300"
+    >
+      <lucide-icon [name]="isMuted ? VolumeX : Volume2" class="size-6" />
+    </button>
+    <ng-container>
+      <div
+      class="flex items-center ml-2 w-36 px-2 py-1 shadow-lg transition-all duration-300 ease-in-out"
+      [ngClass]="{
+        'opacity-100 scale-x-100 pointer-events-auto': isVolumeOpen,
+        'opacity-0 scale-x-0 pointer-events-none': !isVolumeOpen
+      }"
+    >
       <input
         type="range"
         min="0"
@@ -22,6 +30,9 @@
         step="0.01"
         [value]="volume"
         (input)="onVolumeChange_($event)"
-        class="w-full accent-indigo-600"
+        class="w-full h-1 accent-white"
       />
     </div>
+    </ng-container>
+  </div>
+</div>

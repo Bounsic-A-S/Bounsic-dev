@@ -1,29 +1,27 @@
-<media-control-bar class="flex items-center gap-4 w-full h-20 px-4 shadow-xl">
+<media-control-bar class="flex flex-col justify-center items-center gap-2 w-full h-20 px-4 shadow-xl">
+  <section class="flex items-center gap-4">
+    <!-- Seek Backward -->
+    <button (click)="skip.emit(-10)">
+      <lucide-icon [name]="SkipBack" class="w-6 h-6 text-white fill-white" />
+    </button>
 
-  <!-- Seek Backward -->
-  <button (click)="skip.emit(-10)">
-    <lucide-icon [name]="SkipBack" class="w-7 h-7 text-slate-500" />
-  </button>
+    <!-- Play/Pause -->
+    <button
+      (click)="playPause.emit()"
+      class="h-10 w-10 mx-3 rounded-full flex items-center justify-center"
+    >
+      <lucide-icon [name]="isPlaying ? Pause : Play" class="w-7 h-7 text-white fill-white" />
+    </button>
 
-  <!-- Play/Pause -->
-  <button
-    (click)="playPause.emit()"
-    class="h-10 w-10 mx-3 rounded-full bg-slate-700 text-white flex items-center justify-center"
-  >
-    <lucide-icon [name]="isPlaying ? Pause : Play" class="w-5 h-5" />
-  </button>
-
-  <!-- Seek Forward -->
-  <button (click)="skip.emit(10)">
-    <lucide-icon [name]="SkipForward" class="w-7 h-7 text-slate-500" />
-  </button>
-
-  <!-- Divider -->
-  <div class="hidden md:block h-8 border-l border-slate-700/10 mx-4"></div>
+    <!-- Seek Forward -->
+    <button (click)="skip.emit(10)">
+      <lucide-icon [name]="SkipForward" class="w-6 h-6 text-white fill-white" />
+    </button>
+  </section>
 
   <!-- Time Display -->
-  <div class="flex items-center gap-2 w-48 md:w-64">
-    <span class="text-xs text-gray-500">{{ formatTime(currentTime) }}</span>
+  <section class="flex items-center gap-2 w-96">
+    <span class="text-xs text-bounsic-gray-2">{{ formatTime(currentTime) }}</span>
 
     <input
       type="range"
@@ -31,9 +29,8 @@
       [max]="duration"
       [value]="currentTime"
       (input)="onSeek($event)"
-      class="w-full accent-indigo-600 transition-all duration-200"
-    >
-    <span class="text-xs text-gray-500">{{ formatTime(duration) }}</span>
-  </div>
-
+      class="w-full accent-white h-0.5 transition-all duration-200"
+    />
+    <span class="text-xs text-white">{{ formatTime(duration) }}</span>
+  </section>
 </media-control-bar>
