@@ -1,102 +1,41 @@
-<div class="bg-black text-white min-h-screen pb-4">
+<div class="bg-bounsic-gradient text-white min-h-screen pb-4">
   <main-navbar></main-navbar>
-  <main class="container mx-auto mt-20 pt-8 sm:pt-10 px-6 xl:px-2">
+  <main class="container mx-auto mt-14 pt-8 sm:pt-10 px-6 xl:px-2">
     <!-- Playlists Section -->
     <section class="mb-10">
-      <h2 class="text-xl sm:text-3xl font-bold mb-4">Playlists</h2>
+      <h2 class="text-xl sm:text-3xl font-bold mb-4">{{'BOUNSIC.LIBRARY.PLAYLISTS'  | translate}}</h2>
       <div class="h-px w-full bg-white mb-6"></div>
 
-      <div
-        class="flex flex-row flex-wrap gap-6 p-1"
-      >
+      <div class="flex flex-row flex-wrap gap-6 p-1">
         <!-- Playlist Cards -->
-        <div *ngFor="let playlist of playlists" class="cursor-pointer">
-          <div class="aspect-square rounded-xl overflow-hidden mb-2 size-36 md:size-44 xl:size-48">
-            <img
-              [src]="playlist.coverUrl"
-              alt="{{ playlist.title }}"
-              class="w-full h-full object-cover"
-            />
-          </div>
-          <h3 class="font-medium">{{ playlist.title }}</h3>
-          <p class="text-sm text-gray-400">
-            {{ playlist.songCount }} Canciones
-          </p>
-        </div>
+        <library-item *ngFor="let playlist of playlistsT$ | async" [playlist]="playlist">
+        </library-item>
 
         <!-- Add Playlist Button -->
-        <div class="cursor-pointer flex items-center ">
+        <button class="cursor-pointer flex items-center ">
           <div
-            class="aspect-square border border-gray-700 rounded-xl flex items-center justify-center mb-2 size-28 md:size-36 xl:size-40"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-12 w-12 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1"
-                d="M12 4v16m8-8H4"
-              />
+            class="aspect-square border border-gray-700 rounded-xl flex items-center justify-center mb-2 size-28 md:size-36 xl:size-40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v16m8-8H4" />
             </svg>
           </div>
-        </div>
+        </button>
       </div>
     </section>
 
     <!-- Me gustas Section -->
     <section>
-      <h2 class="text-xl sm:text-3xl font-bold mb-4">Me gustas</h2>
+      <h2 class="text-xl sm:text-3xl font-bold mb-4">{{'BOUNSIC.LIBRARY.LIKES'  | translate}}</h2>
       <div class="h-px w-full bg-white mb-6"></div>
 
-      <div
-        class="flex flex-row flex-wrap gap-6 p-1"
-      >
+      <div class="flex flex-row flex-wrap gap-6 p-1">
+        <library-item [playlist]="favorites">
+        </library-item>
+
         <!-- Liked Playlist Cards -->
-        <div *ngFor="let playlist of likedPlaylists" class="cursor-pointer">
-          <div
-            class="aspect-square overflow-hidden mb-2 bg-gradient-to-br rounded-xl size-36 md:size-44 xl:size-48"
-            [ngClass]="{
-              'from-red-500 to-orange-500': playlist.id === 4,
-              'bg-gray-800': playlist.id !== 4
-            }"
-          >
-            <div
-              *ngIf="playlist.id === 4"
-              class="w-full h-full flex items-center justify-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-16 w-16 text-white"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <img
-              *ngIf="playlist.id !== 4"
-              [src]="playlist.coverUrl"
-              alt="{{ playlist.title }}"
-              class="w-full h-full object-cover"
-            />
-          </div>
-          <h3 class="font-medium">{{ playlist.title }}</h3>
-          <p *ngIf="playlist.songCount > 0" class="text-sm text-gray-400">
-            {{ playlist.songCount }} Canciones
-          </p>
-          <p *ngIf="playlist.songCount === 0" class="text-sm text-gray-400">
-            Cuarteto de nos
-          </p>
-        </div>
+        <library-item *ngFor="let playlist of likedPlaylists" [playlist]="playlist">
+        </library-item>
       </div>
     </section>
   </main>

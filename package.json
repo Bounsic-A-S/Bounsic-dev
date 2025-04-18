@@ -29,7 +29,11 @@
     "start:frontend": "cd bounsic-front && bun run start",
     "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
     "start:backend_linux": "cd bounsic-back && source venv/bin/activate && python -m app.main",
-    "start": "concurrently \"bun run start:frontend\" \"bun run start:backend\""
+    "start": "concurrently \"bun run start:frontend\" \"bun run start:backend_linux\"",
+    "test:frontend": "cd bounsic-front && bun run test",
+    "test:frontend_linux": "cd bounsic-front && export CHROME_BIN=/snap/bin/chromium && bun run test",
+    "test:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;pytest\"",
+    "test": "concurrently \"bun run test:frontend\" \"bun run test:backend\""
   },
   "dependencies": {
     "concurrently": "^9.1.2"

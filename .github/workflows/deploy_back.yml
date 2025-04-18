@@ -1,0 +1,24 @@
+name: Deploy Backend to Azure
+
+on:
+  workflow_run:
+    workflows: ["Dockerize Back"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Deploy back to Azure Web App
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: 'bounsic-back-nginx'
+            slot-name: 'production'
+            publish-profile: ${{ secrets.AzureAppService_PublishProfile_5f601987ee0d4b4fa6eb894b6c1a34c8 }}
+            images: 'bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}'
+
+    

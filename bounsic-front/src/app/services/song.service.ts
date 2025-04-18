@@ -10,9 +10,6 @@ export class ApiService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-  getTest(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/bert`);
-  }
   getData(title:string): Observable<any> {
     return this.http.get(`${this.apiUrl}/song/title/${title}`);
   }

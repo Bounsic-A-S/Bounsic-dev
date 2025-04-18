@@ -1,0 +1,20 @@
+<h1 class="text-3xl font-medium mb-8">{{'BOUNSIC.SETTINGS.LANGUAGE.TITLE'  | translate}}</h1>
+<div
+class="flex justify-between border-b text-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 w-1/2">
+<select id="language" class="bg-bounsic-gray-4 text-white w-full focus:outline-none" (change)="changeLanguage($event)">
+  <option [selected]="actualLang === 'es'" value="es">Español</option>
+  <option [selected]="actualLang === 'en'" value="en">English</option>
+  <option [selected]="actualLang === 'kr'" value="kr">Korean</option>
+</select>
+</div>
+
+<div class="w-full mx-auto mt-32">
+  <div class="bg-bounsic-gray-4 rounded-lg">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="mb-4 text-3xl font-extrabold text-white md:text-5xl lg:text-6xl">
+        {{'BOUNSIC.SETTINGS.LANGUAGE.WELCOME'  | translate}}
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-bounsic-red/70 to-bounsic-yellow/70">Bounsic</span>
+      </h1>
+    </div>
+  </div>
+</div>

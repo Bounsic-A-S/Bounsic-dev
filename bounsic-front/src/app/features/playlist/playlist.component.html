@@ -1,0 +1,58 @@
+<main-navbar></main-navbar>
+
+<main class="mx-auto px-6 pt-[14vh] h-screen bg-bounsic-gradient text-white overflow-hidden flex flex-col">
+  <section class="flex flex-col flex-1 xl:gap-x-10 mx-auto container overflow-hidden md:flex-row">
+    <aside class="self-center md:self-auto">
+      <ng-container *ngIf="album$ | async as album">
+        <app-song-hero
+          [title]="album.name"
+          [totalSongs]="album.totalSongs"
+          [totalDuration]="album.totalDuration"
+        ></app-song-hero>
+      </ng-container>
+      <ng-container *ngIf="!(album$ | async)">
+        <app-song-hero
+          title="Loading..."
+          description=""
+          imageUrl=""
+          [totalSongs]="0"
+          totalDuration="0:00"
+        ></app-song-hero>
+      </ng-container>
+    </aside>
+
+    <section class="w-full flex flex-col overflow-hidden">
+      <ng-container *ngIf="album$ | async as album">
+        <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
+          {{ album.name }}
+        </h1>
+        <div class="h-px bg-white w-full my-3 md:my-6"></div>
+
+        <ul class="w-full flex-1 pr-1 xl:pr-4 overflow-y-auto max-h-[65vh] scroll-smooth scroll-hidden">
+          <li *ngFor="let song of album.songs">
+            <playlist-item
+              [id]="song.id"
+              [title]="song.title"
+              [artist]="song.artist"
+              [album]="song.album"
+              [duration]="song.duration"
+              [imageUrl]="song.cover"
+              [mp3Url]="song.mp3Url"
+            ></playlist-item>
+          </li>
+          <li *ngIf="album.songs.length === 0">
+            <p class="text-center py-4">No hay canciones en esta playlist.</p>
+          </li>
+        </ul>
+      </ng-container>
+
+      <ng-container *ngIf="!(album$ | async)">
+        <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
+          Loading...
+        </h1>
+        <div class="h-px bg-white w-full my-3 md:my-6"></div>
+        <p class="text-center py-4">Cargando canciones...</p>
+      </ng-container>
+    </section>
+  </section>
+</main>

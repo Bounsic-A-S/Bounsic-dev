@@ -1,11 +1,11 @@
-from fastapi import APIRouter,Request, Query
+from fastapi import APIRouter, HTTPException,Request, Query
 from fastapi.responses import JSONResponse
 from app.controllers import (
     get_song_by_artist_controller,
     get_song_by_title_controller,
     get_songs_by_genre_controller,
     get_song_image_controller,
-    insert_bs_controller
+    insert_bs_controller,insert_song_controller
 )
 
 router = APIRouter()
@@ -52,7 +52,12 @@ async def insert_bs():
         raise JSONResponse(status_code=500, detail="Error al insertar canciones")
     return JSONResponse(status_code=200,message= "Canciones procesadas",data=res)
 
+@router.put("/insert/{track_name}")
+async def create_song(track_name: str):
+    result = await insert_song_controller(track_name) 
 
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
 
-    
+    return result
     

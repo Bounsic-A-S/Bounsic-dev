@@ -4,10 +4,11 @@ from pathlib import Path
 import yt_dlp
 import re
 from app.provider import get_ffmpeg_path
+import os
 
 def sanitize_filename(text):
-    """Limpia el título y el artista para que sean nombres válidos de archivos."""
-    return re.sub(r'[<>:"/\\|?*]', '', text).strip()
+    # Reemplaza los caracteres inválidos por guiones bajos o vacíos
+    return re.sub(r'[<>:"/\\|?*]', '', text)
 
 def scrappingBueno(url):
 
@@ -64,8 +65,6 @@ def scrappingBueno(url):
 
 def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
-    while base_path.name != "bounsic-back":
-        base_path = base_path.parent
 
     audio_dir = base_path / "audios"
     image_dir = base_path / "images"
@@ -73,7 +72,8 @@ def descargar_audio(url):
     audio_dir.mkdir(parents=True, exist_ok=True)
     image_dir.mkdir(parents=True, exist_ok=True)
 
-    ffmpeg_path = get_ffmpeg_path(base_path)
+
+    ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -83,8 +83,10 @@ def descargar_audio(url):
             'preferredquality': '192',
         }],
         'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
-        'ffmpeg_location': str(ffmpeg_path)
+        'ffmpeg_location': str(ffmpeg_path),
     }
+
+    
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -121,12 +123,19 @@ def descargar_audio(url):
 
 # 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):
-    ydl_opts = {
-        "quiet": True,
-        "default_search": "ytsearch",  # Hace una búsqueda en YouTube
-        "noplaylist": True,
-    }
+    print("DEBUG: Archivo cookies existe:", os.path.exists("cookies/cookies.txt"))
+    print("DEBUG: Archivos en carpeta cookies:", os.listdir("cookies"))
 
+    ydl_opts = {
+        "quiet": False,
+        "verbose": True,
+        "default_search": "ytsearch",
+        "noplaylist": True,
+        "cookiesfromfile": "./cookies/www.youtube.com_cookies.txt",
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        }
+    }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(f"ytsearch:{query}", download=False)
     

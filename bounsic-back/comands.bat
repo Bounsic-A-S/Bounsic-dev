@@ -9,3 +9,7 @@ pip freeze > .\requirements.txt
 
 # Desactivar
 deactivate
+
+# Desinstalar
+pip freeze > requirements.txt
+pip uninstall -y -r requirements.txt

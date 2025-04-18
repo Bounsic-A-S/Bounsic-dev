@@ -12,9 +12,9 @@ export function MSALInstanceFactory(): IPublicClientApplication {
             clientId: environment.msalConfig.auth.clientId,
             authority: environment.msalConfig.auth.authority,
             redirectUri: 'http://localhost:4200/dashboard',
-            postLogoutRedirectUri: '/'
+            postLogoutRedirectUri: '/http://localhost:4200/dashboard'
         },
-        cache: {
+        cache: {    
             cacheLocation: BrowserCacheLocation.LocalStorage
         },
         system: {

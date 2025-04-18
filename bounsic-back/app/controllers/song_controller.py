@@ -1,9 +1,11 @@
 
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image
+from fastapi import Request
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
 import re
 import json
 import os
+
 
 async def get_song_by_artist_controller(artist: str):
     if not artist:
@@ -145,7 +147,7 @@ async def insert_bs_controller(url:str):
 
             except Exception as song_error:
                 results.append({"title": title, "artist": artist, "status": f"Error: {str(song_error)}"})
-                continue  # No detener el proceso por un error individual
+                continue  
         
         if os.path.exists(audio_path):
             os.remove(audio_path)
@@ -161,3 +163,6 @@ async def insert_bs_controller(url:str):
 
     
     
+async def insert_song_controller(track_name: str):
+    result = insert_song(track_name)  
+    return result
