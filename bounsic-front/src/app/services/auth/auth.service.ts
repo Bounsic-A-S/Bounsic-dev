@@ -114,6 +114,11 @@ export class AuthService implements OnDestroy {
     } else {
       this.msalService.logoutRedirect();
     }
+    this.msalService.instance.logout();
+    localStorage.clear(); 
+    sessionStorage.clear();
+    document.cookie = 'msalAppState=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    document.cookie = 'msal.msalConfig=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
     this.userProfile = null;
   }
 
