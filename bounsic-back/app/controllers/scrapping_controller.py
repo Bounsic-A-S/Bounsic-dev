@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.services import scrappingBueno, descargar_audio,buscar_en_youtube
+from app.services import scrappingBueno, descargar_audio,buscar_en_youtube, get_lyrics
 def get_youtube_scrapping_request(url :str):
     if not url:
         raise HTTPException(status_code=400, detail="La URL es obligatoria")
@@ -19,10 +19,20 @@ def get_youtube_download_request(url:str):
         raise HTTPException(status_code=404,content={"detail": "No se pudo descargar el audio"})
     return download_response
 
-def search_youtube_request(query:str):
-        if not query:
-            raise HTTPException(status_code=400, detail="El término de búsqueda es obligatorio")
-        search_response = buscar_en_youtube(query)
-        if not search_response:
-            raise HTTPException(status_code=404, detail="No se encontraron resultados")
-        return search_response
+def search_youtube_request(query: str):
+    if not query:
+        raise HTTPException(status_code=400, detail="El término de búsqueda es obligatorio")
+    search_response = buscar_en_youtube(query)
+    if not search_response:
+        raise HTTPException(status_code=404, detail="No se encontraron resultados")
+    return search_response
+
+def get_song_lyrics(song_name: str, artist: str):
+    if not song_name:
+        raise HTTPException(status_code=400, detail="El nombre de canción es necesario")
+    if not artist:
+        raise HTTPException(status_code=400, detail="El nombre del artista es necesario")
+    lyric_response = get_lyrics(song_name, artist)
+    if not lyric_response:
+        raise HTTPException(status_code=404, detail="No se encontró la letra de la canción")
+    return lyric_response
