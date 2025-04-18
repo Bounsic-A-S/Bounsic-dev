@@ -66,6 +66,7 @@ def scrappingBueno(url):
 def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
 
+
     audio_dir = base_path / "audios"
     image_dir = base_path / "images"
 

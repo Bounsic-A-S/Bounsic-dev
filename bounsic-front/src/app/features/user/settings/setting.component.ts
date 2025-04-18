@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { LucideAngularModule, ChevronLeft } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, Menu } from 'lucide-angular';
+import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-user-settings',
   standalone: true,
@@ -10,19 +12,38 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     RouterModule,
     LucideAngularModule,
-    TranslateModule
+    TranslateModule,
+    ClickOutsideDirective
   ],
   templateUrl: './settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
-  readonly leftArrow = ChevronLeft;
 
-  constructor(private router: Router) { }
+  readonly leftArrow = ChevronLeft;
+  readonly menuIcon = Menu;
+
+  constructor(private router: Router) {}
+
+  public sideBarOpen = true;
 
   goBack(): void {
     this.router.navigate(['/dashboard']);
   }
+
+  toggleSidebar(): void {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
+  closeSideBar(): void {
+    if(window.innerWidth < 768){
+      this.sideBarOpen = false;
+    }
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.sideBarOpen = event.target.innerWidth > 768;
+  }
+
 
   menuItems = [
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.ACCOUNT', route: 'account' },
@@ -34,5 +55,4 @@ export class SettingsComponent {
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.PREFERENCES', route: 'appearance' },
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.LANGUAGE', route: 'language' }
   ];
-
 }
