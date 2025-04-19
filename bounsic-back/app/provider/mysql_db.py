@@ -36,7 +36,7 @@ class DatabaseFacade:
             try:
                 result = await session.execute(text(query), params)
                 await session.commit()
-                return result.fetchall()
+                return [dict(row._mapping) for row in result]
             except Exception as e:
                 await session.rollback()
                 print(f"Error executing query: {e}")
