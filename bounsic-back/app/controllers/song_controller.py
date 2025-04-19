@@ -1,7 +1,9 @@
 
-from fastapi import Request
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
+from app.services import MySQLSongService
 import re
 import json
 import os
@@ -166,3 +168,55 @@ async def insert_bs_controller(url:str):
 async def insert_song_controller(track_name: str):
     result = insert_song(track_name)  
     return result
+
+async def safe_choice_recomendation(email: str):
+    try:
+        # get user by email
+        user = MySQLSongService.get_user_by_email(email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_json = user[0] 
+        user_id = user_json["id_user"]
+        
+        # get recommendations
+        mysql_songs = MySQLSongService.get_safe_choices(user_id)
+        if not mysql_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No recommendations available", "songs": []}
+            )
+        
+        # look for songs in MongoDB
+        final_songs = []
+        for song in mysql_songs:
+            # verify if exists song_mongo_id
+            if "song_mongo_id" not in song:
+                continue
+                
+            # serch song in MongoDB
+            song_id_mongo = song["song_mongo_id"]
+            mongo_song = get_song_by_id(song_id_mongo)
+            
+            if mongo_song:
+                # create object
+                combined_song = { 
+                    **{k: v for k, v in mongo_song.items() if k != '_id'},  
+                }
+                final_songs.append(combined_song)
+        
+        return JSONResponse(
+            status_code=200,
+            content={
+                "songs": final_songs,
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while processing recommendations"
+        )

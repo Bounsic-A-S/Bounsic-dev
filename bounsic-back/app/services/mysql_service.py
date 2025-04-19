@@ -21,7 +21,10 @@ class MySQLSongService:
         
     def get_user_by_email( email):
         try:
-            return MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users WHERE email = %s", (email,))
+            query = """
+                SELECT * FROM Bounsic_Users WHERE email = %s
+                """
+            return MySQLSongService._db.execute_query(query, (email,))
         except Exception as e:
             print.error(f"get_user_by_id error: {e}")
             return None
@@ -282,6 +285,8 @@ class MySQLSongService:
         except Exception as e:
             print.error(f"delete_history error: {e}")
             return False
+        
+
 
     # PLAYLIST
     def get_all_playlists():
@@ -393,4 +398,49 @@ class MySQLSongService:
             print.error(f"delete_like error: {e}")
             return False
 
+    # recomendations 
+    def get_safe_choices(user_id: int) -> list[dict] | None:
+        try:
+            query = """
+        (
+            SELECT 
+                'most_played' AS source,
+                bh.song_mongo_id,
+                bh.cant_repro AS play_count
+            FROM 
+                Bounsic_History bh
+            WHERE 
+                bh.user_id = %s
+            ORDER BY 
+                bh.cant_repro DESC
+            LIMIT 6
+        )
+        UNION ALL
+        (
+            SELECT 
+                'liked_songs' AS source,
+                bl.song_mongo_id,
+                0 AS play_count
+            FROM 
+                Bounsic_Like bl
+            LEFT JOIN (
+                SELECT bh2.song_mongo_id
+                FROM Bounsic_History bh2
+                WHERE bh2.user_id = %s
+                ORDER BY bh2.cant_repro DESC
+                LIMIT 6
+            ) AS top_songs
+            ON bl.song_mongo_id = top_songs.song_mongo_id
+            WHERE 
+                bl.user_id = %s AND 
+                top_songs.song_mongo_id IS NULL
+            ORDER BY RAND()
+            LIMIT 6
+            )
+            """
 
+
+            return MySQLSongService._db.execute_query(query, (user_id, user_id, user_id))
+        except Exception as e:
+            print(f"Error in get_safe_choices: {e}")
+            return []

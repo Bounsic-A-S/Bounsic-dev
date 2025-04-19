@@ -36,6 +36,7 @@ class MySQLController:
     def get_users_by_email( email):
         try:
             user = MySQLSongService.get_user_by_email(email)
+            print(user)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             return JSONResponse(status_code=200, content={"user": user})
