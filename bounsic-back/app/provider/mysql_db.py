@@ -59,10 +59,17 @@ class DatabaseFacade:
         connection = self.get_connection()
         if connection:
             cursor = connection.cursor(dictionary=True, buffered=True)
+            cursor = connection.cursor(dictionary=True, buffered=True)
             try:
                 cursor.execute(query, params)
 
                 # Detectar el tipo de consulta (mÃ¡s robusto)
+                import re
+                query_type_match = re.search(r'\b(SELECT|INSERT|UPDATE|DELETE)\b', query.strip(), re.IGNORECASE)
+                query_type = query_type_match.group(1).upper() if query_type_match else ""
+
+
+                # Detectar el tipo de consulta (más robusto)
                 import re
                 query_type_match = re.search(r'\b(SELECT|INSERT|UPDATE|DELETE)\b', query.strip(), re.IGNORECASE)
                 query_type = query_type_match.group(1).upper() if query_type_match else ""
@@ -82,6 +89,7 @@ class DatabaseFacade:
                         "rowcount": cursor.rowcount
                     }
 
+
             except mysql.connector.Error as err:
                 print(f"Error executing query: {err}")
                 if connection.is_connected():
@@ -92,4 +100,5 @@ class DatabaseFacade:
                 if connection.is_connected():
                     connection.close()
         return None
+
 

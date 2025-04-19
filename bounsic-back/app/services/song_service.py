@@ -29,6 +29,10 @@ def get_song_by_id(id:str):
         print.error(f"Error getting song by ID {song_id}: {str(e)}")
         return None
 
+def normalize_string(s: str) -> str:
+    """Quita espacios y convierte a minúsculas para normalizar un string."""
+    return re.sub(r"\s+", "", s).lower()
+
 def getSongByTitle(song_title:str):
     songs_collection = db["songs"]
     song = songs_collection.find_one({"title": song_title})
@@ -39,9 +43,27 @@ def getSongByTitle(song_title:str):
     else:
         return {"message": "Song not found"}
     
-def normalize_string(s: str) -> str:
-    """Quita espacios y convierte a minúsculas para normalizar un string."""
-    return re.sub(r"\s+", "", s).lower()
+def get_song_by_id(id:str):
+    try:
+        # connect to the MongoDB database
+        songs_collection = db["songs"]
+        
+        # parsing the string id to ObjectId
+        song_id = ObjectId(id)
+        
+        # searching for the song in the collection
+        song = songs_collection.find_one({"_id": song_id})
+        
+        if song:
+            song["_id"] = str(song["_id"])
+            return song
+        return None
+        
+    except Exception as e:
+        print.error(f"Error getting song by ID {song_id}: {str(e)}")
+        return None
+    
+
 
 def getSongByArtist(artist: str):
     try:

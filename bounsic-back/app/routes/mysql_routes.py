@@ -91,6 +91,13 @@ def get_all_history():
 def get_history_by_id(history_id: int):
     return MySQLController.get_history(history_id)
 
+@router.patch("/sumCount")
+async def sum_count_history(request: Request):
+    data = await request.json()
+    email = data.get("email")
+    id_mongo_song = data.get("song_mongo_id")
+    return MySQLController.sum_count_history_song(email, id_mongo_song)
+
 @router.get("/history/user/{user_id}")
 def get_history_by_user(user_id: int):
     return MySQLController.get_history_by_user(user_id)
