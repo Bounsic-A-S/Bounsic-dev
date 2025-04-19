@@ -58,31 +58,30 @@ class DatabaseFacade:
     def execute_query(self, query, params=None):
         connection = self.get_connection()
         if connection:
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor(dictionary=True, buffered=True)
             try:
                 cursor.execute(query, params)
-                
-                # Determinar el tipo de consulta
-                query_type = query.strip().upper().split()[0]
-                
+
+                # Detectar el tipo de consulta (mÃ¡s robusto)
+                import re
+                query_type_match = re.search(r'\b(SELECT|INSERT|UPDATE|DELETE)\b', query.strip(), re.IGNORECASE)
+                query_type = query_type_match.group(1).upper() if query_type_match else ""
+
                 if query_type == "SELECT":
-                    # Para consultas SELECT, devolver los resultados
                     result = cursor.fetchall()
                     return result
                 elif query_type == "INSERT":
-                    # Para INSERT, hacer commit y devolver información incluyendo el último ID
                     connection.commit()
                     return {
                         "rowcount": cursor.rowcount,
                         "lastrowid": cursor.lastrowid
                     }
                 else:
-                    # Para UPDATE, DELETE, hacer commit y devolver filas afectadas
                     connection.commit()
                     return {
                         "rowcount": cursor.rowcount
                     }
-                    
+
             except mysql.connector.Error as err:
                 print(f"Error executing query: {err}")
                 if connection.is_connected():

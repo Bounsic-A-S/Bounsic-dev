@@ -9,6 +9,25 @@ from datetime import datetime
 from app.services.srapping_service import scrappingBueno,buscar_en_youtube,descargar_audio
 from app.services.spotify_service import get_artist_and_genre_by_track, get_album_images
 
+def get_song_by_id(id:str):
+    try:
+        # connect to the MongoDB database
+        songs_collection = db["songs"]
+        
+        # parsing the string id to ObjectId
+        song_id = ObjectId(id)
+        
+        # searching for the song in the collection
+        song = songs_collection.find_one({"_id": song_id})
+        
+        if song:
+            song["_id"] = str(song["_id"])
+            return song
+        return None
+        
+    except Exception as e:
+        print.error(f"Error getting song by ID {song_id}: {str(e)}")
+        return None
 
 def getSongByTitle(song_title:str):
     songs_collection = db["songs"]
