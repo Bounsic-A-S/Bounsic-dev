@@ -398,6 +398,14 @@ class MySQLSongService:
             print.error(f"delete_like error: {e}")
             return False
 
+    def get_random_likes(user_id: int, number: int):
+        # Return (number) random song_id in likes of user (user_id)
+        try:
+            return MySQLSongService._db.execute_query("SELECT song_mongo_id FROM Bounsic_Like WHERE user_id = %s ORDER BY RAND() LIMIT %s", (user_id, number))
+        except Exception as e:
+            print.error(f"get_like error: {e}")
+            return False
+
     # recomendations 
     def get_safe_choices(user_id: int) -> list[dict] | None:
         try:

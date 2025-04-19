@@ -220,3 +220,29 @@ async def safe_choice_recomendation(email: str):
             status_code=500,
             detail="Internal server error while processing recommendations"
         )
+    
+async def feed_related_recomendations(email: str):
+    try:
+        user = MySQLSongService.get_user_by_email(email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_json = user[0] 
+        user_id = user_json["id_user"]
+        
+        # get recommendations
+        
+        return JSONResponse(
+            status_code=200,
+            content={
+                # "songs": final_songs,
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        print.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while processing recommendations"
+        )

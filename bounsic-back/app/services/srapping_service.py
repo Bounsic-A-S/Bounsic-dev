@@ -208,10 +208,3 @@ def get_lyrics(song_name: str, artist: str):
         print(f"Error al procesar la URL {url}: {str(e)}")
         return str(e)
     
-if __name__ == "__main__":
-
-    lyrics = get_lyrics("otro atardecer", "bad bunny")
-    
-    if lyrics:
-        print(lyrics)
-    
