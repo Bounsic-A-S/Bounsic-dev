@@ -32,6 +32,8 @@
   </section>
   <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
     <h2 class="text-xl sm:text-2xl xl:text-3xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.ARTISTS.TEXT1'  | translate}}</h2>
-    <dashboard-artist-list></dashboard-artist-list>
+    <dashboard-artist-list
+    [artists]="artists"
+    ></dashboard-artist-list>
   </section>
 </main>

@@ -1,3 +1,4 @@
+from itertools import chain
 from app.services import getDesc,getSongsByArtist,MySQLSongService,get_song_by_id,get_artists_by_genre
 
 
@@ -42,7 +43,7 @@ async def get_artist_user_prefences_controller(email: str):
     
     # get genres
     genres = [genre for song in songs_liked if song.get("genres") for genre in song["genres"]]
-    filter_genres = list(set([genre["genre"] for genre in genres]))
+    filter_genres = list({genre["genre"] for genre in genres})
     # get artist by genre
     artists = []
     for genre in filter_genres:
@@ -51,5 +52,5 @@ async def get_artist_user_prefences_controller(email: str):
             return {"error": "Artists not found"}
         
         artists.append(artist)
-    
-    return artists
+
+    return list(chain.from_iterable(artists))
