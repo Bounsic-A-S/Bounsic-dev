@@ -1,6 +1,6 @@
 from itertools import chain
-from app.services import getDesc,getSongsByArtist,MySQLSongService,get_song_by_id,get_artists_by_genre
-
+from app.services import getDesc,getSongsByArtist,MySQLSongService,get_songs_by_ids,get_artists_by_genre
+from fastapi.responses import JSONResponse
 
 async def get_songs_by_artist_controller(artist: str):
     if not artist:
@@ -27,30 +27,47 @@ async def get_artist_desc_controller(artist: str):
     
     return {"data": res}
 
-async def get_artist_user_prefences_controller(email: str):
-    if not email:
-        return {"error": "Email not provided"}
-    
-    # get user
-    user = await MySQLSongService.get_user_by_email(email)
-    # get songs listened
-    likes = await MySQLSongService.get_likes_by_user(user[0]["id_user"])
-    songs_liked = []
-    for like in likes:
-        song = get_song_by_id(like["song_mongo_id"])
-        if song:
-            songs_liked.append(song)
-    
-    # get genres
-    genres = [genre for song in songs_liked if song.get("genres") for genre in song["genres"]]
-    filter_genres = list({genre["genre"] for genre in genres})
-    # get artist by genre
-    artists = []
-    for genre in filter_genres:
-        artist = get_artists_by_genre(genre)
-        if not artist:
-            return {"error": "Artists not found"}
+async def get_artist_user_preferences_controller(email: str):
+    try:
+        if not email:
+            return JSONResponse(status_code=404, content={"error": "Email not provided"})
         
-        artists.append(artist)
+        # get likes
+        likes = await MySQLSongService.get_likes_by_user_email(email)
+        if not likes:
+            return JSONResponse(status_code=404, content={"error": "No likes found for user"})
 
-    return list(chain.from_iterable(artists))
+        song_ids = [like["song_mongo_id"] for like in likes]
+
+        songs_liked = get_songs_by_ids(song_ids)
+        if not songs_liked:
+            return JSONResponse(status_code=404, content={"error": "No songs found for liked IDs"})
+
+        # get genres
+        genres = {
+            genre["genre"]
+            for song in songs_liked if song.get("genres")
+            for genre in song["genres"]
+        }
+        # get artists by genre
+        all_artists = []
+        for genre in genres:
+            artists = get_artists_by_genre(genre)
+            if artists:
+                all_artists.extend(artists)
+
+        if not all_artists:
+            return JSONResponse(
+                status_code=404,
+                content={"error": "No artists found for user's preferences"}
+            )
+        return JSONResponse(
+            status_code=200,
+            content=all_artists
+        )
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Internal server error", "details": str(e)}
+        )

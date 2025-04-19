@@ -63,7 +63,23 @@ def get_song_by_id(id:str):
         print.error(f"Error getting song by ID {song_id}: {str(e)}")
         return None
     
+def get_songs_by_ids(ids: list[str]):
+    try:
+        songs_collection = db["songs"]
+        
+        object_ids = [ObjectId(id_) for id_ in ids if ObjectId.is_valid(id_)]
+        
+        songs_cursor = songs_collection.find({"_id": {"$in": object_ids}})
+        songs = list(songs_cursor)
 
+        for song in songs:
+            song["_id"] = str(song["_id"])
+
+        return songs
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return None
 
 def getSongByArtist(artist: str):
     try:

@@ -454,3 +454,16 @@ class MySQLSongService:
         except Exception as e:
             print(f"Error in get_safe_choices: {e}")
             return []
+
+    async def get_likes_by_user_email( email):
+        try:
+            query = """
+            SELECT Bounsic_Like.*, Bounsic_Users.email, Bounsic_Users.username
+            FROM Bounsic_Like
+            JOIN Bounsic_Users ON Bounsic_Like.user_id = Bounsic_Users.id_user
+            WHERE Bounsic_Users.email = :email
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            print.error(f"get_likes_by_user error: {e}")
+            return None
