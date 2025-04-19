@@ -239,6 +239,28 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_history error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching history")
+        
+    @staticmethod
+    def sum_count_history_song( email:str, id_mongo_song:str):
+        try:
+            # get user by email
+            user = MySQLSongService.get_user_by_email(email)
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            
+            user_json = user[0] 
+            user_id = user_json["id_user"]
+
+            #update cant history
+            history = MySQLSongService.update_cant_history(user_id, id_mongo_song)
+            if not history:
+                raise HTTPException(status_code=404, detail="Could not update history")
+            return JSONResponse(status_code=200, content={"history": history})
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"get_history error: {e}")
+            raise HTTPException(status_code=500, detail="Error with  history")
 
     @staticmethod
     def get_history_by_user( user_id):

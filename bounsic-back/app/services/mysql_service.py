@@ -253,6 +253,18 @@ class MySQLSongService:
         except Exception as e:
             print.error(f"get_history_by_id error: {e}")
             return None
+        
+    def update_cant_history( id_user: int, id_mongo_song: str):
+        try:
+            query = """
+                UPDATE Bounsic_History
+                SET cant_repro = cant_repro + 1
+                WHERE user_id = %s AND song_mongo_id = %s
+            """
+            return MySQLSongService._db.execute_query(query, (id_user, id_mongo_song))
+        except Exception as e:
+            print.error(f"update_cant_history error: {e}")
+            return False
 
     def get_history_by_user( user_id):
         try:
