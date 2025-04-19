@@ -6,20 +6,20 @@ router = APIRouter()# Create an instance of the controller
 
 # USERS
 @router.get("/users")
-def get_all_users():
-    return MySQLController.get_all_users()
+async def get_all_users():
+    return await MySQLController.get_all_users()
 
 @router.get("/users/{user_id}")
-def get_user_by_id(user_id: int):
-    return MySQLController.get_users_by_id(user_id)
+async def get_user_by_id(user_id: int):
+    return await MySQLController.get_users_by_id(user_id)
 
 @router.get("/users/email/{user_email}")
-def get_user_by_email(user_email: str):
-    return MySQLController.get_users_by_email(user_email)
+async def get_user_by_email(user_email: str):
+    return await MySQLController.get_users_by_email(user_email)
 
 @router.get("/users/username/{username}")
-def get_user_by_username(username: str):
-    return MySQLController.get_users_by_username(username)
+async def get_user_by_username(username: str):
+    return await MySQLController.get_users_by_username(username)
 
 @router.post("/users")
 async def create_user(request: Request):
@@ -32,13 +32,13 @@ async def update_user(user_id: int, request: Request):
     return MySQLController.update_user(user_id, data)
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int):
-    return MySQLController.delete_user(user_id)
+async def delete_user(user_id: int):
+    return await MySQLController.delete_user(user_id)
 
 # ROLES
 @router.get("/roles")
-def get_all_roles():
-    return MySQLController.get_all_roles()
+async def get_all_roles():
+    return await MySQLController.get_all_roles()
 
 @router.post("/roles")
 async def create_role(request: Request):

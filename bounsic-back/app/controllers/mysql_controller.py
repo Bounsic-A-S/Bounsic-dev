@@ -7,12 +7,18 @@ from app.services import MySQLSongService
 class MySQLController:
     # USERS
     @staticmethod
-    def get_all_users():
+    async def get_all_users():
         try:
-            users = MySQLSongService.get_all_users()
+            users = await MySQLSongService.get_all_users()
             if not users:
                 raise HTTPException(status_code=404, detail="No users found")
-            return JSONResponse(status_code=200, content={"users": users})
+            users_data = []
+            for row in users:
+                user_dict = {}
+                for key, value in row._mapping.items():
+                    user_dict[key] = value
+                users_data.append(user_dict)
+            return JSONResponse(status_code=200, content={"users": users_data})
         except HTTPException:
             raise
         except Exception as e:

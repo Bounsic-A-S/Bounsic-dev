@@ -5,16 +5,16 @@ class MySQLSongService:
 
     # USERS
     @staticmethod
-    def get_all_users():
+    async def get_all_users():
         try:
-            return MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users")
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users")
         except Exception as e:
             print.error(f"get_all_users error: {e}")
             return None
 
-    def get_user_by_id( user_id):
+    async def get_user_by_id( user_id):
         try:
-            return MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users WHERE id_user = %s", (user_id,))
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users WHERE id_user = %s", (user_id,))
         except Exception as e:
             print.error(f"get_user_by_id error: {e}")
             return None
