@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ArtistService } from '@app/services/artist.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { SongService } from '@app/services/song.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -30,10 +31,14 @@ import { CommonModule } from '@angular/common';
 })
 export class DashboardComponent {
   private artistService = inject(ArtistService);
+  private songService = inject(SongService);
   artists$!: Observable<any[]>;
+  songSafeChoices$!: Observable<any[]>
+
 
   ngOnInit() : void {
     this.artists$ = this.artistService.getArtistsByUser("induismo97@hotmail.com");
+    this.songSafeChoices$ = this.songService.getSafeChoices("induismo97@hotmail.com");
   }
 
 }

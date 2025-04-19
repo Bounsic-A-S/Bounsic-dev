@@ -1,13 +1,14 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
   <!-- Song Item -->
-  <div
-    *ngFor="let safeChoiceSong of safeChoiceSongs | slice:0:maxSongsToShow"
+  <ng-container *ngIf="songs !== undefined; else safeChoiceSong">
+    <div
+    *ngFor="let safeChoiceSong of songs | slice:0:maxSongsToShow"
     class="hover:bg-white/5 rounded-lg cursor-pointer"
   >
     <a routerLink="/player" class="flex items-center gap-4 p-2 w-full h-full">
       <div class="w-8 sm:w-10 lg:w-12">
         <img
-          [src]="safeChoiceSong.cover"
+          [src]="safeChoiceSong.img_url"
           [alt]="safeChoiceSong.title"
           class="w-full aspect-square object-cover rounded"
         />
@@ -21,4 +22,28 @@
       </div>
     </a>
   </div>
+  </ng-container>
+  <ng-template #safeChoiceSong>
+    <div
+    *ngFor="let safeChoiceSong of safeChoiceSongs | slice:0:maxSongsToShow"
+    class="hover:bg-white/5 rounded-lg cursor-pointer"
+  >
+    <a routerLink="/player" class="flex items-center gap-4 p-2 w-full h-full">
+      <div class="w-8 sm:w-10 lg:w-12">
+        <img
+          [src]="safeChoiceSong.img_url"
+          [alt]="safeChoiceSong.title"
+          class="w-full aspect-square object-cover rounded"
+        />
+      </div>
+
+      <div>
+        <h4 class="text-base lg:text-lg">{{ safeChoiceSong.title }}</h4>
+        <p class="font-light text-sm sm:text-base text-bounsic-gray-1">
+          {{ safeChoiceSong.artist }} || {{ safeChoiceSong.album }}
+        </p>
+      </div>
+    </a>
+  </div>
+  </ng-template>
 </div>

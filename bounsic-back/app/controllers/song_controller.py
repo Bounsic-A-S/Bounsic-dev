@@ -199,17 +199,14 @@ async def safe_choice_recomendation(email: str):
             mongo_song = get_song_by_id(song_id_mongo)
             
             if mongo_song:
-                # create object
-                combined_song = { 
-                    **{k: v for k, v in mongo_song.items() if k != '_id'},  
-                }
+                keys_to_include = ["artist", "title", "album", "img_url"]
+                combined_song = {k: mongo_song.get(k) for k in keys_to_include}
                 final_songs.append(combined_song)
+
         
         return JSONResponse(
             status_code=200,
-            content={
-                "songs": final_songs,
-            }
+            content=final_songs
         )
         
     except HTTPException:

@@ -62,7 +62,7 @@ async def create_song(track_name: str):
 
     return result
 
-@router.get("/safeChoice")
+@router.post("/safeChoice")
 async def get_safe_choide(request: Request):
     data = await request.json()
     user_email = data.get("email")
