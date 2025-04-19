@@ -2,8 +2,9 @@ from .song_controller import get_song_by_artist_controller, get_song_by_title_co
 from .bert_controller import bert_request
 from .crawl_controller import crawl_request
 from .db_controller import get_songs_request,create_one_song_request
-from .scrapping_controller import get_youtube_scrapping_request,search_youtube_request,get_youtube_download_request
+from .scrapping_controller import get_youtube_scrapping_request, search_youtube_request, get_youtube_download_request, get_song_lyrics
+from .algorithms_controller import fingerprint
 from .artist_controller import get_artist_desc_controller, get_songs_by_artist_controller
-from .spotify_controller import get_album_cover_controller,get_track_info_controller
-from .playlist_controller import get_playlist_by_id_controller,get_all_playlists_controller
+from .spotify_controller import get_album_cover_controller, get_track_info_controller
+from .playlist_controller import get_playlist_by_id_controller, get_all_playlists_controller
 from .mysql_controller import MySQLController
