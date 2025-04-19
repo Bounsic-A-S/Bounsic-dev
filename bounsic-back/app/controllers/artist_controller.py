@@ -32,9 +32,9 @@ async def get_artist_user_prefences_controller(email: str):
         return {"error": "Email not provided"}
     
     # get user
-    user = MySQLSongService.get_user_by_email(email)
+    user = await MySQLSongService.get_user_by_email(email)
     # get songs listened
-    likes = MySQLSongService.get_likes_by_user(user[0]["id_user"])
+    likes = await MySQLSongService.get_likes_by_user(user[0]["id_user"])
     songs_liked = []
     for like in likes:
         song = get_song_by_id(like["song_mongo_id"])

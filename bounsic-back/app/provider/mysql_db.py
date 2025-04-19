@@ -31,12 +31,23 @@ class DatabaseFacade:
         async with self.AsyncSessionLocal() as session:
             yield session
 
-    async def execute_query(self, query: str, params: tuple = None):
+    async def execute_query(self, query: str, params=None):
         async for session in self.get_session():
             try:
-                result = await session.execute(text(query), params)
+                if isinstance(params, dict):
+                    result = await session.execute(text(query), params)
+                elif isinstance(params, (list, tuple)):
+                    result = await session.execute(text(query), params)
+                elif params is None:
+                    result = await session.execute(text(query))
+                else:
+                    raise ValueError("Params must be a dict, list, tuple, or None")
+
                 await session.commit()
-                return [dict(row._mapping) for row in result]
+                try:
+                    return [dict(row._mapping) for row in result]
+                except Exception:
+                    return None
             except Exception as e:
                 await session.rollback()
                 print(f"Error executing query: {e}")

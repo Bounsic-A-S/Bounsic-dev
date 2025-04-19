@@ -14,17 +14,15 @@ class MySQLSongService:
 
     async def get_user_by_id( user_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users WHERE id_user = %s", (user_id,))
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Users WHERE id_user = :user_id",{"user_id":user_id})
         except Exception as e:
             print.error(f"get_user_by_id error: {e}")
             return None
         
     async def get_user_by_email( email):
         try:
-            query = """
-                SELECT * FROM Bounsic_Users WHERE email = %s
-                """
-            return await MySQLSongService._db.execute_query(query, (email,))
+            query = "SELECT * FROM Bounsic_Users WHERE email = :email"
+            return await MySQLSongService._db.execute_query(query, {"email":email})
         except Exception as e:
             print.error(f"get_user_by_id error: {e}")
             return None
@@ -259,9 +257,9 @@ class MySQLSongService:
             query = """
                 UPDATE Bounsic_History
                 SET cant_repro = cant_repro + 1
-                WHERE user_id = %s AND song_mongo_id = %s
+                WHERE user_id = :id_user AND song_mongo_id = :id_mongo_song
             """
-            return await MySQLSongService._db.execute_query(query, (id_user, id_mongo_song))
+            return await MySQLSongService._db.execute_query(query, ({"id_user":id_user, "id_mongo_song":id_mongo_song}))
         except Exception as e:
             print.error(f"update_cant_history error: {e}")
             return False
@@ -380,7 +378,7 @@ class MySQLSongService:
 
     async def get_likes_by_user( user_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Like WHERE user_id = %s", (user_id,))
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Like WHERE user_id = :user_id", {"user_id":user_id})
         except Exception as e:
             print.error(f"get_likes_by_user error: {e}")
             return None
