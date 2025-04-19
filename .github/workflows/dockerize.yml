@@ -34,9 +34,9 @@ jobs:
       - name: Log in to Azure Container Registry
         uses: docker/login-action@v2
         with:
-          registry: bounsiccontainerregistery.azurecr.io
-          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_88D09074E414417AA1D7C4B43A8E2A92 }}
-          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_523D865B699E42D5A2EFF7A5782E78D9 }}
+          registry: https://bounsic.azurecr.io/
+          username: ${{ secrets.AzureAppService_ContainerUsername_25ea92dee1494c22a18d8ea8268299e7 }}
+          password: ${{ secrets.AzureAppService_ContainerPassword_92b12e7f7a664d05ab43b76d0015ba43 }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
@@ -44,4 +44,4 @@ jobs:
           context: .
           file: ./bounsic-front/Dockerfile
           push: true
-          tags: bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}
+          tags: bounsic.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_25ea92dee1494c22a18d8ea8268299e7 }}/bounsic-front:${{ github.sha }}

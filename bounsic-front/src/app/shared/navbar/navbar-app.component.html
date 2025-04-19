@@ -54,7 +54,7 @@
           (click)="toggleLogin()"
           >
           <!-- Usuario no autenticado -->
-          <ng-container *ngIf="!userProfile">
+          <ng-container *ngIf="!isUserLogged()">
             <button
               (click)="openModal()"
               class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
@@ -72,7 +72,7 @@
           </ng-container>
 
           <!-- Usuario autenticado -->
-          <ng-container *ngIf="userProfile">
+          <ng-container *ngIf="isUserLogged()">
             <!-- User Profile Button -->
             <article class="w-full text-left">
               <div class="px-4 py-1.5">
@@ -118,7 +118,7 @@
               </div>
             </button>
             <button
-              (click)="logout(true)"
+              (click)="logout()"
               class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
               role="menuitem"
             >
@@ -190,14 +190,13 @@
 
       <!-- Mobile Login / Logout -->
       <button
-        *ngIf="!userProfile"
-        (click)="loginRedirect()"
+        *ngIf="!isUserLogged()"
         class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
       >
         {{'BOUNSIC.NAVBAR.SIGNIN'  | translate}}
       </button>
       <button
-        *ngIf="userProfile"
+        *ngIf="isUserLogged()"
         (click)="logout()"
         class="block text-sm text-white/90 hover:text-red-600 transition-colors"
       >

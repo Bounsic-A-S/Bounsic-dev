@@ -51,21 +51,46 @@ class DatabaseFacade:
         else:
             print("Connection pool not initialized.")
             return None
+    def release_connection(self, connection):
+        if connection:
+            connection.close()  # Para mysql.connector, close() devuelve la conexión al pool
 
     def execute_query(self, query, params=None):
         connection = self.get_connection()
         if connection:
-            cursor = connection.cursor()
+            cursor = connection.cursor(dictionary=True)
             try:
                 cursor.execute(query, params)
-                connection.commit()
-                return cursor.rowcount
+                
+                # Determinar el tipo de consulta
+                query_type = query.strip().upper().split()[0]
+                
+                if query_type == "SELECT":
+                    # Para consultas SELECT, devolver los resultados
+                    result = cursor.fetchall()
+                    return result
+                elif query_type == "INSERT":
+                    # Para INSERT, hacer commit y devolver información incluyendo el último ID
+                    connection.commit()
+                    return {
+                        "rowcount": cursor.rowcount,
+                        "lastrowid": cursor.lastrowid
+                    }
+                else:
+                    # Para UPDATE, DELETE, hacer commit y devolver filas afectadas
+                    connection.commit()
+                    return {
+                        "rowcount": cursor.rowcount
+                    }
+                    
             except mysql.connector.Error as err:
                 print(f"Error executing query: {err}")
-                connection.rollback()
+                if connection.is_connected():
+                    connection.rollback()
                 return None
             finally:
                 cursor.close()
-                self.release_connection(connection)
+                if connection.is_connected():
+                    connection.close()
         return None
 

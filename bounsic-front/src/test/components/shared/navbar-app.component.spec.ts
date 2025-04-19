@@ -4,6 +4,7 @@ import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG } from '@azure/msa
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { PLATFORM_ID } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 describe('NavbarAppComponent', () => {
   let component: NavbarAppComponent;
   let fixture: ComponentFixture<NavbarAppComponent>;
@@ -26,7 +27,7 @@ describe('NavbarAppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavbarAppComponent],
+      imports: [NavbarAppComponent,TranslateModule.forRoot()],
       providers: [
         { provide: PLATFORM_ID, useValue: 'browser' },
         { provide: MsalService, useValue: mockMsalService },

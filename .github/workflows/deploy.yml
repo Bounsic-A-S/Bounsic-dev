@@ -14,7 +14,7 @@ jobs:
       - name: Deploy Frontend to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'bounsic-front-nginx'
+          app-name: 'bounsic-front'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3CCD7D22BA9147A6B28572F8F693B975 }}
-          images: 'bounsiccontainerregistery.azurecr.io/bounsic-front-nginx:${{ github.sha }}'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_ca13cff80fdd45bb9ea199ced09f0e1b }}
+          images: 'bounsic.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_25ea92dee1494c22a18d8ea8268299e7 }}/bounsic-front:${{ github.sha }}'
