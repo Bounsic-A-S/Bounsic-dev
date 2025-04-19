@@ -10,8 +10,7 @@ import { ArtistListItemComponent } from './artist_item/artist_item.component';
 })
 export class ArtistListComponent {
 
-    @Input() artists: any[] = [];
-
+    @Input() artists!: any[] | null;
     public featuredArtists = [
         {
             artist_name: 'Coldplay',

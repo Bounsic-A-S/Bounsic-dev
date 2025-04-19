@@ -9,7 +9,8 @@ import { ArtistListComponent } from "./artistList/artist_list.component";
 import { LastMonthSongsComponent } from "./lastMonthSongs/last-month-songs.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ArtistService } from '@app/services/artist.service';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -22,32 +23,17 @@ import { catchError, firstValueFrom, of } from 'rxjs';
     TrendingSongsComponent,
     ArtistListComponent,
     LastMonthSongsComponent,
-    TranslateModule
+    TranslateModule,CommonModule
 ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
   private artistService = inject(ArtistService);
-  artists: [] = [];
+  artists$!: Observable<any[]>;
 
-  async ngOnInit() {
-    try {
-      const response = await firstValueFrom(
-        this.artistService.getArtistsByUser("induismo97@hotmail.com").pipe(
-          catchError(error => {
-            console.error('Error obteniendo datos:', error);
-            return of([]);
-          })
-        )
-      );
-
-      if (response) {
-        this.artists = response;
-      }
-    } catch (error) {
-      console.error("Error en ngOnInit:", error);
-    }
+  ngOnInit() : void {
+    this.artists$ = this.artistService.getArtistsByUser("induismo97@hotmail.com");
   }
 
 }
