@@ -96,7 +96,7 @@ async def sum_count_history(request: Request):
     data = await request.json()
     email = data.get("email")
     id_mongo_song = data.get("song_mongo_id")
-    return MySQLController.sum_count_history_song(email, id_mongo_song)
+    return  await MySQLController.sum_count_history_song(email, id_mongo_song)
 
 @router.get("/history/user/{user_id}")
 async def get_history_by_user(user_id: int):

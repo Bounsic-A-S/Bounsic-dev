@@ -252,7 +252,8 @@ class MySQLController:
             user_id = user_json["id_user"]
 
             #update cant history
-            history = MySQLSongService.update_cant_history(user_id, id_mongo_song)
+            history = await MySQLSongService.update_cant_history(user_id, id_mongo_song)
+            print("history", history)
             if not history:
                 raise HTTPException(status_code=404, detail="Could not update history")
             return JSONResponse(status_code=200, content={"history": history})

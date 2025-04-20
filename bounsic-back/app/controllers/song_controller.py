@@ -1,12 +1,13 @@
 
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
 from app.services import MySQLSongService
 import re
 import json
 import os
+import logging
 
 
 async def get_song_by_artist_controller(artist: str):
@@ -171,35 +172,37 @@ async def insert_song_controller(track_name: str):
 
 async def safe_choice_recomendation(email: str):
     try:
-        # get user by email
-        user = MySQLSongService.get_user_by_email(email)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
         
-        user_json = user[0] 
-        user_id = user_json["id_user"]
-        
-        # get recommendations
-        mysql_songs = MySQLSongService.get_safe_choices(user_id)
+        mysql_songs = await MySQLSongService.get_safe_choices(email)
         if not mysql_songs:
             return JSONResponse(
                 status_code=200,
                 content={"message": "No recommendations available", "songs": []}
             )
         
-        # look for songs in MongoDB
+        # Obtener los IDs de las canciones desde MySQL
+        song_ids = [song["song_mongo_id"] for song in mysql_songs]
+
+        # Obtener las canciones desde MongoDB
+        mongo_songs = get_songs_by_ids(song_ids)
+        if not mongo_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No MongoDB songs found", "songs": []}
+            )
+
+        # Crear un mapa de canciones MongoDB por su ID
+        mongo_map = {song["_id"]: song for song in mongo_songs}
+
+        # Filtrar solo la información relevante
         final_songs = []
+        keys_to_include = ["artist", "title", "album", "img_url"]
+
+        # Combinar la información de MySQL y MongoDB
         for song in mysql_songs:
-            # verify if exists song_mongo_id
-            if "song_mongo_id" not in song:
-                continue
-                
-            # serch song in MongoDB
-            song_id_mongo = song["song_mongo_id"]
-            mongo_song = get_song_by_id(song_id_mongo)
-            
+            song_id = song.get("song_mongo_id")
+            mongo_song = mongo_map.get(song_id)
             if mongo_song:
-                keys_to_include = ["artist", "title", "album", "img_url"]
                 combined_song = {k: mongo_song.get(k) for k in keys_to_include}
                 final_songs.append(combined_song)
 
@@ -212,7 +215,7 @@ async def safe_choice_recomendation(email: str):
     except HTTPException:
         raise
     except Exception as e:
-        print.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
+        logging.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail="Internal server error while processing recommendations"

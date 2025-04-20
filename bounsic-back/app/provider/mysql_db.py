@@ -31,25 +31,32 @@ class DatabaseFacade:
         async with self.AsyncSessionLocal() as session:
             yield session
 
+
     async def execute_query(self, query: str, params=None):
         async for session in self.get_session():
             try:
-                if isinstance(params, dict):
-                    result = await session.execute(text(query), params)
-                elif isinstance(params, (list, tuple)):
-                    result = await session.execute(text(query), params)
+                stmt = text(query)
+
+                if isinstance(params, dict) or isinstance(params, (list, tuple)):
+                    result: Result = await session.execute(stmt, params)
                 elif params is None:
-                    result = await session.execute(text(query))
+                    result: Result = await session.execute(stmt)
                 else:
                     raise ValueError("Params must be a dict, list, tuple, or None")
 
-                await session.commit()
                 try:
-                    return [dict(row._mapping) for row in result]
+                    # Intentamos hacer fetchall() para detectar si es SELECT
+                    rows = result.fetchall()
+                    return [dict(row._mapping) for row in rows]
                 except Exception:
-                    return None
+                    # Si no es SELECT, se hace commit y se devuelve info útil
+                    await session.commit()
+                    return {
+                        "rowcount": result.rowcount,
+                        "message": "Query executed successfully"
+                    }
+
             except Exception as e:
                 await session.rollback()
                 print(f"Error executing query: {e}")
                 raise
-            
