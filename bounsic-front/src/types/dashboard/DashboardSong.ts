@@ -1,7 +1,8 @@
 interface DashboardSong {
     id?: number;
-    name: string;
+    title: string;
     artist: string;
-    img: string;
+    album: string;
+    img_url: string;
 }
 export default DashboardSong;

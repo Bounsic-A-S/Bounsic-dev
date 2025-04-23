@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ArtistListItemComponent } from './artist_item/artist_item.component';
+import DashboardArtist from 'src/types/dashboard/DashboardArtist';
 @Component({
     selector: 'dashboard-artist-list',
     standalone: true,
@@ -10,8 +11,8 @@ import { ArtistListItemComponent } from './artist_item/artist_item.component';
 })
 export class ArtistListComponent {
 
-    @Input() artists!: any[] | null;
-    public featuredArtists = [
+    @Input() artists!: DashboardArtist[] | null;
+    public featuredArtists : DashboardArtist[] = [
         {
             artist_name: 'Coldplay',
             img: 'https://i.pinimg.com/736x/9a/5d/ec/9a5dec457d79fb2916fda52c6f831652.jpg',
