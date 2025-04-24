@@ -196,7 +196,7 @@ async def safe_choice_recomendation(email: str):
 
         # Filtrar solo la información relevante
         final_songs = []
-        keys_to_include = ["artist", "title", "album", "img_url"]
+        keys_to_include = ["_id","artist", "title", "album", "img_url"]
 
         # Combinar la información de MySQL y MongoDB
         for song in mysql_songs:
