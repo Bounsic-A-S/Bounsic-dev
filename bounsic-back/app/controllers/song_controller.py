@@ -1,10 +1,13 @@
 
-from fastapi import Request
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
+from app.services import MySQLSongService
 import re
 import json
 import os
+import logging
 
 
 async def get_song_by_artist_controller(artist: str):
@@ -166,3 +169,54 @@ async def insert_bs_controller(url:str):
 async def insert_song_controller(track_name: str):
     result = insert_song(track_name)  
     return result
+
+async def safe_choice_recomendation(email: str):
+    try:
+        
+        mysql_songs = await MySQLSongService.get_safe_choices(email)
+        if not mysql_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No recommendations available", "songs": []}
+            )
+        
+        # Obtener los IDs de las canciones desde MySQL
+        song_ids = [song["song_mongo_id"] for song in mysql_songs]
+
+        # Obtener las canciones desde MongoDB
+        mongo_songs = get_songs_by_ids(song_ids)
+        if not mongo_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No MongoDB songs found", "songs": []}
+            )
+
+        # Crear un mapa de canciones MongoDB por su ID
+        mongo_map = {song["_id"]: song for song in mongo_songs}
+
+        # Filtrar solo la información relevante
+        final_songs = []
+        keys_to_include = ["_id","artist", "title", "album", "img_url"]
+
+        # Combinar la información de MySQL y MongoDB
+        for song in mysql_songs:
+            song_id = song.get("song_mongo_id")
+            mongo_song = mongo_map.get(song_id)
+            if mongo_song:
+                combined_song = {k: mongo_song.get(k) for k in keys_to_include}
+                final_songs.append(combined_song)
+
+        
+        return JSONResponse(
+            status_code=200,
+            content=final_songs
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while processing recommendations"
+        )
