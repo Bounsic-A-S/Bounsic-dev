@@ -7,13 +7,14 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  signal,
   ViewChild,
+  AfterViewInit,
+  signal,
 } from '@angular/core';
 import { Heart, LucideAngularModule, MoreVertical } from 'lucide-angular';
 import { PlayerBarComponent } from './playbar/playbar.component';
 import { PlayerBarControllersComponent } from './controllers/playbar-controllers.component';
-// ... (tus imports)
+import Song from 'src/types/Song';
 
 @Component({
   selector: 'player-music',
@@ -28,8 +29,8 @@ import { PlayerBarControllersComponent } from './controllers/playbar-controllers
   templateUrl: './music-player.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerMusicComponent implements OnChanges {
-  @Input() song: string | null = null;
+export class PlayerMusicComponent implements OnChanges, AfterViewInit {
+  @Input() song!: Song;
 
   readonly Heart = Heart;
   readonly MoreVertical = MoreVertical;
@@ -39,11 +40,12 @@ export class PlayerMusicComponent implements OnChanges {
   volume = signal(1);
   duration = signal(0);
   currentTime = signal(0);
-  lastVolume = 0;
+  lastVolume = 0; 
 
-  @ViewChild('audio', { static: true }) audioRef!: ElementRef<HTMLAudioElement>;
+  @ViewChild('audio') audioRef?: ElementRef<HTMLAudioElement>;
 
   ngAfterViewInit() {
+    if (!this.audioRef) return;
     const audio = this.audioRef.nativeElement;
 
     audio.addEventListener('play', () => this.isPlaying.set(true));
@@ -58,33 +60,33 @@ export class PlayerMusicComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['song'] && this.song && this.audioRef) {
-      const audio = this.audioRef.nativeElement;
-      audio.src = this.song;
-      audio.load();
-      // Opcional: auto play
-      // audio.play();
+    if (changes['song']) {
+      console.log('[player-music] Song input received:', this.song);
+      if (this.audioRef && this.song) {
+        const audio = this.audioRef.nativeElement;
+        audio.src = this.song.mp3_url;
+        audio.load();
+      }
     }
   }
 
   togglePlayPause() {
-    const audio = this.audioRef.nativeElement;
+    const audio = this.audioRef?.nativeElement;
+    if (!audio) return;
     audio.paused ? audio.play() : audio.pause();
   }
 
   toggleMute() {
-    const audio = this.audioRef.nativeElement;
-    this.lastVolume = (audio.volume);
+    const audio = this.audioRef?.nativeElement;
+    if (!audio) return;
+    this.lastVolume = audio.volume;
     audio.muted = !audio.muted;
-    if (audio.muted) {
-      this.volume.set(0);
-    } else {
-      this.volume.set(this.lastVolume);
-    }
+    this.volume.set(audio.muted ? 0 : this.lastVolume);
   }
 
   onVolumeChange(vol: number) {
-    const audio = this.audioRef.nativeElement;
+    const audio = this.audioRef?.nativeElement;
+    if (!audio) return;
     audio.volume = vol;
     this.volume.set(vol);
   }
@@ -96,11 +98,14 @@ export class PlayerMusicComponent implements OnChanges {
   }
 
   skip(seconds: number) {
-    const audio = this.audioRef.nativeElement;
+    const audio = this.audioRef?.nativeElement;
+    if (!audio) return;
     audio.currentTime += seconds;
   }
 
   onSeek(value: number) {
-    this.audioRef.nativeElement.currentTime = value;
+    const audio = this.audioRef?.nativeElement;
+    if (!audio) return;
+    audio.currentTime = value;
   }
 }

@@ -7,7 +7,9 @@
         <section
           class="flex flex-row md:flex-col justify-center items-center gap-x-6"
         >
-          <player-song />
+          <ng-container *ngIf="song$ | async as song">
+            <player-song [song]="song" />
+          </ng-container>
           <player-song-list />
         </section>
 
@@ -19,6 +21,8 @@
   </main>
 
   <footer class="bg-white w-full h-[10vh] fixed bottom-0">
-    <player-music [song]="song.mp3" />
+    <ng-container *ngIf="song$ | async as song">
+      <player-music [song]="song" />
+    </ng-container>
   </footer>
 </div>

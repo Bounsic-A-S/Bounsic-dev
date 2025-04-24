@@ -9,6 +9,16 @@ import json
 import os
 import logging
 
+async def get_song_by_id_controller(id: str):
+    if not id:
+        return {"error": "id not valid"}
+    
+    res = get_song_by_id(id)
+    
+    if not res:
+        return {"error": "Not found any song by artist"}
+    
+    return res
 
 async def get_song_by_artist_controller(artist: str):
     if not artist:

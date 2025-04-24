@@ -22,7 +22,7 @@ export const routes: Routes = [
         component: DashboardComponent,
     },
     {
-        path: 'player',
+        path: 'player/:id',
         component: PlayerComponent,
     },
     {
