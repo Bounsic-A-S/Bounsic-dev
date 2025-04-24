@@ -4,12 +4,20 @@ from app.controllers import (
     get_song_by_artist_controller,
     get_song_by_title_controller,
     get_songs_by_genre_controller,
+    get_song_by_id_controller,
     get_song_image_controller,
     insert_bs_controller,insert_song_controller,
     safe_choice_recomendation
 )
 
 router = APIRouter()
+
+@router.get("/id/{id}")
+async def get_song_by_id(id: str):
+    res = await get_song_by_id_controller(id)
+    if "error" in res:
+        raise JSONResponse(status_code=404, detail="No se encontraron canciones para este artista")
+    return JSONResponse(status_code=200,content=res)
 
 @router.get("/artist/{artist}")
 async def get_song_by_artist(artist: str):
@@ -18,7 +26,6 @@ async def get_song_by_artist(artist: str):
     if "error" in res:
         raise JSONResponse(status_code=404, detail="No se encontraron canciones para este artista")
     return JSONResponse(status_code=200,content=res)
-
 
 
 @router.get("/title/{title}")
