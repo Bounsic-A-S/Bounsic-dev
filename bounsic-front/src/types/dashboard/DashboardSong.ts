@@ -1,5 +1,5 @@
 interface DashboardSong {
-    id?: number;
+    _id?: string;
     title: string;
     artist: string;
     album: string;
