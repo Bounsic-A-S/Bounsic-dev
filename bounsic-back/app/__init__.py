@@ -13,7 +13,7 @@ app = FastAPI()
 # CORS setup
 origins = [
     "http://localhost:4200", #dev
-    "https://bounsic-front-nginx.azurewebsites.net", #prod
+    "https://bounsic-front.azurewebsites.net", #prod
 ]
 
 app.add_middleware(
