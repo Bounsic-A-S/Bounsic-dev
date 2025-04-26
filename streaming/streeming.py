@@ -1,53 +1,97 @@
-# bounsic-back/streaming.py
-from fastapi import FastAPI, Request, HTTPException, Header
+import logging
+from fastapi import APIRouter, Request, HTTPException, Header, status
 from fastapi.responses import StreamingResponse
 from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import ResourceNotFoundError, AzureError
 from typing import Optional
-import io
+from dotenv import load_dotenv
+import os
+from config import ALLOWED_ORIGINS
 
-app = FastAPI()
+load_dotenv()
 
-# ⚠️ Coloca tu string de conexión aquí o usa variables de entorno
-AZURE_CONNECTION_STRING=""
-CONTAINER_NAME = ""
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+router = APIRouter()
+
+# Conexión a Azure Blob Storage
+AZURE_CONNECTION_STRING = os.getenv("AZURE_CONNECTION_STRING")
+AZURE_CONTAINER_NAME = os.getenv("AZURE_CONTAINER_NAME")
 blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
-container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+container_client = blob_service_client.get_container_client(AZURE_CONTAINER_NAME)
 
-@app.get("/stream/{filename}")
-async def stream_song(
-    filename: str,
+@router.get("/stream/{blob_name}")
+async def stream_audio(
+    request: Request,
+    blob_name: str,
     range: Optional[str] = Header(None)
 ):
+    """
+    Endpoint de streaming que actúa como proxy entre el frontend y Azure Blob Storage.
+    
+    Args:
+        request: Objeto Request para verificar el origen
+        blob_name: Nombre del archivo en Azure Blob Storage
+        range: Cabecera Range para soporte de streaming parcial
+    
+    Returns:
+        StreamingResponse con el audio solicitado
+    """
     try:
-        blob_client = container_client.get_blob_client(filename)
+        # Verificación de origen
+        origin = request.headers.get('origin')
+        if origin not in ALLOWED_ORIGINS:
+            raise HTTPException(status_code=403, detail="Origen no permitido")
+
+        # Conexión con Azure
+        blob_client = container_client.get_blob_client(blob_name)
+        
+        # Manejo de rangos para streaming
         blob_props = blob_client.get_blob_properties()
-        blob_size = blob_props.size
-
-        # Manejo de Range Requests
-        start = 0
-        end = blob_size - 1
-
+        file_size = blob_props.size
+        start, end = 0, file_size - 1
+        
         if range:
             parts = range.replace("bytes=", "").split("-")
             start = int(parts[0])
-            if parts[1]:
-                end = int(parts[1])
+            end = int(parts[1]) if parts[1] else file_size - 1
 
-        length = end - start + 1
-        stream = blob_client.download_blob(offset=start, length=length)
+        # Validación de rangos
+        if start >= file_size or end >= file_size or start > end:
+            raise HTTPException(
+                status_code=416,
+                detail=f"Rango inválido. Tamaño del archivo: {file_size} bytes"
+            )
 
+        # Descarga del fragmento solicitado
+        chunk_size = end - start + 1
+        stream = blob_client.download_blob(offset=start, length=chunk_size)
+
+        # Cabeceras de respuesta
         headers = {
-            "Content-Range": f"bytes {start}-{end}/{blob_size}",
+            "Content-Range": f"bytes {start}-{end}/{file_size}",
             "Accept-Ranges": "bytes",
-            "Content-Length": str(length),
-            "Content-Type": "audio/mpeg"  # o el tipo correcto según tu archivo
+            "Content-Length": str(chunk_size),
+            "Content-Type": "audio/mpeg",
+            "Cache-Control": "public, max-age=600",  # 10 minutos de caché
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Expose-Headers": "Content-Range, Accept-Ranges, Content-Length"
         }
 
         return StreamingResponse(
             stream.chunks(),
             status_code=206 if range else 200,
-            headers=headers
+            headers=headers,
+            media_type="audio/mpeg"
         )
+
+    except ResourceNotFoundError:
+        raise HTTPException(status_code=404, detail="Archivo no encontrado")
+    except AzureError as e:
+        logger.error(f"Error de Azure: {str(e)}")
+        raise HTTPException(status_code=502, detail="Error al conectar con el almacenamiento")
     except Exception as e:
-        raise HTTPException(status_code=404, detail=f"Archivo no encontrado: {e}")
+        logger.error(f"Error inesperado: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
