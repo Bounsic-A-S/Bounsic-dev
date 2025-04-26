@@ -5,7 +5,8 @@ from app.controllers import (
     get_song_by_title_controller,
     get_songs_by_genre_controller,
     get_song_image_controller,
-    insert_bs_controller,insert_song_controller
+    insert_bs_controller,insert_song_controller,
+    safe_choice_recomendation
 )
 
 router = APIRouter()
@@ -59,5 +60,12 @@ async def create_song(track_name: str):
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
 
+    return result
+
+@router.post("/safeChoice")
+async def get_safe_choide(request: Request):
+    data = await request.json()
+    user_email = data.get("email")
+    result = await safe_choice_recomendation(user_email)
     return result
     

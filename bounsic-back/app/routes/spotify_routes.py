@@ -22,5 +22,5 @@ async def get_album_cover(
     
 
 @router.get("/track-info")
-def track_info(track_name: str = Query(..., description="Nombre de la canción a buscar")):
+async def track_info(track_name: str = Query(..., description="Nombre de la canción a buscar")):
     return get_track_info_controller(track_name)

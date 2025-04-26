@@ -15,7 +15,7 @@ interface Song {
   album: string;
   cover: string;
   duration: string;
-  mp3Url:string;
+  mp3Url: string;
 }
 
 interface PlaylistDetail {
@@ -31,72 +31,66 @@ interface PlaylistDetail {
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [
-    NavbarAppComponent,
-    PlayListSongItemComponent,
-    CommonModule,
-    SongHeroComponent,
-  ],
   templateUrl: './playlist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SongHeroComponent, PlayListSongItemComponent, CommonModule, NavbarAppComponent],
 })
 export class PlaylistComponent implements OnInit {
-  private route: ActivatedRoute = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
   private playlistService = inject(PlaylistService);
 
-  playlistId$: Observable<string | null> = this.route.paramMap.pipe(
-    map(params => params.get('id'))
-  );
+  public loading = true; // init load always tru
 
-  album$: Observable<PlaylistDetail | undefined> = this.playlistId$.pipe(
-    tap(id => console.log('Playlist ID:', id)),
-    switchMap(playlistId => {
-      if (!playlistId) {
-        console.log('No playlist ID provided');
-        return of(undefined);
-      }
-      console.log('Fetching playlist with ID:', playlistId);
+  playlist$: Observable<PlaylistDetail | undefined> = this.route.paramMap.pipe(
+    switchMap((params) => {
+      const playlistId = params.get('id');
+      if (!playlistId) return of(undefined);
+
       return this.playlistService.getPlaylistById(playlistId).pipe(
-        tap(response => console.log('API Response:', response)),
-        map(response => ({
-          id: response.id,
-          name: response.name || response.title || 'Untitled Playlist',
-          description: response.description ?? '',
-          imageUrl: response.img_url || '',
-          totalSongs: response.songs?.length || 0,
-          totalDuration: this.calculateTotalDuration(response.songs || []),
-          songs: (response.songs || []).map((song: { _id: any; id: any; title: any; artist: any; album: any; img_url: any; mp3_url:any, cover: any; duration: any; },i: number) => ({
-            id:i+1,
-            title: song.title || '',
-            artist: song.artist || '',
-            album: song.album || '',
-            cover: song.img_url || song.cover || '',
-            mp3Url: song.mp3_url || '',
-            duration: song.duration || '0:00'
-          }))
-        })),
-        catchError(error => {
-          console.error('Error fetching playlist:', error);
+        tap(() => {
+          this.loading = false; // load ends
+        }),
+        map((response) => this.mapPlaylistResponse(response)),
+        catchError(() => {
+          this.loading = false; // load ends
           return of(undefined);
         })
       );
     })
   );
 
+  private mapPlaylistResponse(response: any): PlaylistDetail {
+    console.log(response)
+    return {
+      id: response.id,
+      name: response.name || response.title || 'Untitled Playlist',
+      description: response.description ?? '',
+      imageUrl: response.img_url || '',
+      totalSongs: response.songs?.length || 0,
+      totalDuration: this.calculateTotalDuration(response.songs || []),
+      songs: (response.songs || []).map((song: { title: any; artist: any; album: any; img_url: any; cover: any; mp3_url: any; duration: any; }, i: number) => ({
+        id: i + 1,
+        title: song.title || '',
+        artist: song.artist || '',
+        album: song.album || '',
+        cover: song.img_url || song.cover || '',
+        mp3Url: song.mp3_url || '',
+        duration: song.duration || '0:00',
+      })),
+    };
+  }
+
   private calculateTotalDuration(songs: any[]): string {
-    if (!songs || songs.length === 0) return '0:00';
     const totalSeconds = songs.reduce((acc, song) => {
-      const duration = song.duration || '0:00';
-      const [minutes, seconds] = duration.split(':').map(Number);
+      const [minutes, seconds] = (song.duration || '0:00').split(':').map(Number);
       return acc + (minutes * 60 + (seconds || 0));
     }, 0);
-    
+
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   ngOnInit(): void {
-    // The subscription is handled automatically by the async pipe in the template
   }
 }

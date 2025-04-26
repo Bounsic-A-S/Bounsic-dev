@@ -4,13 +4,14 @@ import {
   EventEmitter,
   Input,
   Output,
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { AuthService } from '@app/services/auth/auth.service';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
@@ -19,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,ClickOutsideDirective,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, ClickOutsideDirective, TranslateModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,12 +33,16 @@ export class AuthComponent {
   isSubmitting = false;
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
+  constructor() {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
     });
   }
+
   close(): void {
     this.closeModal.emit();
   }

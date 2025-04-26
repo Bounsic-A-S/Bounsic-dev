@@ -49,23 +49,24 @@ export class LibraryComponent implements OnInit {
         }
     ];
 
+
     ngOnInit(): void {
         this.playlistsT$ = this.playlistService.getAllPlaylist().pipe(
-            map(response => {
-                if (Array.isArray(response) && response.length > 0) {
-                    return response.map((item, index) => ({
-                        id: item._id,
-                        title: item.title || `Lista ${index + 1}`,
-                        songCount: item.songs?.length || 0,
-                        coverUrl: item.img_url || ''
-                    }));
-                }
-                return this.defaultPlaylists;
-            }),
-            catchError(err => {
-                console.error('Error al obtener playlists:', err);
-                return of(this.defaultPlaylists);
-            })
+          map((response) => {
+            if (Array.isArray(response) && response.length > 0) {
+              return response.map((item, index) => ({
+                id: item._id,
+                title: item.title || `Lista ${index + 1}`,
+                songCount: item.songs?.length || 0,
+                coverUrl: item.img_url || ''
+              }));
+            }
+            return this.defaultPlaylists;
+          }),
+          catchError((err) => {
+            console.error('Error al obtener playlists:', err);
+            return of(this.defaultPlaylists);
+          })
         );
     }
 }

@@ -1,0 +1,67 @@
+<media-controller
+  audio
+  class="w-full"
+  style="
+    --media-background-color: transparent;
+    --media-control-background: transparent;
+    --media-control-hover-background: transparent;
+  "
+>
+  <!-- Audio -->
+  <audio
+    #audio
+    preload="metadata"
+    slot="media"
+    [src]="song"
+  ></audio>
+
+  <!-- Layout con los subcomponentes -->
+  <div class="bg-bounsic-gray-4 text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1 items-center justify-between gap-6">
+    
+    <!-- Song Info -->
+    <div class="flex justify-center items-center gap-4">
+      <img
+        src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
+        alt="Cover"
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-cover flex-shrink-0"
+      />
+      <div class="min-w-0">
+        <h3 class="text-base sm:text-lg font-semibold truncate">No One Noticed</h3>
+        <p class="text-sm text-bounsic-gray-2 truncate">The Marias</p>
+      </div>
+      <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
+        <button class="text-bounsic-gray-2 hover:text-white transition-colors">
+          <lucide-angular [img]="Heart" class="my-icon" [size]="20"></lucide-angular>
+        </button>
+        <button class="hidden sm:block text-bounsic-gray-2 hover:text-white transition-colors">
+          <lucide-angular [img]="MoreVertical" class="my-icon" [size]="20"></lucide-angular>
+        </button>
+      </div>
+    </div>
+
+    <!-- Playbar -->
+    <div class="flex items-center justify-center w-full sm:w-auto max-w-full">
+      <player-music-playbar 
+      [isPlaying]="isPlaying()"
+      [currentTime]="currentTime()"
+      [duration]="duration()"
+      (playPause)="togglePlayPause()"
+      (seek)="onSeek($event)"
+      (skip)="skip($event)"
+      
+      class="w-full"></player-music-playbar>
+    </div>
+
+    <!-- Controllers -->
+    <div class="flex items-center justify-center w-full sm:w-auto max-w-full">
+      <player-music-playbar-controllers
+      [isMuted]="isMuted()"
+      [volume]="volume()"
+      (toggleMute)="toggleMute()"
+      (onVolumeChange)="onVolumeChange($event)"
+      
+      class="w-full"></player-music-playbar-controllers>
+    </div>
+
+  </div>
+</media-controller>

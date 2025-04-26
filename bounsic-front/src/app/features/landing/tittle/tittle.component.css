@@ -1,11 +1,10 @@
-/* smooth-hover-text.component.css */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 h1 {
-  font-family: "Inter", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-weight: 900;
-  font-size: clamp(3rem, 8vw, 7rem); /* Ajuste dinámico de tamaño */
-  letter-spacing: -0.05em;
+  font-size: clamp(5rem, 10vw, 9rem); /* Ajuste dinámico de tamaño */
+  letter-spacing: 0.15em; /* ← Más separación horizontal */
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
   -webkit-text-fill-color: transparent;
   transition: all 0.3s cubic-bezier(0.43, 0.13, 0.23, 0.96);
@@ -18,7 +17,11 @@ h1.hovered {
 }
 
 .first-tittle {
-  font-size: clamp(2rem, 5vw, 3rem); /* Ajuste dinámico */
+  font-size: clamp(3rem, 6vw, 4rem); /* Ajuste dinámico */
+  letter-spacing: normal; /* Puedes ajustar este si quieres menos spacing en el primero */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0);
+  -webkit-text-fill-color: white;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
 }
 
 @media (max-width: 1024px) {
@@ -38,6 +41,6 @@ h1.hovered {
     font-size: 3rem;
   }
   .second-tittle {
-    font-size: 2.2rem
+    font-size: 2.2rem;
   }
 }

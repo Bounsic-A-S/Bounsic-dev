@@ -7,3 +7,5 @@ from .health_routes import router as health_router
 from .artist_routes import router as artist_router
 from .spotify_routes import router as spotify_router
 from .playlist_routes import router as playlist_router
+from .algorithms_routes import router as algorithms_router
+from .mysql_routes import router as mysql_router

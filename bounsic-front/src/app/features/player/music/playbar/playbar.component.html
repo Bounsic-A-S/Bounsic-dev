@@ -1,0 +1,36 @@
+<media-control-bar class="flex flex-col justify-center items-center gap-2 w-full h-20 px-4 shadow-xl">
+  <section class="flex items-center gap-x-0 sm:gap-x-8 lg:gap-x-12">
+    <!-- Seek Backward -->
+    <button (click)="skip.emit(-10)" class="hidden sm:block">
+      <lucide-icon [name]="SkipBack" class="w-6 h-6 text-white fill-white" />
+    </button>
+
+    <!-- Play/Pause -->
+    <button
+      (click)="playPause.emit()"
+      class="rounded-full flex items-center justify-center sm:block"
+    >
+      <lucide-icon [name]="isPlaying ? Pause : Play" class="w-7 h-7 text-white fill-white" />
+    </button>
+
+    <!-- Seek Forward -->
+    <button (click)="skip.emit(10)" class="hidden sm:block">
+      <lucide-icon [name]="SkipForward" class="w-6 h-6 text-white fill-white" />
+    </button>
+  </section>
+
+  <!-- Time Display -->
+  <section class="hidden items-center gap-2 w-96 md:flex">
+    <span class="text-xs text-bounsic-gray-2">{{ formatTime(currentTime) }}</span>
+
+    <input
+      type="range"
+      min="0"
+      [max]="duration"
+      [value]="currentTime"
+      (input)="onSeek($event)"
+      class="w-full accent-white h-0.5 transition-all duration-200"
+    />
+    <span class="text-xs text-white">{{ formatTime(duration) }}</span>
+  </section>
+</media-control-bar>
