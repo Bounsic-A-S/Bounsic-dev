@@ -1,173 +1,76 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Inject,
-  OnDestroy,
   OnInit,
-  PLATFORM_ID,
+  inject
 } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { filter, Subject, takeUntil } from 'rxjs';
-import {
-  MSAL_GUARD_CONFIG,
-  MsalBroadcastService,
-  MsalGuardConfiguration,
-  MsalService,
-} from '@azure/msal-angular';
-import {
-  AuthenticationResult,
-  EventMessage,
-  EventType,
-  InteractionStatus,
-  PopupRequest,
-  RedirectRequest,
-} from '@azure/msal-browser';
+import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, LogIn, LogOut, Heart, Settings } from 'lucide-angular';
-import { AuthComponent } from "@app/auth/auth.component";
+import {
+  LucideAngularModule,
+  LogIn,
+  LogOut,
+  Heart,
+  Settings,
+} from 'lucide-angular';
+import { AuthComponent } from '@app/auth/auth.component';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from '@app/services/auth/auth.service';
+
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, 
-    AuthComponent,ClickOutsideDirective,TranslateModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    LucideAngularModule,
+    AuthComponent,
+    ClickOutsideDirective,
+    TranslateModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarAppComponent implements OnInit, OnDestroy {
+export class NavbarAppComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   isMobileMenuOpen = false;
   userProfile: any = null;
   isLoggingToggled = false;
-  isIframe = false;
-  loginDisplay = false;
-  private readonly _destroying$ = new Subject<void>();
-  //icons
+  isModalOpen = false;
+
+  // Icons
   readonly Heart = Heart;
   readonly loginIcon = LogIn;
   readonly logoutIcon = LogOut;
   readonly settingsIcon = Settings;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
-    private authService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
-    private router: Router
-  ) {}
-  isModalOpen = false; // Controla si el modal está abierto o cerrado
+  ngOnInit(): void {
+    this.authService.initialize();
+  }
+
   goToSettings() {
     this.router.navigate(['/settings']);
   }
+
+  isUserLogged() {
+    this.userProfile = this.authService.getUserProfile();
+    return this.userProfile !== null;
+  }
+
   openModal() {
-    this.isModalOpen = true; // Abre el modal
+    this.isModalOpen = true;
   }
 
   closeModal() {
-    this.isModalOpen = false; // Cierra el modal
+    this.isModalOpen = false;
   }
 
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.authService.handleRedirectObservable().subscribe();
-      this.isIframe = window !== window.parent && !window.opener;
-    }
-
-    this.authService.instance.enableAccountStorageEvents();
-
-    // Manejar eventos de cuenta
-    this.msalBroadcastService.msalSubject$
-      .pipe(
-        filter(
-          (msg: EventMessage) =>
-            msg.eventType === EventType.ACCOUNT_ADDED ||
-            msg.eventType === EventType.ACCOUNT_REMOVED
-        ),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        if (this.authService.instance.getAllAccounts().length === 0) {
-          this.router.navigate(['/']);
-        } else {
-          this.checkAndSetActiveAccount(); // Asegurar cuenta activa antes de mostrar el perfil
-          this.setLoginDisplay();
-        }
-      });
-
-    // Manejar eventos de estado de autenticación
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter(
-          (status: InteractionStatus) => status === InteractionStatus.None
-        ),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.checkAndSetActiveAccount();
-        this.setLoginDisplay();
-      });
-  }
-
-  private setLoginDisplay(): void {
-    const accounts = this.authService.instance.getAllAccounts();
-    this.loginDisplay = accounts.length > 0;
-
-    if (this.loginDisplay) {
-      const activeAccount = this.authService.instance.getActiveAccount();
-      this.userProfile = activeAccount ? activeAccount : null;
-    }
-  }
-
-  private checkAndSetActiveAccount(): void {
-    let activeAccount = this.authService.instance.getActiveAccount();
-    if (!activeAccount) {
-      const accounts = this.authService.instance.getAllAccounts();
-      if (accounts.length > 0) {
-        this.authService.instance.setActiveAccount(accounts[0]);
-      }
-    }
-  }
-
-  loginRedirect(): void {
-    if (this.msalGuardConfig.authRequest) {
-      this.authService.loginRedirect({
-        ...this.msalGuardConfig.authRequest,
-      } as RedirectRequest);
-    } else {
-      this.authService.loginRedirect();
-    }
-  }
-
-  loginPopup(): void {
-    if (this.msalGuardConfig.authRequest) {
-      this.authService
-        .loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
-        .subscribe((response: AuthenticationResult) => {
-          this.authService.instance.setActiveAccount(response.account);
-          this.setLoginDisplay(); // Actualizar el estado después del login
-        });
-    } else {
-      this.authService
-        .loginPopup()
-        .subscribe((response: AuthenticationResult) => {
-          this.authService.instance.setActiveAccount(response.account);
-          this.setLoginDisplay();
-        });
-    }
-  }
-
-  logout(popup?: boolean): void {
-    if (popup) {
-      this.authService.logoutPopup({ mainWindowRedirectUri: '/' });
-    } else {
-      this.authService.logoutRedirect();
-    }
-    this.userProfile = null;
-  }
-
-  ngOnDestroy(): void {
-    this._destroying$.next();
-    this._destroying$.complete();
+  logout(): void {
+    this.authService.logout(true);
+    this.userProfile = this.authService.getUserProfile();
   }
 
   toggleLogin(): void {

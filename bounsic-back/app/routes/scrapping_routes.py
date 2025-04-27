@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Query
 from fastapi.responses import JSONResponse
-from app.controllers import get_youtube_scrapping_request,get_youtube_download_request,search_youtube_request
+from app.controllers import get_youtube_scrapping_request,get_youtube_download_request,search_youtube_request, get_song_lyrics
 
 router = APIRouter()
 
@@ -33,5 +33,13 @@ async def buscar_youtube(q: str = Query(..., title="Término de búsqueda", desc
         video_url = search_youtube_request(q)
         return {"query": q, "video_url": video_url}
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/getlyric/{song}/{artist}")
+async def buscar_letra(song: str, artist: str):
+    try:
+        lyric = get_song_lyrics(song_name=song, artist=artist)
+        return JSONResponse(content=lyric)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.services import get_album_images,get_artist_and_genre_by_track
+from app.services import get_album_images,get_artist_and_genre_by_track,get_artists_by_genre    
 
 
 def get_album_cover_controller(album_name: str, artist_name: str = None):
@@ -26,4 +26,3 @@ def get_track_info_controller(track_name: str):
         raise HTTPException(status_code=404, detail="Canción no encontrada en Spotify")
 
     return result
-
