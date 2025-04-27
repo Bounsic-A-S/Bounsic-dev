@@ -49,16 +49,6 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
 
   
   ngAfterViewInit() {
-    if (this.audioRef) {
-      const audio = this.audioRef.nativeElement;
-      console.log('Audio element available:', audio);
-      
-      // Ahora puedes asignar la fuente del audio
-      audio.src = 'ruta/a/tu/audio.mp3';
-      audio.load();  // Cargar el archivo de audio
-    } else {
-      console.error('audioRef is undefined');
-    }
     if (!this.audioRef) return;
     const audio = this.audioRef.nativeElement;
 
@@ -82,7 +72,6 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
           const regex = /imgs\/(.*)/;
           const match = this.song.mp3_url.match(regex);
           audio.src = this.audioStreamService.getAudioUrl(match ? match[1] : '')
-          // audio.src = this.audioStreamService.getAudioUrl("Dua Lipa - Don't Start Now (Official Music Video).mp3");
           console.log('Audio source set to:', audio.src);
           audio.load();
         }
@@ -121,7 +110,7 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     const audio = this.audioRef?.nativeElement;
     if (!audio) return;
     audio.currentTime += seconds;
-    this.currentTime.set(audio.currentTime); // <-- actualizar la señal
+    this.currentTime.set(audio.currentTime);
 
   }
 
@@ -129,7 +118,7 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     const audio = this.audioRef?.nativeElement;
     if (!audio) return;
     audio.currentTime = value;
-    this.currentTime.set(value); // <-- actualizar la señal aquí también
+    this.currentTime.set(value);
 
   }
 }

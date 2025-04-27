@@ -1,5 +1,5 @@
 # Bounsic-dev
-Development repository for a muscial-web-app that uses scrapping as its core. 
+Development repository for a musical-web-app that uses scrapping as its core. 
 Both back-end and front-end are found here.
 
 # Bounsic
@@ -23,6 +23,7 @@ Both back-end and front-end are found here.
 bounsic/
 ├── bounsic-front/       # Frontend (React + Bun)
 ├── bounsic-back/        # Backend (FastAPI + Python)
+├── streaming/        # Streaming (FastAPI + Python)
 ├── package.json         # Global scripts and dependencies
 └── README.md            # Project documentation
 ```
@@ -51,7 +52,7 @@ bounsic/
 - [PowerShell](https://learn.microsoft.com/en-us/powershell/) (Windows) or [Bash](https://www.gnu.org/software/bash/) (Linux/Mac)
 - [Git](https://git-scm.com/)
 
-### Full Installation (Frontend + Backend)
+### Full Installation (Frontend + Backend + Streaming)
 
 #### On Windows
 
@@ -59,13 +60,13 @@ bounsic/
 bun run install
 ```
 
-#### On Linux/macOS
+#### On Linux (Ubuntu)
 
 Due to the cmd commands this is neccesary.
 ```bash
-bun run install:frontend
-bun run install:backend_linux
+bun run install_linux
 ```
+This will run the same commands as Windows with linux cmd
 
 ---
 
@@ -77,33 +78,36 @@ bun run install:backend_linux
 bun run start
 ```
 
-This will launch both the **frontend** and **backend** simultaneously using `concurrently`.
+This will launch both the **frontend** , **backend** and **streaming** simultaneously using `concurrently`.
 
-### On Linux/macOS
+### On Linux (Ubuntu)
 
 ```bash
-bun run start:frontend
-bun run start:backend_linux
+bun run start_linux
 ```
-You can also change the `package.json` by putting:
-```bash
-"start": "concurrently \"bun run start:frontend\" \"bun run start:backend_linux\"",
-```
----
 
 ## All Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun run install:frontend` | Installs frontend dependencies |
-| `bun run install:backend` | Sets up a Python virtual environment and installs backend dependencies (Windows) |
-| `bun run install:backend_linux` | Same as above but for Linux/macOS |
-| `bun run start:frontend` | Starts the frontend app |
-| `bun run start:backend` | Starts the backend server (Windows) |
-| `bun run start:backend_linux` | Starts the backend server (Linux/macOS) |
-| `bun run test` | Runs all tests for frontend and backend |
-| `bun run test:frontend` | Runs frontend tests |
-| `bun run test:backend` | Runs backend tests |
+| Script                             | Description                                                                                      |
+|------------------------------------|--------------------------------------------------------------------------------------------------|
+| `bun run install:frontend`         | Installs frontend dependencies                                                                   |
+| `bun run install:backend`          | Sets up a Python virtual environment and installs backend dependencies (Windows)                 |
+| `bun run install:streaming`        | Sets up a Python virtual environment and installs streaming dependencies (Windows)               |
+| `bun run install:backend_linux`    | Same as above but for Linux (Ubuntu)                                                                 |
+| `bun run install:streaming_linux`  | Same as above but for Linux (Ubuntu)                                                                 |
+| `bun run install`                  | Installs all dependencies: frontend, backend, and streaming                                      |
+| `bun run install_linux`            | Installs all dependencies for Linux: frontend, backend, and streaming                      |
+| `bun run start:frontend`           | Starts the frontend app                                                                          |
+| `bun run start:backend`            | Starts the backend server (Windows)                                                              |
+| `bun run start:streaming`          | Starts the streaming service (Windows)                                                           |
+| `bun run start:backend_linux`      | Starts the backend server (Linux)                                                          |
+| `bun run start:streaming_linux`    | Starts the streaming service (Linux)                                                       |
+| `bun run start`                    | Starts all services (frontend, backend, and streaming) concurrently                             |
+| `bun run start_linux`              | Starts all services for Linux (frontend, backend, and streaming) concurrently              |
+| `bun run test:frontend`            | Runs frontend tests                                                                               |
+| `bun run test:frontend_linux`      | Runs frontend tests on Linux (with Chromium configured for headless testing)               |
+| `bun run test:backend`             | Runs backend tests (Windows)                                                                     |
+| `bun run test`                     | Runs all tests for frontend and backend concurrently                                            |
 
 ---
 
