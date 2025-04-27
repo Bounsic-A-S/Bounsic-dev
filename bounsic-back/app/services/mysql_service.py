@@ -452,7 +452,7 @@ class MySQLSongService:
             logging.error(f"delete_like error: {e}")
             return False
 
-    # recomendations
+    # recomendations ------ METHODS ACTUALLY USEFUL
     @staticmethod
     async def get_safe_choices(email: str):
         try:
@@ -509,4 +509,32 @@ class MySQLSongService:
             return await MySQLSongService._db.execute_query(query, {"email": email})
         except Exception as e:
             print.error(f"get_likes_by_user error: {e}")
+            return None
+
+    async def get_full_user_by_email( email):
+        try:
+            query = """ 
+                    SELECT 
+                        u.id_user,
+                        u.username,
+                        u.name,
+                        u.last_name,
+                        u.email,
+                        r.name_rol AS role,
+                        u.profile_img,
+                        p.background,
+                        p.typography,
+                        p.language
+                    FROM 
+                        Bounsic_Users u
+                    INNER JOIN 
+                        Bounsic_Role r ON u.rol_user = r.id_rol
+                    LEFT JOIN 
+                        Bounsic_Preferences p ON u.id_user = p.user_id
+                    WHERE 
+                        u.email = :email;
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            print.error(f"get_full_user_by_email error: {e}")
             return None
