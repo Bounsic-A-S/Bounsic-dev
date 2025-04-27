@@ -2,19 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Rocola Bounsic</title>
-</head>
-<body>
-  <h1>Rocola Bounsic 🎵</h1>
-
-  <audio id="audioPlayer" controls autoplay>
-    <source id="audioSource" src="http://localhost:4000/stream/BTS (방탄소년단) 'Savage Love' (Laxed – Siren Beat) [BTS Remix] Lyric Video.mp3" type="audio/mpeg">
-    Tu navegador no soporta audio.
-  </audio>
-
-  <br>
-  <button onclick="prevSong()">⏮️ Anterior canción</button>
-  <button onclick="nextSong()">⏭️ Siguiente canción</button>
+  <title>Rocola Bounsic 🎵</title>
+  <!-- Importar TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
     const songs = [
@@ -42,5 +32,24 @@
       playSong(currentIndex);
     }
   </script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+  <h1 class="text-3xl font-bold mb-6">Rocola Bounsic 🎵</h1>
+
+  <audio id="audioPlayer" controls autoplay class="w-full max-w-xl mb-6">
+    <source id="audioSource" src="http://localhost:4000/stream/BTS (방탄소년단) 'Savage Love' (Laxed – Siren Beat) [BTS Remix] Lyric Video.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+  </audio>
+
+  <div class="flex gap-4">
+    <button onclick="prevSong()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+      ⏮️ Anterior canción
+    </button>
+    <button onclick="nextSong()" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+      ⏭️ Siguiente canción
+    </button>
+  </div>
+
 </body>
 </html>
