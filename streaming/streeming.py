@@ -84,4 +84,3 @@ async def stream_audio(
     except Exception as e:
         logger.error(f"Error inesperado: {str(e)}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
-
