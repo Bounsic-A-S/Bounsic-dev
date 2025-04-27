@@ -1,7 +1,7 @@
 from .bert_service import pregunta_respuesta 
 from .crawl_service import crawler
 from .srapping_service import scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen, get_lyrics
-from .song_service import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song,get_song_by_id,get_songs_by_ids
+from .song_service import insert_mp3,getSongByTitle,getSongByArtist,get_artist_and_genre_by_track,insert_song,get_image,get_album_images,generar_song_data,get_song_by_id,get_songs_by_ids,getSongByGenre
 from .db_service import get_all_songs,insert_one_song
 from .algorithms.fingerprint_service import generate_fingerprint
 from .artist_service import getSongsByArtist, getDesc
