@@ -4,4 +4,6 @@ ALLOWED_ORIGINS = [
     "https://bounsic-front-nginx.azurewebsites.net",  # Producción
     "http://localhost:8000",  # FastAPI dev
     "http://localhost:4000",  # Puerto alternativo
+    "http://localhost:5500",
+    "http://localhost:58284"
 ]
