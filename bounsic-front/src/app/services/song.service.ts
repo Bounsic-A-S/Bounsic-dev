@@ -36,7 +36,6 @@ export class SongService {
     return this.http.post<any>(`${this.apiUrl}/song/safeChoice/`, { email: email }).pipe(
       tap((songSafeChoices) => {
         this.songSafeChoicesSubject.next(songSafeChoices);
-        console.log('Safe choices:', songSafeChoices);
       }),
       catchError((err) => {
         console.error('Error al obtener artistas:', err);

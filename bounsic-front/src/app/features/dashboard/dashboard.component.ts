@@ -39,8 +39,8 @@ export class DashboardComponent {
 
 
   ngOnInit() : void {
-    this.artists$ = this.artistService.getArtistsByUser("induismo97@hotmail.com");
-    this.songSafeChoices$ = this.songService.getSafeChoices("induismo97@hotmail.com");
+    this.artists$ = this.artistService.getArtistsByUser("juan.patino.2022@upb.edu.co");
+    this.songSafeChoices$ = this.songService.getSafeChoices("juan.patino.2022@upb.edu.co");
   }
 
 }

@@ -78,19 +78,19 @@
               <div class="px-4 py-1.5">
                 <div class="flex items-center">
                   <!-- Avatar - Improved with conditional image support -->
-                  <div *ngIf="userProfile.profileImage; else initialAvatar" 
+                  <div *ngIf="userProfile.profile_img; else initialAvatar" 
                        class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
-                    <img [src]="userProfile.profileImage" alt="Profile" class="h-full w-full object-cover">
+                    <img [src]="userProfile.profile_img" alt="Profile" class="h-full w-full object-cover">
                   </div>
                   <ng-template #initialAvatar>
                     <div class="flex-shrink-0 size-8 rounded-full bg-gray-700 flex items-center justify-center mr-3 border border-gray-600">
-                      <span class="text-sm font-medium text-white">{{ userProfile.name.charAt(0).toUpperCase() }}</span>
+                      <span class="text-sm font-medium text-white">{{ userProfile.username.charAt(0).toUpperCase() }}</span>
                     </div>
                   </ng-template>
                   
                   <!-- User Info - Added email -->
                   <div class="truncate">
-                    <p class="text-sm font-medium text-white">{{ userProfile.name }}</p>
+                    <p class="text-sm font-medium text-white">{{ userProfile.username }}</p>
                     <p class="text-xs text-gray-400 truncate">{{ userProfile.email }}</p>
                   </div>
                 </div>

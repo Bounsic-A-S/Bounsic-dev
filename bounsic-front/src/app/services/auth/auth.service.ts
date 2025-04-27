@@ -13,6 +13,7 @@ import {
   PopupRequest,
   RedirectRequest
 } from '@azure/msal-browser';
+import { UserService } from './user.service'; 
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,8 @@ export class AuthService implements OnDestroy {
     private msalService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    private userService: UserService
   ) {}
 
   initialize(): void {
@@ -40,6 +42,7 @@ export class AuthService implements OnDestroy {
             if (result && result.account) {
               this.msalService.instance.setActiveAccount(result.account);
               this.setLoginDisplay();
+              this.getUserProfileFromApi(); 
             }
           },
           error: (error) => {
@@ -52,7 +55,6 @@ export class AuthService implements OnDestroy {
 
     this.msalService.instance.enableAccountStorageEvents();
 
-    // Actualiza cuando se agregan o eliminan cuentas
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter((msg: EventMessage) =>
@@ -67,10 +69,10 @@ export class AuthService implements OnDestroy {
         } else {
           this.checkAndSetActiveAccount();
           this.setLoginDisplay();
+          this.getUserProfileFromApi();  
         }
       });
 
-    // Detecta cuando ya no hay interacción para actualizar el estado
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
@@ -79,6 +81,7 @@ export class AuthService implements OnDestroy {
       .subscribe(() => {
         this.checkAndSetActiveAccount();
         this.setLoginDisplay();
+        this.getUserProfileFromApi(); 
       });
   }
 
@@ -93,6 +96,7 @@ export class AuthService implements OnDestroy {
         if (response && response.account) {
           this.msalService.instance.setActiveAccount(response.account);
           this.setLoginDisplay();
+          this.getUserProfileFromApi(); 
         }
         return response;
       });
@@ -149,7 +153,24 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Obtener el perfil del usuario autenticado
+   * Obtener el perfil del usuario autenticado desde el API
+   */
+  private getUserProfileFromApi(): void {
+    const email = this.userProfile?.username; 
+    if (email) {
+      this.userService.getUserByEmail(email).subscribe(
+        (user) => {
+          this.userProfile = user;  
+        },
+        (error) => {
+          console.error('Error al obtener el perfil del usuario:', error);
+        }
+      );
+    }
+  }
+
+  /**
+   * Obtener el perfil del usuario
    */
   getUserProfile(): any {
     return this.userProfile;
