@@ -1,9 +1,12 @@
 from app.services import MySQLSongService
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+
 async def get_user_by_email_controller(email: str):
     try:
         user = await MySQLSongService.get_full_user_by_email(email)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            return JSONResponse(status_code=404, content={"error": "User not found"})
         user = user[0]
         transformed_user = {
             "id_user": user["id_user"],
@@ -19,10 +22,25 @@ async def get_user_by_email_controller(email: str):
                 "language": user["language"]
             }
         }
-        return transformed_user
-
+        return JSONResponse(
+            status_code=200,
+            content=transformed_user
+        )
     except HTTPException as http_err:
         raise http_err
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
+async def set_background_controller(id: int,background:str):
+    try:
+        res = await MySQLSongService.update_background(id,background)
+        if not res:
+            return JSONResponse(status_code=404, content={"error": "Data not updated correctly"})
+        return JSONResponse(
+            status_code=200,
+            content=res
+        )
+    except HTTPException as http_err:
+        raise http_err
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

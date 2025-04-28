@@ -246,10 +246,37 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def update_preference( preference_id, data):
+    async def update_background( user_id, background):
         try:
-            query = "UPDATE Bounsic_Preferences SET background=%s, typography=%s, language=%s WHERE id_preferences=%s"
-            values = (data.get("background"), data.get("typography"), data.get("language"), preference_id)
+            query = "UPDATE Bounsic_Preferences SET background= :background WHERE user_id= :user_id"
+            values = {
+            "user_id": user_id,
+            "background": background
+        }
+            return await MySQLSongService._db.execute_query(query, values)
+        except Exception as e:
+            logging.error(f"update_preference error: {e}")
+            return False
+    @staticmethod
+    async def update_font_size( user_id, fontSize):
+        try:
+            query = "UPDATE Bounsic_Preferences SET typography= :fontSize WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "fontSize": fontSize
+            }
+            return await MySQLSongService._db.execute_query(query, values)
+        except Exception as e:
+            logging.error(f"update_preference error: {e}")
+            return False
+    @staticmethod
+    async def update_language( user_id, language):
+        try:
+            query = "UPDATE Bounsic_Preferences SET language= :language WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "language": language
+            }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"update_preference error: {e}")
