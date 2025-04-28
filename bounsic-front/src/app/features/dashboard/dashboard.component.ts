@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { SearchBarComponent } from './searchBar/search-bar.component';
 import { SongsCarouselComponent } from './songsCarousel/songs-carousel.component';
@@ -28,7 +33,8 @@ import { AuthService } from '@app/services/auth/auth.service';
     TrendingSongsComponent,
     ArtistListComponent,
     LastMonthSongsComponent,
-    TranslateModule, CommonModule
+    TranslateModule,
+    CommonModule,
   ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,26 +49,32 @@ export class DashboardComponent implements OnInit {
   bg$ = new BehaviorSubject<string>('bg-bounsic-gradient');
 
   ngOnInit(): void {
-    this.authService.userProfile$.subscribe(user => {
-      if(user) this.getData(user.email)
+    this.authService.userProfile$.subscribe((user) => {
+      if (user) this.getData(user.email);
       if (user && user.preferences?.background) {
-        const background = user.preferences.background;
-        this.getBackground(background);
+        this.getBackground(user.preferences.background);
+        this.getLanguage(user.preferences.language);
       }
     });
   }
-  private getData(email:string):void{
+  private getData(email: string): void {
     this.artists$ = this.artistService.getArtistsByUser(email);
     this.songSafeChoices$ = this.songService.getSafeChoices(email);
   }
 
-  private getBackground(background:string): void {
+  private getBackground(background: string): void {
     const savedBackground = localStorage.getItem('background');
     if (savedBackground) {
       this.bg$.next(savedBackground);
     } else {
       this.bg$.next(background);
       localStorage.setItem('background', background);
+    }
+  }
+  private getLanguage(language: string): void {
+    const savedLanguage = localStorage.getItem('language');
+    if (!savedLanguage && language !== null) {
+      localStorage.setItem('language', language);
     }
   }
 }

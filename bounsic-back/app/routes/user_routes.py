@@ -1,5 +1,5 @@
 from fastapi import APIRouter , Request
-from app.controllers import get_user_by_email_controller,set_background_controller
+from app.controllers import get_user_by_email_controller,set_background_controller,set_language_controller
 
 router = APIRouter()# Create an instance of the controller
 
