@@ -14,4 +14,7 @@ export class UserService {
   getUserByEmail(email: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/${email}`);
   }
+  setLanguage(language: string,id:number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/user/language/${id}`,{"language": language});
+  }
 }
