@@ -103,7 +103,7 @@ def get_track_details(track_name, artist_name=None):
     }
 
 
-def get_artist_info(artist_name: str): 
+def get_artist_info(artist_name: str):
     """
     Obtiene información completa de un artista desde Spotify y la formatea
     para coincidir con tu esquema de MongoDB.
@@ -112,17 +112,25 @@ def get_artist_info(artist_name: str):
         artist_name (str): Nombre del artista a buscar
     
     Returns:
-        dict: Información formateada del artista
+        dict: {
+            "name": str,               # Nombre real
+            "artist_name": str,        # Nombre artístico (puede ser igual)
+            "country": str,            # País (del primer mercado disponible)
+            "desc": str,              # Géneros como descripción
+            "albums": list,           # Lista vacía (se llena después)
+            "spotify_data": {         # Datos adicionales de Spotify
+                "genres": list,
+                "popularity": int,
+                "image_url": str
+            }
+        }
         None: Si no se encuentra el artista
     """
     try:
-        # Si el nombre tiene varios artistas, tomar el primero
-        first_artist_name = artist_name.split(",")[0].strip()  # Obtener solo el primer nombre
-        
         # Buscar artista en Spotify
-        result = sp.search(q=f'artist:{first_artist_name}', type='artist', limit=1)
+        result = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
         if not result['artists']['items']:
-            print(f"No se encontró el artista: {first_artist_name}")
+            print(f"No se encontró el artista: {artist_name}")
             return None
 
         artist = result['artists']['items'][0]
@@ -133,8 +141,8 @@ def get_artist_info(artist_name: str):
 
         # Formatear según tu esquema
         artist_data = {
-            "name": artist_details.get('name', first_artist_name),
-            "artist_name": artist_details.get('name', first_artist_name),
+            "name": artist_details.get('name', artist_name),
+            "artist_name": artist_details.get('name', artist_name),
             "country": artist_details.get('country', 
                       artist_details.get('markets', [''])[0] if artist_details.get('markets') else ''),
             "desc": ", ".join(artist_details.get('genres', ['Sin descripción'])),

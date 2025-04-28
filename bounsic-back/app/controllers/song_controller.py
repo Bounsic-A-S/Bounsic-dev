@@ -147,8 +147,11 @@ async def process_song_and_album(title: str, artist: str):
     }
 
     try:
+        
         # 1. Obtener metadata de la canción desde Spotify
         spotify_data = get_track_details(title, artist)
+
+        print(spotify_data)
         if not spotify_data:
             result["status"] = "error"
             result["error"] = "No se pudo obtener metadata de Spotify"
@@ -193,17 +196,14 @@ async def process_song_and_album(title: str, artist: str):
         else:
             result["album_id"] = album_db["_id"]
         
-        # 5. Procesar cada canción del álbum
         for track in album_info["songs"]:
             track_title = track["name"]
-            
             
             # Verificar si la canción ya existe
             existing_song_id = search_song_exact(track_title, artist)
             if existing_song_id:
-                song_id = existing_song_id  # Si ya existe, usamos el ID existente
+                song_id = existing_song_id
             else:
-                print("---------------------------")
                 song_result = await process_single_song(track_title, artist, spotify_data)
                 if song_result["status"] != "success":
                     result["failed_songs"].append({
@@ -213,22 +213,34 @@ async def process_song_and_album(title: str, artist: str):
                     continue
                 
                 song_id = song_result["song_id"]
+            
+            # CONVERSIÓN SEGURA A ObjectId
+            try:
+                if isinstance(song_id, dict):
+                    # Si es diccionario, extraer el song_id
+                    song_id = song_id.get("song_id", song_id.get("_id"))
                 
-                if isinstance(song_id, dict) and "song_id" in song_id:
-                    song_id = str(song_id["song_id"])
+                if isinstance(song_id, ObjectId):
+                    song_id_obj = song_id
+                else:
+                    song_id_obj = ObjectId(song_id)
+            except:
+                result["failed_songs"].append({
+                    "title": track_title,
+                    "error": f"invalid_song_id: {song_id}"
+                })
+                continue
 
-            # Ahora sí, agregamos el ID correctamente
-            add_song_to_album(result["album_id"], ObjectId(song_id))
+            # Agregar canción al álbum
+            add_song_to_album(result["album_id"], song_id_obj)
             
             result["processed_songs"].append({
                 "title": track_title,
                 "status": "inserted" if not existing_song_id else "already_exists",
-                "song_id": str(song_id)
+                "song_id": str(song_id_obj)
             })
         
-        # Ensure all ObjectIds are serialized before returning
         return serialize_for_json(result)
-
     except Exception as e:
         print(f"Error processing album: {str(e)}")
         traceback.print_exc()
@@ -291,7 +303,8 @@ async def process_single_song(title: str, artist: str, spotify_data: dict = None
         if os.path.exists(audio_path):
             os.remove(audio_path)
 
-        return {"status": "success", "song_id": str(song_id)}
+        # Devuelve DIRECTAMENTE el ID, no un diccionario
+        return {"status": "success", "song_id": song_id}
 
     except Exception as e:
         return {"status": "error", "error": str(e)}
