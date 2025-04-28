@@ -2,12 +2,14 @@
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
-from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
-from app.services import MySQLSongService
+from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song , get_album_images, get_artist_and_genre_by_track, get_track_details
+from app.services import MySQLSongService, generate_fingerprint, insert_song_mongo, add_song_to_album, add_album_to_artist, insert_album, add_artist_to_album,insert_artist, searchAlbum,searchArtist, get_artist_info, get_album_info, search_song_exact
 import re
 import json
 import os
 import logging
+import traceback
+from bson import ObjectId
 
 async def get_song_by_id_controller(id: str):
     if not id:
@@ -67,10 +69,10 @@ async def get_song_image_controller(url: str):
     
     return {"data": res}
 
-
-async def insert_bs_controller(url:str):
+# Add this function to your API route where you call process_song_and_album
+async def insert_bs_controller(name:str):
     try:
-        json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/images/data.json"
+        json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/audios/data.json"
 
         if not os.path.exists(json_path):
             return {"error": "JSON file not found"}
@@ -78,97 +80,33 @@ async def insert_bs_controller(url:str):
         with open(json_path, "r", encoding="utf-8") as f:
             songs_list = json.load(f)
         results = []  
-
+    
         for song in songs_list:
             try:
-                title = song.get("title", "Desconocido")
-                artist = song.get("artist", "Desconocido")
-                genre = song.get("genre", "Desconocido")
-                language = song.get("language", "Desconocido")
-
+                titleE = song['title']
+                artistE = song['artist']
                 
-                busqueda = f"{title} {artist}"
-                video_url = buscar_en_youtube(busqueda)
+                busqueda = f"{titleE} {artistE}"
+                youtube_search = buscar_en_youtube(busqueda)
 
-                if not video_url:
-                    results.append({"title": title, "artist": artist, "status": "No encontrado en YouTube"})
-                    continue 
+                title = youtube_search['title']
+                artist = youtube_search['artist']
 
-            
-                response_scraping = scrappingBueno(video_url)
-                if not response_scraping:
-                    results.append({"title": title, "artist": artist, "status": "Scraping fallido"})
-                    continue
+                video_url = youtube_search['url']
 
-                descarga = descargar_audio(video_url)
-
-                if not descarga or not descarga.get("audio"):
-                    results.append({"title": title, "artist": artist, "status": "Descarga de audio fallida"})
-                    continue
-
-                audio_path = descarga.get("audio")  
-                image_path = descarga.get("thumbnail")  
-
-                pattern_mp3 = r"([^/\\]+)\.(mp3)"
-                match_mp3 = re.search(pattern_mp3, audio_path)
-
-                if not match_mp3:
-                    results.append({"title": title, "artist": artist, "status": "Nombre de archivo de audio inválido"})
-                    continue
-
-                mp3_name = match_mp3.group(0)
-
-
-                pattern_img = r"([^/\\]+)\.(jpg|jpeg|png|gif)"
-                match_img = re.search(pattern_img, image_path)
-
-                if not match_img:
-                    results.append({"title": title, "artist": artist, "status": "Nombre de archivo de imagen inválido"})
-                    continue
-
-                img_name = match_img.group(0)  
-
-                
-                mp3_blob_url = insert_image(audio_path, mp3_name)
-                if not mp3_blob_url:
-                    results.append({"title": title, "artist": artist, "status": "Fallo al insertar audio"})
-                    continue
-
-                img_blob_url = insert_image(image_path, img_name)
-                if not img_blob_url:
-                    results.append({"title": title, "artist": artist, "status": "Fallo al insertar imagen"})
-                    continue
-                
-                if img_blob_url and mp3_blob_url:
-                    mongo_song = {
-                        "title": title,
-                        "artist": artist,
-                        "genre": genre,
-                        "language": language,
-                        "img_url": img_blob_url,
-                        "mp3_url": mp3_blob_url
-                    }
-                    insert_one_song(mongo_song)
-                    
-                results.append({
-                    "title": title,
-                    "artist": artist,
-                    "genre": genre,
-                    "language": language,
-                    "status": "inserted"
+                result = await process_song_and_album(title, artist)
+                # Ensure the result is JSON serializable
+                return serialize_for_json({
+                    "status": "success",
+                    "data": result
                 })
-
-            except Exception as song_error:
-                results.append({"title": title, "artist": artist, "status": f"Error: {str(song_error)}"})
-                continue  
-        
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
-
-        if os.path.exists(image_path):
-            os.remove(image_path)
+            except Exception as e:
+                return serialize_for_json({
+                    "status": "error",
+                    "error": str(e)
+                })
             
-        return {"message": "Songs processed", "data": results}
+        return serialize_for_json({"message": "Songs processed", "data": results})
 
     except Exception as e:
         return {"error": str(e)}
@@ -179,6 +117,188 @@ async def insert_bs_controller(url:str):
 async def insert_song_controller(track_name: str):
     result = insert_song(track_name)  
     return result
+
+# Helper function to convert ObjectIds to strings for JSON serialization
+def serialize_for_json(obj):
+    """Convert MongoDB ObjectIds to strings in a dict or list"""
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, dict):
+        return {k: serialize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [serialize_for_json(item) for item in obj]
+    else:
+        return obj
+
+
+# Fixed process_song_and_album function
+async def process_song_and_album(title: str, artist: str):
+    """
+    Procesa una canción y descarga todo su álbum, con vinculaciones completas.
+    """
+    result = {
+        "status": "success",
+        "album": "",
+        "artist": artist,
+        "processed_songs": [],
+        "failed_songs": [],
+        "album_id": None,
+        "artist_id": None
+    }
+
+    try:
+        # 1. Obtener metadata de la canción desde Spotify
+        spotify_data = get_track_details(title, artist)
+        if not spotify_data:
+            result["status"] = "error"
+            result["error"] = "No se pudo obtener metadata de Spotify"
+            return serialize_for_json(result)
+
+        album_name = spotify_data["album"]
+        result["album"] = album_name
+
+        # 2. Verificar/insertar artista
+        artist_info = get_artist_info(artist)
+        artist_db = searchArtist(artist)
+        
+        if not artist_db:
+            # Insertar nuevo artista
+            artist_id = insert_artist(
+                name=artist_info["name"],
+                artist_name=artist_info["artist_name"],
+                country=artist_info["country"],
+                desc=artist_info["desc"],
+            )
+            result["artist_id"] = artist_id
+        else:
+            result["artist_id"] = artist_db["_id"]
+
+        # 3. Verificar/insertar álbum
+        album_db = searchAlbum(album_name, result["artist_id"])
+        album_info = get_album_info(album_name, artist)
+        
+        if not album_db:
+            # Insertar nuevo álbum
+            album_id = insert_album(
+                name=album_info["name"],
+                release_year=album_info["release_year"],
+                img_url=album_info["img_url"],
+                artist_id=result["artist_id"]
+            )
+            result["album_id"] = album_id
+            
+            # Vincular álbum al artista
+            add_album_to_artist(result["artist_id"], result["album_id"])
+            add_artist_to_album(result["artist_id"], result["album_id"])
+        else:
+            result["album_id"] = album_db["_id"]
+        
+        # 5. Procesar cada canción del álbum
+        for track in album_info["songs"]:
+            track_title = track["name"]
+            
+            
+            # Verificar si la canción ya existe
+            existing_song_id = search_song_exact(track_title, artist)
+            if existing_song_id:
+                song_id = existing_song_id  # Si ya existe, usamos el ID existente
+            else:
+                print("---------------------------")
+                song_result = await process_single_song(track_title, artist, spotify_data)
+                if song_result["status"] != "success":
+                    result["failed_songs"].append({
+                        "title": track_title,
+                        "error": song_result.get("error", "unknown_error")
+                    })
+                    continue
+                
+                song_id = song_result["song_id"]
+                
+                if isinstance(song_id, dict) and "song_id" in song_id:
+                    song_id = str(song_id["song_id"])
+
+            # Ahora sí, agregamos el ID correctamente
+            add_song_to_album(result["album_id"], ObjectId(song_id))
+            
+            result["processed_songs"].append({
+                "title": track_title,
+                "status": "inserted" if not existing_song_id else "already_exists",
+                "song_id": str(song_id)
+            })
+        
+        # Ensure all ObjectIds are serialized before returning
+        return serialize_for_json(result)
+
+    except Exception as e:
+        print(f"Error processing album: {str(e)}")
+        traceback.print_exc()
+        result["status"] = "error"
+        result["error"] = str(e)
+        return serialize_for_json(result)
+    
+
+async def process_single_song(title: str, artist: str, spotify_data: dict = None):
+    try:
+        if not spotify_data:
+            spotify_data = get_track_details(title, artist)
+            if not spotify_data:
+                return {"status": "error", "error": "no_spotify_data"}
+
+        # Descargar audio
+        youtube_data = buscar_en_youtube(f"{title} {artist}")
+        if not youtube_data:
+            return {"status": "error", "error": "youtube_not_found"}
+        
+        print("----------------")
+
+        download_result = await descargar_audio(youtube_data["url"])
+        if not download_result or not download_result.get("audio"):
+            return {"status": "error", "error": "download_failed"}
+
+        audio_path = download_result["audio"]
+        
+        # Verificar que el archivo existe y tiene contenido
+        if not os.path.exists(audio_path) or os.path.getsize(audio_path) == 0:
+            return {"status": "error", "error": "empty_audio_file"}
+
+        # Generar nombre seguro para el blob
+        safe_name = f"{sanitize_filename(artist)}_{sanitize_filename(title)}.mp3"
+
+        
+        
+        # Subir a Azure (sin await si insert_image no es async)
+        mp3_blob_url = await insert_image(audio_path, safe_name)
+        
+        if not mp3_blob_url:
+            return {"status": "error", "error": "blob_upload_failed"}
+
+        fingerprint = await generate_fingerprint(audio_path)
+        
+        song_data = {
+            "title": title,
+            "artist": artist,
+            "album": spotify_data["album"],
+            "genres": [{"genre": g} for g in spotify_data["genres"]],
+            "img_url": spotify_data["image_url"],
+            "mp3_url": mp3_blob_url,
+            "release_year": spotify_data["release_year"],
+            "fingerprint": fingerprint
+        }
+        
+        song_id = insert_song_mongo(song_data)
+        
+        # Limpieza
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+
+        return {"status": "success", "song_id": str(song_id)}
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+def sanitize_filename(name: str) -> str:
+    """Limpia nombres para usar en archivos"""
+    return "".join(c for c in name if c.isalnum() or c in (' ', '_', '-')).rstrip()
 
 async def safe_choice_recomendation(email: str):
     try:

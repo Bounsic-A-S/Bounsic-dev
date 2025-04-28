@@ -10,6 +10,24 @@ def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
     return re.sub(r'[<>:"/\\|?*]', '', text)
 
+def clean_song_title(title):
+    # Expresiones regulares para patrones comunes
+    patterns_to_remove = [
+        r'[\(\[].*?[\)\]]',  # Elimina texto entre paréntesis/corchetes
+        r'[\ᴰᴴᵃᵇᶜ]',          # Elimina caracteres especiales como ᴴᴰ
+        r'\b(HD|MV|Official Video|Video Oficial|Lyrics?|4K|FULL)\b',
+        r'[^\w\s]',          # Elimina caracteres no alfanuméricos (excepto espacios)
+        r'\s+',              # Reemplaza múltiples espacios con uno solo
+    ]
+    
+    cleaned_title = title
+    for pattern in patterns_to_remove:
+        cleaned_title = re.sub(pattern, ' ', cleaned_title, flags=re.IGNORECASE)
+    
+    # Limpieza final
+    cleaned_title = cleaned_title.strip()  # Elimina espacios al inicio/final
+    return cleaned_title
+
 def scrappingBueno(url):
 
 
@@ -63,15 +81,13 @@ def scrappingBueno(url):
 
 
 
-def descargar_audio(url):
+async def descargar_audio(url):
     base_path = Path(__file__).resolve().parent
 
 
     audio_dir = base_path / "audios"
-    image_dir = base_path / "images"
 
     audio_dir.mkdir(parents=True, exist_ok=True)
-    image_dir.mkdir(parents=True, exist_ok=True)
 
 
     ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
@@ -87,7 +103,6 @@ def descargar_audio(url):
         'ffmpeg_location': str(ffmpeg_path),
     }
 
-    
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -100,21 +115,10 @@ def descargar_audio(url):
             print(f"Archivo esperado: {downloaded_file}")
 
 
-            image_url = info.get("thumbnail")
-            if image_url:
-                image_path = image_dir / f"{video_title}.jpg"
-                response = requests.get(image_url)
-                if response.status_code == 200:
-                    with open(image_path, "wb") as thumb_file:
-                        thumb_file.write(response.content)
-                    print(f"Thumbnail guardado en: {image_path}")
-                else:
-                    print("No se pudo descargar la imagen")
 
             if downloaded_file.exists():
                 return {
                     "audio": str(downloaded_file),
-                    "thumbnail": str(image_path) if image_url else None
                 }
         return None
 
@@ -122,8 +126,8 @@ def descargar_audio(url):
         print(f"Error en la descarga: {e}")
         return None
 
-# 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):
+    
     print("DEBUG: Archivo cookies existe:", os.path.exists("cookies/cookies.txt"))
     print("DEBUG: Archivos en carpeta cookies:", os.listdir("cookies"))
 
@@ -137,16 +141,37 @@ def buscar_en_youtube(query):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         }
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(f"ytsearch:{query}", download=False)
     
-    if not info["entries"]:
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(f"ytsearch:{query}", download=False)
+        
+        if not info["entries"]:
+            return None
+
+        video = info["entries"][0]
+        print(f"DEBUG: Video encontrado - {video['title']}")
+
+        # Extraer artista y título (heurística simple)
+        video_title = video.get("title", "")
+        artist = query.split()[0]  # Primera palabra de la query como artista
+        title = " ".join(query.split()[1:])  # Resto como título
+
+        # Si el título de YouTube contiene "-", dividirlo
+        if "-" in video_title:
+            parts = [p.strip() for p in video_title.split("-", 1)]
+            if len(parts) == 2:
+                artist, title = parts
+
+        return {
+            "url": video["webpage_url"],
+            "title": clean_song_title(title),
+            "artist": artist
+        }
+
+    except Exception as e:
+        print(f"ERROR en buscar_en_youtube: {str(e)}")
         return None
-
-    first_video = info["entries"][0]  # Primer resultado de la búsqueda
-    video_url = first_video["webpage_url"]  # URL completa del video
-
-    return video_url
 
 
 def descargar_imagen(url, title):

@@ -53,12 +53,22 @@ async def get_song_image(blob_name: str = Query(..., description="Nombre del blo
     return JSONResponse(status_code=200,content=res)
 
 
+
 @router.post("/insert/songs")
 async def insert_bs():
-    res = await insert_bs_controller("")
-    if "error" in res:
-        raise JSONResponse(status_code=500, detail="Error al insertar canciones")
-    return JSONResponse(status_code=200,message= "Canciones procesadas",data=res)
+    try:
+        res = await insert_bs_controller("")
+        if "error" in res:
+            raise HTTPException(status_code=500, detail=res["error"])
+        return JSONResponse(
+            status_code=200,
+            content={
+                "message": "Canciones procesadas",
+                "data": res
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/insert/{track_name}")
 async def create_song(track_name: str):
