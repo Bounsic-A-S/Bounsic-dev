@@ -9,6 +9,7 @@ import json
 import os
 import logging
 import traceback
+import unicodedata
 from bson import ObjectId
 
 async def get_song_by_id_controller(id: str):
@@ -129,6 +130,46 @@ def serialize_for_json(obj):
         return [serialize_for_json(item) for item in obj]
     else:
         return obj
+    
+
+def clean_artist_name(artist: str) -> str:
+    """
+    Limpia el nombre del artista tomando solo el primer nombre antes de 'x', '&', 'feat.', etc.
+    """
+    separators = ['x', 'X', '&', 'feat.', 'Feat.', 'FEAT.', ',', ';']
+    for sep in separators:
+        if sep in artist:
+            return artist.split(sep)[0].strip()
+    return artist.strip()
+
+
+def clean_song_title(title: str) -> str:
+    """
+    Limpia el nombre de la canción, extrayendo solo el título real.
+    """
+    # Quitar corchetes [] y paréntesis ()
+    title = re.sub(r'\[.*?\]|\(.*?\)', '', title)
+    
+    # Si hay '|', tomar solo lo anterior
+    if '|' in title:
+        title = title.split('|')[0]
+    
+    # Si hay '-', tomar lo que está después del ÚLTIMO guion
+    if '-' in title:
+        parts = title.split('-')
+        # Elimina partes que son artistas (usualmente antes del título)
+        title = parts[-1]
+
+    # Ahora eliminar palabras residuales tipo álbumes
+    extra_words = ['Visualizer', 'Official', 'Audio', 'Video', 'Lyric', 'Lyrics', 'Album', 'Remix']
+    for word in extra_words:
+        title = title.replace(word, '')
+    
+    # Quitar espacios dobles y espacios extra
+    title = re.sub(r'\s+', ' ', title)
+    
+    return title.strip()
+
 
 
 # Fixed process_song_and_album function
@@ -148,8 +189,11 @@ async def process_song_and_album(title: str, artist: str):
 
     try:
         
+        cleanTitle = clean_song_title(title)
+        cleanArtist = clean_artist_name(artist)
+
         # 1. Obtener metadata de la canción desde Spotify
-        spotify_data = get_track_details(title, artist)
+        spotify_data = get_track_details(cleanTitle, cleanArtist)
 
         print(spotify_data)
         if not spotify_data:
@@ -161,8 +205,8 @@ async def process_song_and_album(title: str, artist: str):
         result["album"] = album_name
 
         # 2. Verificar/insertar artista
-        artist_info = get_artist_info(artist)
-        artist_db = searchArtist(artist)
+        artist_info = get_artist_info(cleanArtist)
+        artist_db = searchArtist(cleanArtist)
         
         if not artist_db:
             # Insertar nuevo artista
@@ -178,7 +222,8 @@ async def process_song_and_album(title: str, artist: str):
 
         # 3. Verificar/insertar álbum
         album_db = searchAlbum(album_name, result["artist_id"])
-        album_info = get_album_info(album_name, artist)
+        album_info = get_album_info(album_name, cleanArtist)
+        print(album_info)
         
         if not album_db:
             # Insertar nuevo álbum
@@ -204,7 +249,7 @@ async def process_song_and_album(title: str, artist: str):
             if existing_song_id:
                 song_id = existing_song_id
             else:
-                song_result = await process_single_song(track_title, artist, spotify_data)
+                song_result = await process_single_song(track_title, cleanArtist, spotify_data)
                 if song_result["status"] != "success":
                     result["failed_songs"].append({
                         "title": track_title,
@@ -261,23 +306,22 @@ async def process_single_song(title: str, artist: str, spotify_data: dict = None
         if not youtube_data:
             return {"status": "error", "error": "youtube_not_found"}
         
-        print("----------------")
+        
 
-        download_result = await descargar_audio(youtube_data["url"])
+        # Generar nombre seguro para el blob
+        safe_name = f"{sanitize_filename(artist)}_{sanitize_filename(title)}.mp3"
+        print(f"Generated safe filename: {safe_name}")
+        download_result = await descargar_audio(youtube_data["url"] , safe_name)
         if not download_result or not download_result.get("audio"):
             return {"status": "error", "error": "download_failed"}
-
+        print('llega')
         audio_path = download_result["audio"]
-        
+        print(audio_path)
         # Verificar que el archivo existe y tiene contenido
         if not os.path.exists(audio_path) or os.path.getsize(audio_path) == 0:
             return {"status": "error", "error": "empty_audio_file"}
 
-        # Generar nombre seguro para el blob
-        safe_name = f"{sanitize_filename(artist)}_{sanitize_filename(title)}.mp3"
-
-        
-        
+        print("blob")
         # Subir a Azure (sin await si insert_image no es async)
         mp3_blob_url = await insert_image(audio_path, safe_name)
         
@@ -310,8 +354,23 @@ async def process_single_song(title: str, artist: str, spotify_data: dict = None
         return {"status": "error", "error": str(e)}
 
 def sanitize_filename(name: str) -> str:
-    """Limpia nombres para usar en archivos"""
-    return "".join(c for c in name if c.isalnum() or c in (' ', '_', '-')).rstrip()
+    """Limpia nombres para usar en archivos, manejando caracteres Unicode."""
+    # Normalizar caracteres Unicode (convertir acentos a formas básicas)
+    name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')
+    
+    # Reemplazar caracteres no alfanuméricos por guion bajo
+    sanitized_name = re.sub(r'[^\w\s-]', '', name)
+    
+    # Reemplazar espacios, guiones y múltiples guiones bajos con un solo guion bajo
+    sanitized_name = re.sub(r'[-\s_]+', '_', sanitized_name)
+    
+    # Eliminar espacios en blanco al inicio y final
+    sanitized_name = sanitized_name.strip('_')
+    
+    # Limitar la longitud del nombre
+    sanitized_name = sanitized_name[:255]
+    
+    return sanitized_name
 
 async def safe_choice_recomendation(email: str):
     try:

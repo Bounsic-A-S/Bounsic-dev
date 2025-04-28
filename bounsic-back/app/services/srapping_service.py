@@ -81,17 +81,19 @@ def scrappingBueno(url):
 
 
 
-async def descargar_audio(url):
+async def descargar_audio(url, safe_name: str):
     base_path = Path(__file__).resolve().parent
-
-
     audio_dir = base_path / "audios"
-
     audio_dir.mkdir(parents=True, exist_ok=True)
 
-
     ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
-
+    
+    # Remove the file extension from safe_name for the outtmpl
+    safe_name_without_ext = safe_name.rsplit('.', 1)[0]
+    
+    # Set the output template to directly use our safe_name
+    output_path = str(audio_dir / safe_name_without_ext)
+    
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -99,27 +101,37 @@ async def descargar_audio(url):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
+        # Use our safe filename directly in the output template
+        'outtmpl': f"{output_path}.%(ext)s",
         'ffmpeg_location': str(ffmpeg_path),
     }
-
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-
-            video_title = info.get("title", "unknown").replace("/", "-")
-
             
-            downloaded_file = audio_dir / f"{video_title}.mp3"
-            print(f"Archivo esperado: {downloaded_file}")
-
-
-
-            if downloaded_file.exists():
+            # The file should now be saved with the safe_name
+            final_file = audio_dir / safe_name
+            print(f"Archivo descargado como: {final_file}")
+            
+            if final_file.exists():
                 return {
-                    "audio": str(downloaded_file),
+                    "audio": str(final_file),
                 }
+            else:
+                # If the file doesn't exist with safe_name, let's check if it used the default naming
+                video_title = info.get("title", "unknown").replace("/", "-")
+                potential_file = audio_dir / f"{video_title}.mp3"
+                if potential_file.exists():
+                    # Try renaming as a fallback
+                    potential_file.rename(final_file)
+                    print(f"Archivo renombrado fallback a: {final_file}")
+                    return {
+                        "audio": str(final_file),
+                    }
+                
+                print(f"¡Alerta! No se encontró el archivo descargado en: {final_file}")
+        
         return None
 
     except Exception as e:
@@ -165,7 +177,7 @@ def buscar_en_youtube(query):
 
         return {
             "url": video["webpage_url"],
-            "title": clean_song_title(title),
+            "title": title,
             "artist": artist
         }
 
