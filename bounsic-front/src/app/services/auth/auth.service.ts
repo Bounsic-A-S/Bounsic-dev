@@ -14,6 +14,7 @@ import {
   RedirectRequest
 } from '@azure/msal-browser';
 import { UserService } from './user.service'; 
+import User from 'src/types/user/User';
 
 @Injectable({
   providedIn: 'root',
@@ -172,7 +173,7 @@ export class AuthService implements OnDestroy {
   /**
    * Obtener el perfil del usuario
    */
-  getUserProfile(): any {
+  getUserProfile(): User {
     return this.userProfile;
   }
 
