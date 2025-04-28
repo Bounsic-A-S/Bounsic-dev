@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { Subject, filter, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, filter, takeUntil } from 'rxjs';
 import {
   MsalService,
   MsalBroadcastService
@@ -23,7 +23,8 @@ export class AuthService implements OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   isIframe = false;
   loginDisplay = false;
-  userProfile: any = null;
+  private userProfileSubject = new BehaviorSubject<any | null>(null);
+  userProfile$ = this.userProfileSubject.asObservable(); 
 
   constructor(
     private msalService: MsalService,
@@ -43,7 +44,7 @@ export class AuthService implements OnDestroy {
             if (result && result.account) {
               this.msalService.instance.setActiveAccount(result.account);
               this.setLoginDisplay();
-              this.getUserProfileFromApi(); 
+              this.getUserProfileFromApi();
             }
           },
           error: (error) => {
@@ -70,7 +71,7 @@ export class AuthService implements OnDestroy {
         } else {
           this.checkAndSetActiveAccount();
           this.setLoginDisplay();
-          this.getUserProfileFromApi();  
+          this.getUserProfileFromApi(); 
         }
       });
 
@@ -82,7 +83,7 @@ export class AuthService implements OnDestroy {
       .subscribe(() => {
         this.checkAndSetActiveAccount();
         this.setLoginDisplay();
-        this.getUserProfileFromApi(); 
+        this.getUserProfileFromApi();
       });
   }
 
@@ -97,7 +98,7 @@ export class AuthService implements OnDestroy {
         if (response && response.account) {
           this.msalService.instance.setActiveAccount(response.account);
           this.setLoginDisplay();
-          this.getUserProfileFromApi(); 
+          this.getUserProfileFromApi();
         }
         return response;
       });
@@ -120,11 +121,11 @@ export class AuthService implements OnDestroy {
       this.msalService.logoutRedirect();
     }
     this.msalService.instance.logout();
-    localStorage.clear(); 
+    localStorage.clear();
     sessionStorage.clear();
     document.cookie = 'msalAppState=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
     document.cookie = 'msal.msalConfig=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    this.userProfile = null;
+    this.userProfileSubject.next(null);
   }
 
   /**
@@ -136,7 +137,9 @@ export class AuthService implements OnDestroy {
 
     if (this.loginDisplay) {
       const activeAccount = this.msalService.instance.getActiveAccount();
-      this.userProfile = activeAccount;
+      if (activeAccount) {
+        this.userProfileSubject.next(activeAccount);
+      }
     }
   }
 
@@ -157,11 +160,11 @@ export class AuthService implements OnDestroy {
    * Obtener el perfil del usuario autenticado desde el API
    */
   private getUserProfileFromApi(): void {
-    const email = this.userProfile?.username; 
-    if (email) {
-      this.userService.getUserByEmail(email).subscribe(
+    const activeAccount = this.msalService.instance.getActiveAccount();
+    if (activeAccount && activeAccount.username) {
+      this.userService.getUserByEmail(activeAccount.username).subscribe(
         (user) => {
-          this.userProfile = user;  
+          this.userProfileSubject.next(user);
         },
         (error) => {
           console.error('Error al obtener el perfil del usuario:', error);
@@ -173,8 +176,8 @@ export class AuthService implements OnDestroy {
   /**
    * Obtener el perfil del usuario
    */
-  getUserProfile(): User {
-    return this.userProfile;
+  getUserProfile(): User | null {
+    return this.userProfileSubject.value;
   }
 
   /**
