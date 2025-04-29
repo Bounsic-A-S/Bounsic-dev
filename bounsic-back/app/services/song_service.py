@@ -6,10 +6,10 @@ from app.provider import DatabaseFacade
 import re
 from bson import ObjectId
 from datetime import datetime
-from app.services.srapping_service import scrappingBueno, buscar_en_youtube, descargar_audio
+from app.services.srapping_service import scrappingBueno,buscar_en_youtube,descargar_audio
 from app.services.spotify_service import get_artist_and_genre_by_track, get_album_images
 
-def get_song_by_id(id: str):
+def get_song_by_id(id:str):
     try:
         # connect to the MongoDB database
         songs_collection = db["songs"]
@@ -26,29 +26,40 @@ def get_song_by_id(id: str):
         return None
         
     except Exception as e:
-        print(f"Error getting song by ID {id}: {str(e)}")
+        print.error(f"Error getting song by ID {song_id}: {str(e)}")
         return None
 
 def normalize_string(s: str) -> str:
     """Quita espacios y convierte a minúsculas para normalizar un string."""
     return re.sub(r"\s+", "", s).lower()
 
-def getSongByTitle(song_title: str):
+def getSongByTitle(song_title:str):
+    songs_collection = db["songs"]
+    song = songs_collection.find_one({"title": song_title})
+    if song:
+        if "_id" in song:
+            song["_id"] = str(song["_id"])
+        return song
+    else:
+        return {"message": "Song not found"}
+    
+def get_song_by_id(id: str):
     try:
         songs_collection = db["songs"]
-        songs = list(songs_collection.find({"title": song_title}))
-        if not songs:
-            return {"message": "No songs found by title"}
         
-        for song in songs:
-            song["_id"] = str(song["_id"])
-        
-        return songs
+        song_id = ObjectId(id.strip())
 
+        song = songs_collection.find_one({"_id": song_id})
+        
+        if song:
+            song["_id"] = str(song["_id"])  
+            return song
+        return None
+        
     except Exception as e:
-        print(f"Error getting songs by title: {e}")
-        return {"message": "Internal server error"}
-
+        print(f"Error getting song by ID {id}: {str(e)}")  
+        return None
+    
 def get_songs_by_ids(ids: list[str]):
     try:
         songs_collection = db["songs"]
@@ -75,7 +86,7 @@ def getSongByArtist(artist: str):
         songs = list(songs_collection.find({
             "$expr": {
                 "$eq": [
-                    {"$toLower": {"$replaceAll": {"input": "$artist", "find": " ", "replacement": ""}}}, 
+                    {"$toLower": {"$replaceAll": {"input": "$artist", "find": " ", "replacement": ""}}},
                     normalized_artist
                 ]
             }
@@ -85,6 +96,30 @@ def getSongByArtist(artist: str):
             song["_id"] = str(song["_id"])
 
         return songs if songs else {"message": "No songs found for this artist"}
+
+    except PyMongoError as e:
+        return {"error": "Database error", "details": str(e)}
+    except Exception as e:
+        return {"error": "Unexpected error", "details": str(e)}
+    
+def getSongByTitle(title: str):
+    try:
+        songs_collection = db["songs"]
+        normalized_title = normalize_string(title)
+        song = songs_collection.find_one({
+            "$expr": {
+                "$eq": [
+                    {"$toLower": {"$replaceAll": {"input": "$title", "find": " ", "replacement": ""}}},
+                    normalized_title
+                ]
+            }
+        })
+
+        if song:
+            song["_id"] = str(song["_id"])
+            return song
+
+        return {"message": "Song not found"}
 
     except PyMongoError as e:
         return {"error": "Database error", "details": str(e)}
@@ -112,7 +147,7 @@ def get_image(blob_name: str):
     else:
         return {"message": "Image not found"}
 
-def insert_mp3(file_url: str, blob_name: str):
+def insert_image(file_url: str, blob_name: str):
     blob_service_client = BlobServiceClient.from_connection_string(AZURE_CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(AZURE_CONTAINER_NAME)
     
@@ -132,7 +167,7 @@ def mysql_db():
         return version[0]
     else:
         return None
-
+    
 def insert_song(track_name: str):
     try:
         song_data = generar_song_data(track_name)
@@ -169,15 +204,20 @@ def generar_song_data(track_name):
         print("No se pudo obtener metadata o info extra.")
         return None
 
-    imagenes_album = get_image(info_extra["album"])
+    imagenes_album = get_album_images(info_extra["album"], info_extra["artist_name"])
     img_url = imagenes_album[0]["url"] if imagenes_album else None
 
     descarga = descargar_audio(video_url)
-    mp3_url = descarga["audio"] if descarga and "audio" in descarga else None
+    local_audio_path = descarga["audio"] if descarga and "audio" in descarga else None
 
-    if not mp3_url:
+    if not local_audio_path:
         print("No se pudo descargar el audio.")
         return None
+
+    # Subir el archivo MP3 al Blob Storage
+    # Puedes darle al blob el nombre de la canción como nombre del archivo
+    audio_blob_name = f"audios/{info_extra['track_name'].replace(' ', '_')}.mp3"
+    mp3_url = insert_image(local_audio_path, audio_blob_name)  # <-- Aquí se sube y devuelve la URL
 
     release_year = int(metadata["publish_date"][:4]) if metadata.get("publish_date") and metadata["publish_date"] != "Fecha de publicación no encontrada" else 0
 
@@ -186,7 +226,7 @@ def generar_song_data(track_name):
         "title": info_extra["track_name"],
         "album": info_extra["album"],
         "img_url": img_url,
-        "mp3_url": mp3_url,
+        "mp3_url": mp3_url,  # Ahora es la URL del blob
         "release_year": release_year,
         "genres": [{"genre": g} for g in info_extra.get("genres", [])],
         "fingerprint": []

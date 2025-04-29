@@ -12,6 +12,8 @@ import { ArtistService } from '@app/services/artist.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SongService } from '@app/services/song.service';
+import DashboardSong from 'src/types/dashboard/DashboardSong';
+import DashboardArtist from 'src/types/dashboard/DashboardArtist';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -32,8 +34,8 @@ import { SongService } from '@app/services/song.service';
 export class DashboardComponent {
   private artistService = inject(ArtistService);
   private songService = inject(SongService);
-  artists$!: Observable<any[]>;
-  songSafeChoices$!: Observable<any[]>
+  artists$!: Observable<DashboardArtist[]>;
+  songSafeChoices$!: Observable<DashboardSong[]>
 
 
   ngOnInit() : void {

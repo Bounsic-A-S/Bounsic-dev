@@ -3,10 +3,11 @@
   <ng-container *ngIf="songs !== undefined; else safeChoiceSong">
     <div
     *ngFor="let safeChoiceSong of songs | slice:0:maxSongsToShow"
+    id="safeChoiceSong._id"
     class="hover:bg-white/5 rounded-lg cursor-pointer"
   >
-    <a routerLink="/player" class="flex items-center gap-4 p-2 w-full h-full">
-      <div class="w-8 sm:w-10 lg:w-12">
+  <a [routerLink]="['/player', safeChoiceSong._id]" class="flex items-center gap-4 p-2 w-full h-full">
+    <div class="w-8 sm:w-10 lg:w-12">
         <img
           [src]="safeChoiceSong.img_url"
           [alt]="safeChoiceSong.title"
@@ -27,6 +28,7 @@
     <div
     *ngFor="let safeChoiceSong of safeChoiceSongs | slice:0:maxSongsToShow"
     class="hover:bg-white/5 rounded-lg cursor-pointer"
+    id="safeChoiceSong.id"
   >
     <a routerLink="/player" class="flex items-center gap-4 p-2 w-full h-full">
       <div class="w-8 sm:w-10 lg:w-12">

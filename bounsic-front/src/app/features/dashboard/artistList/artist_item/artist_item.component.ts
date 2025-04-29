@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
+import DashboardArtist from 'src/types/dashboard/DashboardArtist';
 @Component({
   selector: 'dashboard-artist-list-card',
   standalone: true,
@@ -14,8 +15,5 @@ import {
 })
 export class ArtistListItemComponent implements OnInit {
   ngOnInit(): void {}
-  @Input() artist!: {
-    artist_name: string;
-    img: string;
-  };
+  @Input() artist!: DashboardArtist
 }
