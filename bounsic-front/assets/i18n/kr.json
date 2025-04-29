@@ -115,8 +115,10 @@
         "TITLE": "테마",
         "GRADIENTS": "그라디언트",
         "SOLID_COLORS": "단색",
-        "BASIC": "기본",
-        "FONT_SIZE": "폰트 크기"
+        "BASE": "기본 테마",
+        "FONT_SIZE": "폰트 크기",        
+        "LIGHT": "빛",
+        "DARK": "어두운"
       },
       "LANGUAGE": {
         "TITLE": "언어",

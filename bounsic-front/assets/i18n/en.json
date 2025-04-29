@@ -115,8 +115,10 @@
         "TITLE": "Themes",
         "GRADIENTS": "Gradients",
         "SOLID_COLORS": "Solid Colors",
-        "BASIC": "Basic",
-        "FONT_SIZE": "Font Size"
+        "BASE": "Base Theme",
+        "FONT_SIZE": "Font Size",
+        "LIGHT": "Light",
+        "DARK": "Dark"
       },
       "LANGUAGE": {
         "TITLE": "Language",
