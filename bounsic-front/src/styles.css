@@ -48,6 +48,39 @@
   background-position: center;
   background-blend-mode: multiply, overlay;
 }
+/* custom bg classes*/
+@layer utilities {
+  .bg-bounsic-custom-gradient-blue {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      linear-gradient(
+        to bottom,
+        #060517,
+        #060514
+        ),
+      url('/background/PATTERNS.svg');
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-blend-mode: multiply, overlay;
+  }
+  .bg-bounsic-custom-gradient-purple {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      linear-gradient(
+        to bottom,
+        #382338,
+        #210414,
+        #08011c
+        ),
+      url('/background/PATTERNS.svg');
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-blend-mode: multiply, overlay;
+  }
+}
+
 
 @utility bg-bounsic-gradient-about {
   background-image: 
@@ -73,8 +106,6 @@
       var(--color-bounsic-bg-main-purple-light)
     )
 }
-
-
 
 
 /* FONTS */
