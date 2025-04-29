@@ -17,4 +17,6 @@ export class UserService {
   setLanguage(language: string,id:number): Observable<boolean> {
     return this.http.put<boolean>(`${this.apiUrl}/user/language/${id}`,{"language": language});
   }
-}
+  setBackground(background: string,id:number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/user/background/${id}`,{"background": background});
+  }}

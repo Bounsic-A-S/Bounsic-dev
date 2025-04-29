@@ -118,7 +118,8 @@
         "BASE": "Tema Base",
         "FONT_SIZE": "Tamaño de la fuente",
         "LIGHT": "Claro",
-        "DARK": "Oscuro"
+        "DARK": "Oscuro",
+        "SAVE":"Guardar"
       },
       "LANGUAGE": {
         "TITLE": "Idioma",

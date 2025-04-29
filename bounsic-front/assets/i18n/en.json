@@ -118,7 +118,8 @@
         "BASE": "Base Theme",
         "FONT_SIZE": "Font Size",
         "LIGHT": "Light",
-        "DARK": "Dark"
+        "DARK": "Dark",
+        "SAVE":"Save"
       },
       "LANGUAGE": {
         "TITLE": "Language",
