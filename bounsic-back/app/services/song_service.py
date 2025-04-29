@@ -46,24 +46,21 @@ def getSongByTitle(song_title:str):
     else:
         return {"message": "Song not found"}
     
-def get_song_by_id(id:str):
+def get_song_by_id(id: str):
     try:
-        # connect to the MongoDB database
         songs_collection = db["songs"]
         
-        # parsing the string id to ObjectId
-        song_id = ObjectId(id)
-        
-        # searching for the song in the collection
+        song_id = ObjectId(id.strip())
+
         song = songs_collection.find_one({"_id": song_id})
         
         if song:
-            song["_id"] = str(song["_id"])
+            song["_id"] = str(song["_id"])  
             return song
         return None
         
     except Exception as e:
-        print.error(f"Error getting song by ID {song_id}: {str(e)}")
+        print(f"Error getting song by ID {id}: {str(e)}")  
         return None
     
 def get_songs_by_ids(ids: list[str]):
@@ -268,11 +265,16 @@ def generar_song_data(track_name):
     img_url = imagenes_album[0]["url"] if imagenes_album else None
 
     descarga = descargar_audio(video_url)
-    mp3_url = descarga["audio"] if descarga and "audio" in descarga else None
+    local_audio_path = descarga["audio"] if descarga and "audio" in descarga else None
 
-    if not mp3_url:
+    if not local_audio_path:
         print("No se pudo descargar el audio.")
         return None
+
+    # Subir el archivo MP3 al Blob Storage
+    # Puedes darle al blob el nombre de la canción como nombre del archivo
+    audio_blob_name = f"audios/{info_extra['track_name'].replace(' ', '_')}.mp3"
+    mp3_url = insert_image(local_audio_path, audio_blob_name)  # <-- Aquí se sube y devuelve la URL
 
     release_year = int(metadata["publish_date"][:4]) if metadata.get("publish_date") and metadata["publish_date"] != "Fecha de publicación no encontrada" else 0
 
@@ -281,7 +283,7 @@ def generar_song_data(track_name):
         "title": info_extra["track_name"],
         "album": info_extra["album"],
         "img_url": img_url,
-        "mp3_url": mp3_url,
+        "mp3_url": mp3_url,  # Ahora es la URL del blob
         "release_year": release_year,
         "genres": [{"genre": g} for g in info_extra.get("genres", [])],
         "fingerprint": []
