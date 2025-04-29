@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { LucideAngularModule, ChevronLeft, Menu } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, Menu, UserRoundPen, Lock, Workflow, MessageSquare, Palette, Languages, AudioLines } from 'lucide-angular';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -22,6 +22,14 @@ export class SettingsComponent {
 
   readonly leftArrow = ChevronLeft;
   readonly menuIcon = Menu;
+  // icons for settings
+  readonly account = UserRoundPen;
+  readonly privacy = Lock;
+  readonly connections = Workflow;
+  readonly notifications = MessageSquare;
+  readonly player = AudioLines;
+  readonly preferences = Palette;
+  readonly language = Languages;
 
   constructor(private router: Router) {}
 
@@ -46,13 +54,12 @@ export class SettingsComponent {
 
 
   menuItems = [
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.ACCOUNT', route: 'account' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PRIVACY' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.CONNECTIONS' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.NOTIFICATIONS' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAN' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAYER' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PREFERENCES', route: 'appearance' },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.LANGUAGE', route: 'language' }
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.ACCOUNT', route: 'account', icon: this.account },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PRIVACY', icon: this.privacy },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.CONNECTIONS',icon: this.connections },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.NOTIFICATIONS',icon: this.notifications },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAYER', icon: this.player },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.PREFERENCES', route: 'appearance', icon: this.preferences },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.LANGUAGE', route: 'language', icon: this.language },
   ];
 }
