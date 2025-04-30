@@ -1,6 +1,6 @@
 # Bounsic-dev
 Development repository for a musical-web-app that uses scrapping as its core. 
-Both back-end and front-end are found here.
+All services are found here.
 
 # Bounsic
 
@@ -23,7 +23,7 @@ Both back-end and front-end are found here.
 bounsic/
 ├── bounsic-front/       # Frontend (React + Bun)
 ├── bounsic-back/        # Backend (FastAPI + Python)
-├── streaming/        # Streaming (FastAPI + Python)
+├── streaming/           # Streaming (FastAPI + Python)
 ├── package.json         # Global scripts and dependencies
 └── README.md            # Project documentation
 ```
