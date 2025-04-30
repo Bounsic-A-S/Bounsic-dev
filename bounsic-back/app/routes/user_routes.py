@@ -30,7 +30,7 @@ async def set_language(id: str , request: Request):
 @router.post("/register")
 async def register(request: Request):
     data = await request.json()
-    return MySQLController.register_user(data)
+    return await MySQLController.register_user(data)
 
 @router.put("/update/{user_email}")
 async def update_user(user_email: str, request: Request):

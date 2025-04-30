@@ -42,8 +42,8 @@ class MySQLSongService:
     async def insert_user(data):
         try:
             query = """
-                INSERT INTO Bounsic_Users (name, last_name, email, profile_img, rol_user)
-                VALUES (:name, :last_name, :email, :profile_img, 2 )
+                INSERT INTO Bounsic_Users (name, last_name,username, email, profile_img, rol_user)
+                VALUES (:name, :last_name, :name , :email,null, 2 )
             """
             return await MySQLSongService._db.execute_query(query, data)
         except Exception as e:
