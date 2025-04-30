@@ -626,7 +626,7 @@ async def safe_choice_recomendation(email: str):
                 combined = {k: mongo_song.get(k) for k in keys}
                 final_songs.append(combined)
 
-        return JSONResponse(status_code=200, content={"songs": final_songs})
+        return JSONResponse(status_code=200, content=final_songs)
 
     except Exception as e:
         logging.error(f"Error en safe_choice_recommendation: {str(e)}", exc_info=True)

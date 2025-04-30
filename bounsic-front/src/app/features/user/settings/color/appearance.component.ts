@@ -56,7 +56,7 @@ export class SettingsAppearanceComponent {
     }
     console.log(user);
     if (id === 0) return;
-    this.userService.setLanguage(this.customThemeSelected, id).subscribe({
+    this.userService.setBackground(this.customThemeSelected, id).subscribe({
       next: () => {
         console.log('BG updated successfully');
       },

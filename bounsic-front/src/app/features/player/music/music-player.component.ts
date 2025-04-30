@@ -69,7 +69,7 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
         if (this.audioRef && this.song) {
           const audio = this.audioRef.nativeElement;
           console.log(this.song);
-          const regex = /imgs\/(.*)/;
+          const regex = /mp3\/(.*)/;
           const match = this.song.mp3_url.match(regex);
           audio.src = this.audioStreamService.getAudioUrl(match ? match[1] : '')
           console.log('Audio source set to:', audio.src);

@@ -6,6 +6,7 @@ from azure.core.exceptions import ResourceNotFoundError, AzureError
 from typing import Optional
 from dotenv import load_dotenv
 import os
+import io
 from config import ALLOWED_ORIGINS
 
 load_dotenv()
@@ -53,16 +54,16 @@ async def stream_audio(
                 detail=f"Rango inválido. Tamaño del archivo: {file_size} bytes"
             )
 
-        # Descarga del fragmento
         chunk_size = end - start + 1
         stream = blob_client.download_blob(offset=start, length=chunk_size)
+        buffer = stream.readall()  # Lee todo el fragmento en memoria
 
         headers = {
             "Content-Range": f"bytes {start}-{end}/{file_size}",
             "Accept-Ranges": "bytes",
             "Content-Length": str(chunk_size),
             "Content-Type": "audio/mpeg",
-            "Cache-Control": "public, max-age=600",  # 10 minutos de caché
+            "Cache-Control": "public, max-age=600",
         }
 
         if origin:
@@ -70,7 +71,7 @@ async def stream_audio(
             headers["Access-Control-Expose-Headers"] = "Content-Range, Accept-Ranges, Content-Length"
 
         return StreamingResponse(
-            stream.chunks(),
+            io.BytesIO(buffer),
             status_code=206 if range else 200,
             headers=headers,
             media_type="audio/mpeg"
