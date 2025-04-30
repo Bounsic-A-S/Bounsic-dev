@@ -5,6 +5,12 @@ from app.services import MySQLSongService
 
 
 class MySQLController:
+
+    dataPreference = {
+        "background":"bg-bounsic-black",
+        "typography":"",
+        "language":"ES"
+    }
     # USERS
     @staticmethod
     async def get_all_users():
@@ -58,18 +64,31 @@ class MySQLController:
             logging.error(f"get_users_by_username error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching user")
     @staticmethod
-    async def create_user(data):
+    async def register_user(data):
         try:
+            email = data["email"]
+            getUser= await MySQLSongService.get_user_by_email(email)
+            if getUser:
+                getPreferences = await MySQLSongService.get_preferences_by_user(getUser["user_id"])
+                return JSONResponse(status_code=200, content ={ "preference" : getPreferences })
+            
             user = await MySQLSongService.insert_user(data)
-            return JSONResponse(status_code=201, content={"user": user})
+            if not user:
+                return JSONResponse(status_code=400)
+
+            MySQLController.dataPreference["user_id"] = getUser["user_id"]
+
+
+            preferences = await MySQLSongService.insert_preference(MySQLController.dataPreference)
+            return JSONResponse(status_code=201, content={"preference": preferences})
         except Exception as e:
             logging.error(f"create_user error: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")
         
     @staticmethod
-    async def update_user(user_id, data):
+    async def update_user(email, data):
         try:
-            user = await MySQLSongService.update_user(user_id, data)
+            user = await MySQLSongService.update_user_by_email(email, data)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             return JSONResponse(status_code=200, content={"user": user})
@@ -78,6 +97,7 @@ class MySQLController:
         except Exception as e:
             logging.error(f"update_user error: {e}")
             raise HTTPException(status_code=500, detail="Error updating user")
+        
     @staticmethod
     async def delete_user( user_id):
         try:
@@ -93,9 +113,9 @@ class MySQLController:
 
     # ROLES
     @staticmethod
-    async def get_all_roles():
+    async def get_rol_by_email(email):
         try:
-            roles = await MySQLSongService.get_all_roles()
+            roles = await MySQLSongService.get_role_by_email(email)
             if not roles:
                 raise HTTPException(status_code=404, detail="No roles found")
             return JSONResponse(status_code=200, content={"roles": roles})
@@ -116,7 +136,7 @@ class MySQLController:
 
     # PERMISSIONS
     @staticmethod
-    async def get_all_permissions():
+    async def get_permissions_by_email(email):
         try:
             permissions = await MySQLSongService.get_all_permissions()
             if not permissions:
@@ -187,9 +207,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error creating preference")
 
     @staticmethod
-    async def update_preference( preference_id, data):
+    async def update_preference( email, data):
         try:
-            preference = await MySQLSongService.update_preference(preference_id, data)
+            preference = await MySQLSongService.update_preference(email, data)
             if not preference:
                 raise HTTPException(status_code=404, detail="Preference not found")
             return JSONResponse(status_code=200, content={"preference": preference})
@@ -264,9 +284,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error with  history")
 
     @staticmethod
-    async def get_history_by_user( user_id):
+    async def get_history_by_email( email):
         try:
-            history = await MySQLSongService.get_history_by_user(user_id)
+            history = await MySQLSongService.get_history_by_user(email)
             if not history:
                 raise HTTPException(status_code=404, detail="No history found for this user")
             return JSONResponse(status_code=200, content={"history": history})

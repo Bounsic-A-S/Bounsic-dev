@@ -10,6 +10,24 @@ def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
     return re.sub(r'[<>:"/\\|?*]', '', text)
 
+def clean_song_title(title):
+    # Expresiones regulares para patrones comunes
+    patterns_to_remove = [
+        r'[\(\[].*?[\)\]]',  # Elimina texto entre paréntesis/corchetes
+        r'[\ᴰᴴᵃᵇᶜ]',          # Elimina caracteres especiales como ᴴᴰ
+        r'\b(HD|MV|Official Video|Video Oficial|Lyrics?|4K|FULL)\b',
+        r'[^\w\s]',          # Elimina caracteres no alfanuméricos (excepto espacios)
+        r'\s+',              # Reemplaza múltiples espacios con uno solo
+    ]
+    
+    cleaned_title = title
+    for pattern in patterns_to_remove:
+        cleaned_title = re.sub(pattern, ' ', cleaned_title, flags=re.IGNORECASE)
+    
+    # Limpieza final
+    cleaned_title = cleaned_title.strip()  # Elimina espacios al inicio/final
+    return cleaned_title
+
 def scrappingBueno(url):
 
 
@@ -63,19 +81,19 @@ def scrappingBueno(url):
 
 
 
-def descargar_audio(url):
+async def descargar_audio(url, safe_name: str):
     base_path = Path(__file__).resolve().parent
-
-
     audio_dir = base_path / "audios"
-    image_dir = base_path / "images"
-
     audio_dir.mkdir(parents=True, exist_ok=True)
-    image_dir.mkdir(parents=True, exist_ok=True)
-
 
     ffmpeg_path, ffprobe_path = get_ffmpeg_path(base_path)
-
+    
+    # Remove the file extension from safe_name for the outtmpl
+    safe_name_without_ext = safe_name.rsplit('.', 1)[0]
+    
+    # Set the output template to directly use our safe_name
+    output_path = str(audio_dir / safe_name_without_ext)
+    
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -83,47 +101,45 @@ def descargar_audio(url):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': str(audio_dir / "%(title)s.%(ext)s"),
+        # Use our safe filename directly in the output template
+        'outtmpl': f"{output_path}.%(ext)s",
         'ffmpeg_location': str(ffmpeg_path),
     }
-
-    
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
-
-            video_title = info.get("title", "unknown").replace("/", "-")
-
             
-            downloaded_file = audio_dir / f"{video_title}.mp3"
-            print(f"Archivo esperado: {downloaded_file}")
-
-
-            image_url = info.get("thumbnail")
-            if image_url:
-                image_path = image_dir / f"{video_title}.jpg"
-                response = requests.get(image_url)
-                if response.status_code == 200:
-                    with open(image_path, "wb") as thumb_file:
-                        thumb_file.write(response.content)
-                    print(f"Thumbnail guardado en: {image_path}")
-                else:
-                    print("No se pudo descargar la imagen")
-
-            if downloaded_file.exists():
+            # The file should now be saved with the safe_name
+            final_file = audio_dir / safe_name
+            print(f"Archivo descargado como: {final_file}")
+            
+            if final_file.exists():
                 return {
-                    "audio": str(downloaded_file),
-                    "thumbnail": str(image_path) if image_url else None
+                    "audio": str(final_file),
                 }
+            else:
+                # If the file doesn't exist with safe_name, let's check if it used the default naming
+                video_title = info.get("title", "unknown").replace("/", "-")
+                potential_file = audio_dir / f"{video_title}.mp3"
+                if potential_file.exists():
+                    # Try renaming as a fallback
+                    potential_file.rename(final_file)
+                    print(f"Archivo renombrado fallback a: {final_file}")
+                    return {
+                        "audio": str(final_file),
+                    }
+                
+                print(f"¡Alerta! No se encontró el archivo descargado en: {final_file}")
+        
         return None
 
     except Exception as e:
         print(f"Error en la descarga: {e}")
         return None
 
-# 🔍 Scraping para buscar en YouTube
 def buscar_en_youtube(query):
+    
     print("DEBUG: Archivo cookies existe:", os.path.exists("cookies/cookies.txt"))
     print("DEBUG: Archivos en carpeta cookies:", os.listdir("cookies"))
 
@@ -137,16 +153,37 @@ def buscar_en_youtube(query):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         }
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(f"ytsearch:{query}", download=False)
     
-    if not info["entries"]:
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(f"ytsearch:{query}", download=False)
+        
+        if not info["entries"]:
+            return None
+
+        video = info["entries"][0]
+        print(f"DEBUG: Video encontrado - {video['title']}")
+
+        # Extraer artista y título (heurística simple)
+        video_title = video.get("title", "")
+        artist = query.split()[0]  # Primera palabra de la query como artista
+        title = " ".join(query.split()[1:])  # Resto como título
+
+        # Si el título de YouTube contiene "-", dividirlo
+        if "-" in video_title:
+            parts = [p.strip() for p in video_title.split("-", 1)]
+            if len(parts) == 2:
+                artist, title = parts
+
+        return {
+            "url": video["webpage_url"],
+            "title": title,
+            "artist": artist
+        }
+
+    except Exception as e:
+        print(f"ERROR en buscar_en_youtube: {str(e)}")
         return None
-
-    first_video = info["entries"][0]  # Primer resultado de la búsqueda
-    video_url = first_video["webpage_url"]  # URL completa del video
-
-    return video_url
 
 
 def descargar_imagen(url, title):
