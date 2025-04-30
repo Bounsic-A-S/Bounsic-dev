@@ -246,10 +246,37 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def update_preference( preference_id, data):
+    async def update_background( user_id, background):
         try:
-            query = "UPDATE Bounsic_Preferences SET background=%s, typography=%s, language=%s WHERE id_preferences=%s"
-            values = (data.get("background"), data.get("typography"), data.get("language"), preference_id)
+            query = "UPDATE Bounsic_Preferences SET background= :background WHERE user_id= :user_id"
+            values = {
+            "user_id": user_id,
+            "background": background
+        }
+            return await MySQLSongService._db.execute_query(query, values)
+        except Exception as e:
+            logging.error(f"update_preference error: {e}")
+            return False
+    @staticmethod
+    async def update_font_size( user_id, fontSize):
+        try:
+            query = "UPDATE Bounsic_Preferences SET typography= :fontSize WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "fontSize": fontSize
+            }
+            return await MySQLSongService._db.execute_query(query, values)
+        except Exception as e:
+            logging.error(f"update_preference error: {e}")
+            return False
+    @staticmethod
+    async def update_language( user_id, language):
+        try:
+            query = "UPDATE Bounsic_Preferences SET language= :language WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "language": language
+            }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"update_preference error: {e}")
@@ -452,7 +479,7 @@ class MySQLSongService:
             logging.error(f"delete_like error: {e}")
             return False
 
-    # recomendations
+    # recomendations ------ METHODS ACTUALLY USEFUL
     @staticmethod
     async def get_safe_choices(email: str):
         try:
@@ -509,4 +536,32 @@ class MySQLSongService:
             return await MySQLSongService._db.execute_query(query, {"email": email})
         except Exception as e:
             print.error(f"get_likes_by_user error: {e}")
+            return None
+
+    async def get_full_user_by_email( email):
+        try:
+            query = """ 
+                    SELECT 
+                        u.id_user,
+                        u.username,
+                        u.name,
+                        u.last_name,
+                        u.email,
+                        r.name_rol AS role,
+                        u.profile_img,
+                        p.background,
+                        p.typography,
+                        p.language
+                    FROM 
+                        Bounsic_Users u
+                    INNER JOIN 
+                        Bounsic_Role r ON u.rol_user = r.id_rol
+                    LEFT JOIN 
+                        Bounsic_Preferences p ON u.id_user = p.user_id
+                    WHERE 
+                        u.email = :email;
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            print.error(f"get_full_user_by_email error: {e}")
             return None

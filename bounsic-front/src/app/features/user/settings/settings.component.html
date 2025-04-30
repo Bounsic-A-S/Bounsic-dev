@@ -1,9 +1,9 @@
 <body class="min-h-screen flex text-white bg-bounsic-gray-4 relative">
-
   <button
     class="absolute w-auto top-4 left-4 z-20 md:hidden p-2 rounded cursor-pointer bg-bounsic-gray-4 hover:bg-bounsic-gray-3/60"
     (click)="toggleSidebar()"
-    clickOutside (clickOutside)="closeSideBar()"
+    clickOutside
+    (clickOutside)="closeSideBar()"
     aria-label="Abrir menú"
   >
     <lucide-icon [img]="menuIcon" [size]="24" [strokeWidth]="3"></lucide-icon>
@@ -14,10 +14,7 @@
       'translate-x-0': sideBarOpen,
       '-translate-x-full': !sideBarOpen
     }"
-    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[36vw] md:w-[14vw]
-     bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10
-      transform transition-transform duration-300 ease-in-out flex flex-col"
-      
+    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[36vw] md:w-[14vw] bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10 transform transition-transform duration-300 ease-in-out flex flex-col"
   >
     <button class="p-4 cursor-pointer hidden md:block" (click)="goBack()">
       <lucide-icon
@@ -27,32 +24,43 @@
         [strokeWidth]="3"
       ></lucide-icon>
     </button>
-    
 
     <nav class="flex-1 overflow-y-auto scroll-hidden">
       <ul class="space-y-4 py-4 mt-16 md:mt-0">
         <ng-container *ngFor="let item of menuItems">
           <li
-            *ngIf="item.route; else staticItem"
-            class="px-6 py-2"
+            class="flex flex-1 px-4 py-2"
             routerLinkActive
             #rla="routerLinkActive"
             [ngClass]="{
-              'bg-gradient-to-r from-bounsic-red to-bounsic-yellow font-medium':
-                rla.isActive
+              'bg-gradient-to-r from-bounsic-red to-bounsic-yellow font-medium': rla.isActive
             }"
           >
-            <a [routerLink]="item.route" class="block w-full">
-              {{ item.label | translate }}
-            </a>
+            <ng-container *ngIf="item.route; else staticContent">
+              <a [routerLink]="item.route" class="flex items-center w-full">
+                <lucide-icon
+                  [img]="item.icon"
+                  class="my-icon mr-2"
+                  [size]="20"
+                  [strokeWidth]="2"
+                ></lucide-icon>
+                {{ item.label | translate }}
+              </a>
+            </ng-container>
+            <ng-template #staticContent>
+              <div class="flex items-center w-full">
+                <lucide-icon
+                  [img]="item.icon"
+                  class="my-icon mr-2"
+                  [size]="20"
+                  [strokeWidth]="2"
+                ></lucide-icon>
+                {{ item.label | translate }}
+              </div>
+            </ng-template>
           </li>
-
-          <ng-template #staticItem>
-            <li class="px-6 py-2">
-              {{ item.label | translate }}
-            </li>
-          </ng-template>
         </ng-container>
+        
       </ul>
     </nav>
 
@@ -67,8 +75,9 @@
   </aside>
 
   <!-- Contenido principal scrollable -->
-  <main class="flex-1 max-h-screen overflow-y-auto pt-20 md:pt-[10vh] px-4 md:px-10">
+  <main
+    class="flex-1 max-h-screen overflow-y-auto pt-20 md:pt-[10vh] px-4 md:px-10"
+  >
     <router-outlet></router-outlet>
   </main>
-
 </body>
