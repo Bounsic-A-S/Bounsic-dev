@@ -6,7 +6,7 @@ async def get_user_by_email_controller(email: str):
     try:
         user = await MySQLSongService.get_full_user_by_email(email)
         if not user:
-            return JSONResponse(status_code=404, content={"error": "User not found"})
+            return JSONResponse(status_code=200, content=None)
         user = user[0]
         transformed_user = {
             "id_user": user["id_user"],

@@ -157,21 +157,43 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Obtener el perfil del usuario autenticado desde el API
+   * gets the user profile from API ,
+   * if it doesn't exist, it creates it
    */
   private getUserProfileFromApi(): void {
     const activeAccount = this.msalService.instance.getActiveAccount();
+  
     if (activeAccount && activeAccount.username) {
-      this.userService.getUserByEmail(activeAccount.username).subscribe(
-        (user) => {
-          this.userProfileSubject.next(user);
+      this.userService.getUserByEmail(activeAccount.username).subscribe({
+        next: (user) => {
+          if (user) {
+            this.userProfileSubject.next(user);
+          } else {
+            const data = {
+              "email": activeAccount.username,
+              "name": activeAccount.name,
+              "last_name": activeAccount.name,
+            }
+            console.log("No existe el usuario, creando uno nuevo", data);
+            this.userService.registerUser(data).subscribe({
+              next: (res) => {
+                if (res) {
+                  console.log("Usuario creado correctamente", res);
+                  this.userProfileSubject.next(res);
+                } else {
+                  console.error("Error al crear el usuario");
+                }
+              }
+            });
+          }
         },
-        (error) => {
-          console.error('Error al obtener el perfil del usuario:', error);
+        error: (error) => {
+          console.error("Error al obtener el perfil del usuario:", error);
         }
-      );
+      });
     }
   }
+  
 
   /**
    * Obtener el perfil del usuario
