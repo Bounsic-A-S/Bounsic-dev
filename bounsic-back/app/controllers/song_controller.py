@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
-from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song , get_album_images, get_artist_and_genre_by_track, get_track_details
+from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song , get_album_images, get_artist_and_genre_by_track, get_track_details, get_all_songs
 from app.services import MySQLSongService, generate_fingerprint, insert_song_mongo, add_song_to_album, add_album_to_artist, insert_album, add_artist_to_album,insert_artist, searchAlbum,searchArtist, get_artist_info, get_album_info, search_song_exact
 import re
 import json
@@ -15,6 +15,12 @@ async def get_song_by_id_controller(id: str):
     if not id:
         raise HTTPException(status_code=400, detail="ID inválido")
     res = get_song_by_id(id)
+    if not res:
+        raise HTTPException(status_code=404, detail="No se encontró canción con ese ID")
+    return JSONResponse(status_code=200, content=res)
+
+async def get_allSongs():
+    res = get_all_songs()
     if not res:
         raise HTTPException(status_code=404, detail="No se encontró canción con ese ID")
     return JSONResponse(status_code=200, content=res)

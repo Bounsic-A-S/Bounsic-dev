@@ -7,7 +7,8 @@ from app.controllers import (
     get_song_image_controller,
     insert_bs_controller,
     insert_song_controller,
-    safe_choice_recomendation
+    safe_choice_recomendation,
+    get_allSongs
 )
 
 router = APIRouter()
@@ -15,6 +16,10 @@ router = APIRouter()
 @router.get("/id/{id}")
 async def get_song_by_id(id: str):
     return await get_song_by_id_controller(id)
+
+@router.get("/songs")
+async def get_songs():
+    return await get_allSongs()
 
 @router.get("/artist/{artist}")
 async def get_song_by_artist(artist: str):
