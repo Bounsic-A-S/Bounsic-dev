@@ -83,6 +83,37 @@
     background-position: center;
     background-blend-mode: multiply, overlay;
   }
+  /* BG IMG BASED -> */
+
+  .bg-bounsic-custom-gradient-pink-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.15)),
+      url('/background/custom/pink-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  
+  .bg-bounsic-custom-gradient-blue-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/blue-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  .bg-bounsic-custom-gradient-orange-purple-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/orange-purple-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+
   /* LIGHT PREFERENCES -> */
   .bg-bounsic-custom-gradient-white {
     background-image:

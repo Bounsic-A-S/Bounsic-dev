@@ -25,7 +25,13 @@ export class SettingsAppearanceComponent {
         { name: 'bg-bounsic-custom-gradient-white', isLight: true },
 
       ],
-      gradient: [{ name: 'bg-bounsic-gradient-about-mobile', isLight: false }],
+      gradient: [
+        { name: 'bg-bounsic-gradient-about-mobile', isLight: false },
+        { name: 'bg-bounsic-custom-gradient-pink-based', isLight: true },
+        { name: 'bg-bounsic-custom-gradient-blue-based', isLight: false },
+        { name: 'bg-bounsic-custom-gradient-orange-purple-based', isLight: false },
+
+      ],
       solid: [
         { name: 'bg-bounsic-red', isLight: true },
         { name: 'bg-bounsic-yellow', isLight: true },
@@ -56,8 +62,8 @@ export class SettingsAppearanceComponent {
     if (user) id = user.id_user;
     if (id === 0) return;
     const data = {
-      background:this.customThemeSelected,
-      theme:this.theme
+      background: this.customThemeSelected,
+      theme: this.theme
     }
     this.userService.setBackground(data, id).subscribe({
       error: (error) => {
