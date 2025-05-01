@@ -30,7 +30,8 @@ export class SettingsAppearanceComponent {
         { name: 'bg-bounsic-custom-gradient-pink-based', isLight: true },
         { name: 'bg-bounsic-custom-gradient-blue-based', isLight: false },
         { name: 'bg-bounsic-custom-gradient-orange-purple-based', isLight: false },
-
+        { name: 'bg-bounsic-custom-gradient-red-based', isLight: false },
+        { name: 'bg-bounsic-custom-gradient-green-based', isLight: false },
       ],
       solid: [
         { name: 'bg-bounsic-red', isLight: true },
@@ -71,7 +72,7 @@ export class SettingsAppearanceComponent {
       },
     });
     localStorage.setItem('background', this.customThemeSelected);
-    
+
     if (this.theme !== localStorage.getItem('theme')) {
       document.documentElement.className = '';
       document.documentElement.classList.add(this.theme);

@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit {
   
     const savedTheme = localStorage.getItem('theme');
   
-    if (!savedTheme) {
+    if (savedTheme !== theme || !document.documentElement.classList.contains(theme)) {
       document.documentElement.className = '';
       document.documentElement.classList.add(theme);
       localStorage.setItem('theme', theme);

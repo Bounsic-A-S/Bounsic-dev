@@ -15,6 +15,7 @@
   --color-bounsic-gray-4: #141313;
     /* colors for light theme */
   --color-bounsic-dark-1: #373739;
+  --color-bounsic-light-1: #F5F5F7;
   /* main */
   --color-bounsic-red: #df0e50;
   --color-bounsic-yellow: #f6a618;
@@ -25,6 +26,7 @@
   --color-bounsic-bg-main-pink: #21031B;
   /* shadows */
   --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  --shadow-bounsic-searchbar: 0px 0px 10px rgba(0, 0, 0, 0.16);
   --shadow-bounsic-sidebar-user: 6px 6px 15px rgba(0, 0, 0, 0.25);
 }
 /* custom classes */
@@ -113,6 +115,24 @@
     background-position: center, center, center;
     background-blend-mode: multiply, overlay, normal;
   }
+  .bg-bounsic-custom-gradient-red-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/red-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  .bg-bounsic-custom-gradient-green-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/green-based.png');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
 
   /* LIGHT PREFERENCES -> */
   .bg-bounsic-custom-gradient-white {
@@ -121,8 +141,7 @@
       linear-gradient(
         to bottom,
         #F3E8E8,
-        #CFC8CD,
-        #A19E9E
+        #faf8f8
         ),
       url('/background/PATTERNS.svg');
     background-size: auto;
