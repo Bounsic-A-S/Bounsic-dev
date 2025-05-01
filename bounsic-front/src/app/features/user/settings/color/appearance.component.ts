@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@app/services/auth/auth.service';
 import { UserService } from '@app/services/auth/user.service';
+import { BackgroundService } from '@app/services/background.service';
 @Component({
   selector: 'user-settings-appearance',
   standalone: true,
@@ -13,6 +14,7 @@ import { UserService } from '@app/services/auth/user.service';
 export class SettingsAppearanceComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private backgroundService = inject(BackgroundService)
   private theme: string = localStorage.getItem('theme') ?? 'dark';
   public customThemeSelected: string =
     localStorage.getItem('background') ?? 'bg-bounsic-gradient';
@@ -71,7 +73,7 @@ export class SettingsAppearanceComponent {
         console.error('Error updating BG & theme:', error);
       },
     });
-    localStorage.setItem('background', this.customThemeSelected);
+    this.backgroundService.setBackground(this.customThemeSelected);
 
     if (this.theme !== localStorage.getItem('theme')) {
       document.documentElement.className = '';

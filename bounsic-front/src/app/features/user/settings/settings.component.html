@@ -1,6 +1,6 @@
-<body class="min-h-screen flex text-white bg-bounsic-gray-4 relative">
+<body [ngClass]="bg$ | async" class="min-h-screen flex text-white relative not-dark:text-black">
   <button
-    class="absolute w-auto top-4 left-4 z-20 md:hidden p-2 rounded cursor-pointer bg-bounsic-gray-4 hover:bg-bounsic-gray-3/60"
+    class="absolute w-auto top-4 left-4 z-20 md:hidden p-2 rounded cursor-pointer bg-bounsic-gray-4 hover:bg-bounsic-gray-3/60 not-dark:bg-bounsic-light-1 not-dark:hover:bg-black/10"
     (click)="toggleSidebar()"
     clickOutside
     (clickOutside)="closeSideBar()"
@@ -14,7 +14,7 @@
       'translate-x-0': sideBarOpen,
       '-translate-x-full': !sideBarOpen
     }"
-    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[45vw] md:w-[14vw] bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10 transform transition-transform duration-300 ease-in-out flex flex-col"
+    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[45vw] md:w-[14vw] bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10 transform transition-transform duration-300 ease-in-out flex flex-col not-dark:bg-bounsic-light-1"
   >
     <button class="p-4 cursor-pointer hidden md:block" (click)="goBack()">
       <lucide-icon
@@ -67,7 +67,7 @@
     <!-- Logo -->
     <div class="p-6 flex justify-center cursor-pointer" (click)="goBack()">
       <img
-        class="size-12"
+        class="size-12 not-dark:invert"
         src="/logo/svg/logoBounsic_reduced.svg"
         alt="Logo_Bounsic"
       />

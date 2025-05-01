@@ -1,6 +1,6 @@
 <main-navbar></main-navbar>
 
-<main class="mx-auto px-6 pt-[14vh] h-screen bg-bounsic-gradient text-white overflow-hidden flex flex-col">
+<main [ngClass]="bg$ | async" class="mx-auto px-6 pt-[14vh] h-screen text-white overflow-hidden flex flex-col not-dark:text-black">
   <section class="flex flex-col flex-1 xl:gap-x-10 mx-auto container overflow-hidden md:flex-row">
     <aside class="self-center md:self-auto">
       <ng-container *ngIf="loading; else loaded">
@@ -25,7 +25,7 @@
         <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
           {{ album.name }}
         </h1>
-        <div class="h-px bg-white w-full my-3 md:my-6"></div>
+        <div class="h-px bg-white w-full my-3 md:my-6 not-dark:bg-black"></div>
 
         <ul class="w-full flex-1 pr-1 xl:pr-4 overflow-y-auto max-h-[65vh] scroll-smooth scroll-hidden">
           <li *ngFor="let song of album.songs">
@@ -49,7 +49,7 @@
         <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
           Loading...
         </h1>
-        <div class="h-px bg-white w-full my-3 md:my-6"></div>
+        <div class="h-px bg-white w-full my-3 md:my-6 not-dark:bg-black"></div>
         <p class="text-center py-4">Cargando canciones...</p>
       </ng-container>
     </section>
