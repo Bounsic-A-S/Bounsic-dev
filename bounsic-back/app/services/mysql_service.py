@@ -452,3 +452,14 @@ class MySQLSongService:
         except Exception as e:
             print(f"Error in get_safe_choices: {e}")
             return []
+
+    def get_most_played_songs(user_id, size):
+        try:
+            return MySQLSongService._db.execute_query(
+                """SELECT bh.song_mongo_id, bh.cant_repro AS play_count 
+                    FROM Bounsic_History bh 
+                    WHERE bh.user_id = %s ORDER BY  bh.cant_repro DESC LIMIT %s""", (user_id, size)
+                )
+        except Exception as e:
+            print.error(f"get_most_played_songs error: {e}")
+            return False

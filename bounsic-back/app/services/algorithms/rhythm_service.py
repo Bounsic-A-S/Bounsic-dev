@@ -25,17 +25,14 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
 
         current_song = song["fingerprint"]
 
-        if ("bpm" not in current_song):
-            # print(f"Huella invalida en {song['title']}")
-            continue
-        if ("bpm" not in target_fp):
-            # print(f"Huella invalida en {target_song['title']}")
+        if ("bpm" not in current_song or "bpm" not in target_fp):
             continue
 
-        a = current_song["bpm"] - target_song["fingerprint"]["bpm"]
-        if (np.abs(a) > 30): continue
+        temp = np.abs(current_song["bpm"] - target_song["fingerprint"]["bpm"])
+        if (temp > 20): 
+            continue
 
-        bpm_score = ( 1 / ( 1 + (np.abs(target_fp["bpm"] - target_fp["bpm"]) / 40)))
+        bpm_score = ( 1 / ( 1 + (temp / 40)))
 
         # Compare frequency range
         # bajos_score = ( 1 / ( 1 + (np.abs(target_song["distribution"]["bajos"] - current_song["distribution"]["bajos"]) / 60)))
@@ -43,17 +40,21 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
         # altos_score = ( 1 / ( 1 + (np.abs(target_song["distribution"]["altos"] - current_song["distribution"]["altos"]) / 60)))        
 
         def distribution_percent(dist_a, dist_b):
-            return (np.min([dist_a, dist_b]) 
-                       / np.max([dist_a, dist_b]))
+            if (dist_a > dist_b):
+                r = dist_b / dist_a
+            else:
+                r = dist_a / dist_b
+            return r
 
         bajos_score = distribution_percent(target_fp["distribution"]["bajos"], current_song["distribution"]["bajos"])
         medios_score = distribution_percent(target_fp["distribution"]["medios"], current_song["distribution"]["medios"])
         altos_score = distribution_percent(target_fp["distribution"]["altos"], current_song["distribution"]["altos"])
         
-        bpm_score = float("{:.4f}".format(bpm_score))
-        bajos_score = float("{:.4f}".format(bajos_score))
-        medios_score = float("{:.4f}".format(medios_score))
-        altos_score = float("{:.4f}".format(altos_score))
+        # bpm_score = float("{:.4f}".format(bpm_score))
+        # bajos_score = float("{:.4f}".format(bajos_score))
+        # medios_score = float("{:.4f}".format(medios_score))
+        # altos_score = float("{:.4f}".format(altos_score))
+
         # print(f"..bpmScore: {bpm_score}    ->  {bpm_score*bpm_w}   ({bpm_w})")
         # print(f"bajos: {bajos_score}   ->  {bajos_score*bajo_w}   ({bajo_w})")
         # print(f"medios: {medios_score}   ->  {medios_score*medio_w}   ({medio_w})")
@@ -62,6 +63,7 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
         total_score = (bpm_score*bpm_w) + (bajos_score*bajo_w) + (medios_score*medio_w) + (altos_score*alto_w)
         if total_score > min_alike:
             resSongs.append(song)
+
 
     size = min(size, len(resSongs))
     return random.sample(resSongs, size)

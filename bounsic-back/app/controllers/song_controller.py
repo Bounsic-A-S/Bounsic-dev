@@ -227,17 +227,21 @@ async def feed_related_recomendations(email: str):
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        user_json = user[0] 
-        user_id = user_json["id_user"]
+        user_id = user[0]["id_user"]
         
         # get recommendations
-        get_feed_recomendations(user_id)
+        res_songs = await get_feed_recomendations(user_id)
+        final_songs = []
+        keys = ["_id", "artist", "title", "album", "img_url"]
+
+        final_songs = [
+            {k: str(song.get(k, "")) for k in keys}
+            for song in res_songs
+        ]
 
         return JSONResponse(
             status_code=200,
-            content={
-                # "songs": final_songs,
-            }
+            content=final_songs
         )
     except HTTPException:
         raise

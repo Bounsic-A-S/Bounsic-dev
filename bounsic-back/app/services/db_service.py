@@ -38,7 +38,7 @@ def get_random_song_by_album(album_name: str):
     
     album = albums_collection.find_one({ "name": album_name })
     
-    if len(album) > 4: # Validar que es un album y no un sencillo
+    if album and len(album) > 4: # Validar que es un album y no un sencillo
         return random.choice(album["songs"])
     else:
         return None
