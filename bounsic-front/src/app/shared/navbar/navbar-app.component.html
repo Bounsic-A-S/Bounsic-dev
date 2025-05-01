@@ -1,24 +1,25 @@
-<header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4">
+<header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4 not-dark:bg-white">
   <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
 
-  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-20 py-1 shadow-bounsic-navbar">
+  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-20 py-1 shadow-bounsic-navbar not-dark:shadow-none">
     <!-- Logo -->
-    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer">
-      <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-24" />
+    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer dark:text-black">
+      <img src="/logo/logoBounsicBlack.png" alt="Bounsic_light_logo" class="h-auto w-24 dark:hidden" />
+      <img src="/logo/logoBounsic.png" alt="Bounsic_dark_logo" class="h-auto w-24 hidden dark:block" />
     </a>
 
     <!-- Navigation Links -->
     <section class="flex items-center">
       <div class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32">
         <a routerLink="/ayuda" routerLinkActive="text-white"
-          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer not-dark:text-black/90 not-dark:hover:text-black">
           {{ 'BOUNSIC.NAVBAR.TRENDING' | translate }}
         </a>
         <a routerLink="/library" routerLinkActive="text-white"
-          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer not-dark:text-black/90 not-dark:hover:text-black">
           {{ 'BOUNSIC.NAVBAR.LIBRARY' | translate }}
         </a>
-        <div class="text-md text-white/90 hover:text-white transition-colors">
+        <div class="text-md text-white/90 hover:text-white transition-colors not-dark:text-black/90 not-dark:hover:text-black">
           <input class="w-24" type="text" placeholder="{{ 'BOUNSIC.NAVBAR.SEARCH' | translate }}" />
         </div>
       </div>

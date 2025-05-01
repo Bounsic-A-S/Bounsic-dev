@@ -22,6 +22,8 @@ export class SettingsAppearanceComponent {
         { name: 'bg-bounsic-gradient', isLight: false },
         { name: 'bg-bounsic-custom-gradient-blue', isLight: false },
         { name: 'bg-bounsic-custom-gradient-purple', isLight: false },
+        { name: 'bg-bounsic-custom-gradient-white', isLight: true },
+
       ],
       gradient: [{ name: 'bg-bounsic-gradient-about-mobile', isLight: false }],
       solid: [

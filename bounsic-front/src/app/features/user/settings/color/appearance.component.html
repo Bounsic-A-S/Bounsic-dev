@@ -40,15 +40,20 @@
     <ng-container *ngFor="let theme of customThemes[0].bounsic">
       <button
         (click)="setCustomTheme(theme.name)"
+        [disabled]="isLightTheme() !== theme.isLight"
         [ngClass]="[
           theme.name,
-          'w-18 h-10 rounded-full cursor-pointer transition-colors duration-300',
+          'w-18 h-10 rounded-full transition-colors duration-300',
           customThemeSelected === theme.name
             ? 'border-white/80 border'
-            : 'hover:border-white/40 hover:border-[0.5px]'
+            : 'hover:border-white/40 hover:border-[0.5px]',
+          !isLightTheme() === theme.isLight
+            ? 'opacity-70 cursor-not-allowed grayscale'
+            : 'cursor-pointer'
         ]"
       ></button>
     </ng-container>
+    
   </div>
 </div>
 
@@ -61,12 +66,16 @@
     <ng-container *ngFor="let theme of customThemes[0].gradient">
       <button
         (click)="setCustomTheme(theme.name)"
+        [disabled]="isLightTheme() !== theme.isLight"
         [ngClass]="[
           theme.name,
-          'size-12 rounded-full cursor-pointer transition-colors duration-300',
+          'size-12 rounded-full transition-colors duration-300',
           customThemeSelected === theme.name
             ? 'border-white/80 border'
-            : 'hover:border-white/40 hover:border-[0.5px]'
+            : 'hover:border-white/40 hover:border-[0.5px]',
+          !isLightTheme() === theme.isLight
+            ? 'opacity-70 cursor-not-allowed grayscale'
+            : 'cursor-pointer'
         ]"
       ></button>
     </ng-container>

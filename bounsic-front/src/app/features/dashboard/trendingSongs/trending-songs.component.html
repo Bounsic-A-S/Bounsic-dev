@@ -2,14 +2,14 @@
     <!-- Contenedor de botones arriba a la derecha -->
     <div class="absolute top-0 right-0 flex gap-2 p-2 z-10 -translate-y-14">
       <button
-        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer"
+        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
         (click)="scrollLeft()"
       >
         <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
       </button>
   
       <button
-        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer"
+        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
         (click)="scrollRight()"
       >
         <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
@@ -27,8 +27,8 @@
           [alt]="trendingSong.title"
           class="w-full aspect-square object-cover rounded-md mb-2"
           />
-      <h4 class="lg:text-lg font-semibold text-pretty">{{ trendingSong.title }}</h4>
-      <p class="font-light text-sm lg:text-base text-bounsic-gray-1 text-pretty">{{ trendingSong.artist }}</p>
+      <h4 class="lg:text-lg text-pretty">{{ trendingSong.title }}</h4>
+      <p class="text-sm lg:text-base text-bounsic-gray-1 text-pretty not-dark:text-bounsic-dark-1">{{ trendingSong.artist }}</p>
       </div>
     </div>
 </div>
