@@ -49,5 +49,6 @@ app.include_router(playlist_router, prefix="/playlist", tags=["Playlist"])
 app.include_router(algorithms_router, prefix="/algorithms", tags=["Algorithms"])
 app.include_router(user_router, prefix="/user", tags=["User"])
 app.include_router(mysql_router, prefix="/mysql", tags=["Mysql"])
+app.include_router(user_router, prefix="/user", tags=["User"])
 
 

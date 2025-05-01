@@ -8,6 +8,6 @@ export class AudioStreamService {
     private baseUrl = environment.api_S_Url;
   
     getAudioUrl(blobName: string): string {
-      return `${this.baseUrl}/stream/${encodeURIComponent(blobName)}`;
+      return `${this.baseUrl}/stream/${blobName}`;
     }
   }

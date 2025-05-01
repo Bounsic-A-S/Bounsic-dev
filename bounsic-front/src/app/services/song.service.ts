@@ -33,7 +33,7 @@ export class SongService {
     if(this.songSafeChoicesSubject.value.length > 0) {
       return this.songSafeChoices$;
     }
-    return this.http.post<any>(`${this.apiUrl}/song/safeChoice/`, { email: email }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/song/safeChoice`, { email: email }).pipe(
       tap((songSafeChoices) => {
         this.songSafeChoicesSubject.next(songSafeChoices);
       }),

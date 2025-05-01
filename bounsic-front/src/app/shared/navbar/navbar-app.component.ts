@@ -37,7 +37,7 @@ export class NavbarAppComponent implements OnInit {
   private router = inject(Router);
 
   isMobileMenuOpen = false;
-  userProfile: any = null;
+  userProfile$ = this.authService.userProfile$;
   isLoggingToggled = false;
   isModalOpen = false;
 
@@ -56,8 +56,7 @@ export class NavbarAppComponent implements OnInit {
   }
 
   isUserLogged() {
-    this.userProfile = this.authService.getUserProfile();
-    return this.userProfile !== null;
+    return this.userProfile$;
   }
 
   openModal() {
@@ -70,7 +69,6 @@ export class NavbarAppComponent implements OnInit {
 
   logout(): void {
     this.authService.logout(true);
-    this.userProfile = this.authService.getUserProfile();
   }
 
   toggleLogin(): void {

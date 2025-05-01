@@ -51,10 +51,15 @@ async def get_artist_user_preferences_controller(email: str):
         }
         # get artists by genre
         all_artists = []
+        seen_names = set()
         for genre in genres:
             artists = get_artists_by_genre(genre)
             if artists:
-                all_artists.extend(artists)
+                for artist in artists:
+                    name = artist.get("artist_name")
+                    if name and name not in seen_names:
+                        seen_names.add(name)
+                        all_artists.append(artist)
 
         if not all_artists:
             return JSONResponse(

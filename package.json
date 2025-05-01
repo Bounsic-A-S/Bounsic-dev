@@ -31,7 +31,7 @@
     "install_linux": "bun run install:frontend && bun run install:backend_linux && bun run install:streaming_linux",
     "start:frontend": "cd bounsic-front && bun run start",
     "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
-    "start:streaming": "cd streaming && powershell -Command \"venv\\Scripts\\activate;uvicorn main:app --reload --port 4000\"",
+    "start:streaming": "cd streaming && powershell -Command \"venv\\Scripts\\activate;python hypercorn_server.py\"",
     "start:backend_linux": "cd bounsic-back && source venv/bin/activate && python -m app.main",
     "start:streaming_linux": "cd streaming && source venv/bin/activate && uvicorn main:app --reload --port 4000",
     "start": "concurrently --names \"frontend,backend,streaming\" \"bun run start:frontend\" \"bun run start:backend\" \"bun run start:streaming\"",
