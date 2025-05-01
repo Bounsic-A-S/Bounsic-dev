@@ -94,17 +94,15 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
 </head>
 
 <body id="HTMLReporter" class="html-reporter">
-<h1>Tested in Chrome Headless 135.0.0.0 (Wi on Tue Apr 2Tue Ap</h1>
+<h1>Tested in Chrome Headless 135.0.0.0 (Windows 10) on Wed Apr 30 2025</h1>
 
-</h1>
+<div class="alert">
 
-<div class="
 
 
   
-  <span
   <span class="passingAlert bar"><span class="fold-buttons"><a href="#" onclick="fold();">Fold</a> | 
-  <a href="#" onclick="unfold();">Unfold</25 specs, 0 failed, 0 pending0 pending</span>
+  <a href="#" onclick="unfold();">Unfold</a></span>25 specs, 0 failed, 0 pending</span>
   
 
 
@@ -116,15 +114,44 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
   
   
   
-    <div class="sui">passed">
+    <div class="suite passed">
       <span class="description">LandingNavBarComponent</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should toggle mobile menu</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should load datos from the API on init</span>
+      </div>
     
       <div class="specSummary passed">
       <span class="description">should create</span>
       </div>
     
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">NavbarAppComponent</span>
+    
       <div class="specSummary passed">
-      <span class="description">should load datos from the API on init</span>
+      <span class="description">should logout and refresh userProfile$</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should check if user is logged</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should call authService.initialize on init</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create the navbar</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should toggle the login option</span>
       </div>
     
       <div class="specSummary passed">
@@ -134,22 +161,61 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
     </div>
   
     <div class="suite passed">
-      <span class="description">LandingTextComponent with multiple languages</span>
+      <span class="description">Unit Test - formatDuration</span>
     
       <div class="specSummary passed">
-      <span class="description">should render correctly in kr</span>
+      <span class="description">should handle only hours</span>
       </div>
     
       <div class="specSummary passed">
-      <span class="description">should create the component</span>
+      <span class="description">should format single hour and minute</span>
       </div>
     
       <div class="specSummary passed">
-      <span class="description">should render correctly in en</span>
+      <span class="description">should handle only minutes</span>
       </div>
     
       <div class="specSummary passed">
-      <span class="description">should render correctly in es</span>
+      <span class="description">should format plural correctly</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should handle zeroes</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">AppComponent</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should create the app</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">PlayListSongItemComponent</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should display title, artist, album and duration</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should display the image</span>
+      </div>
+    
+      <div class="specSummary passed">
+      <span class="description">should create</span>
+      </div>
+    
+    </div>
+  
+    <div class="suite passed">
+      <span class="description">LandingTextComponent</span>
+    
+      <div class="specSummary passed">
+      <span class="description">should apply hovered class on mouseenter and remove it on mouseleave</span>
       </div>
     
     </div>
@@ -168,47 +234,10 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
     </div>
   
     <div class="suite passed">
-      <span class="description">AppComponent</span>
+      <span class="description">LandingTextComponent with multiple languages</span>
     
       <div class="specSummary passed">
-      <span class="description">should create the app</span>
-      </div>
-    
-    </div>
-  
-    <div class="suite passed">
-      <span class="description">Unit Test - formatDuration</span>
-    
-      <div class="specSummary passed">
-      <span class="description">should handle only minutes</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should handle zeroes</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should handle only hours</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should format plural correctly</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should format single hour and minute</span>
-      </div>
-    
-    </div>
-  
-    <div class="suite passed">
-      <span class="description">NavbarAppComponent</span>
-    
-      <div class="specSummary passed">
-      <span class="description">should toggle the logLandingTextComponent with multiple languages</span>
-    
-      <div class="specSummary passed">
-      <span class="description">should render correctly in kr</span>
+      <span class="description">should render correctly in en</span>
       </div>
     
       <div class="specSummary passed">
@@ -216,48 +245,15 @@ body { background-color: #eeeeee; padding: 0; margin: 5px; overflow-y: scroll; }
       </div>
     
       <div class="specSummary passed">
-      <span class="description">should render correctly in en</span>
+      <span class="description">should create the component</span>
       </div>
     
       <div class="specSummary passed">
-      <span class="description">should create the component</span>
+      <span class="description">should render correctly in kr</span>
       </div>
     
     </div>
   
-    <div class="suite passed">
-      <span class="description">NavbarAppComponent</span>
-    
-      <div class="specSummary passed">
-      <span class="description">should create the navbar</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should check if user is logged</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="description">should toggle mobile menu</span>
-      </div>
-    
-      <div class="specSummary passed">
-      <span class="descriptio">
-      <span class="descriptio</span>
-      <</span>
-  
-      <div cla
-      <div class="sp">
-      passed">
-      <span class="description">should display title, artist, album and duration</span>
-      </div>
-    
-      <div cla">
-      <span passed">
-      <span class="description">should display the image</span>
-      </div>
-    
-    </div
-</d
   
 </div>
 
