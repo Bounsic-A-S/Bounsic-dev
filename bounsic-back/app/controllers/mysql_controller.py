@@ -9,7 +9,8 @@ class MySQLController:
     dataPreference = {
         "background":"bg-bounsic-gradient",
         "typography":"",
-        "language":"es"
+        "language":"es",
+        "theme": "dark"
     }
     # USERS
     @staticmethod
@@ -63,6 +64,7 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_users_by_username error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching user")
+        
     @staticmethod
     async def register_user(data):
         try:
