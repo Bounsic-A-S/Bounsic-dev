@@ -42,7 +42,7 @@ class MySQLSongService:
     async def insert_user(data):
         try:
             query = """
-                INSERT INTO Bounsic_Users (name, last_name,username, email, profile_img, rol_user)
+                INSERT INTO Bounsic_Users (name,username, email, profile_img, rol_user)
                 VALUES (:name, :last_name, :name , :email,null, 2 )
             """
             return await MySQLSongService._db.execute_query(query, data)
@@ -579,13 +579,16 @@ class MySQLSongService:
                         u.id_user,
                         u.username,
                         u.name,
-                        u.last_name,
                         u.email,
+                        u.country,
+                        u.phone,
+                        u.creation_date AS membre_since,
                         r.name_rol AS role,
                         u.profile_img,
                         p.background,
                         p.typography,
-                        p.language
+                        p.language,
+                        p.theme
                     FROM 
                         Bounsic_Users u
                     INNER JOIN 

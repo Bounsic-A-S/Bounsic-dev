@@ -51,9 +51,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.authService.userProfile$.subscribe((user) => {
       if (user) this.getData(user.email);
-      if (user && user.preferences?.background) {
+      if (user && user.preferences) {
         this.getBackground(user.preferences.background);
         this.getLanguage(user.preferences.language);
+        this.getCurrentTheme(user.preferences.theme);
       }
     });
   }
@@ -75,6 +76,13 @@ export class DashboardComponent implements OnInit {
     const savedLanguage = localStorage.getItem('language');
     if (!savedLanguage && language !== null) {
       localStorage.setItem('language', language);
+    }
+  }
+  getCurrentTheme(theme : string): void {
+    if(theme) {
+      document.documentElement.classList.add(theme)
+      localStorage.setItem('theme', theme);
+      console.log(theme)
     }
   }
 }

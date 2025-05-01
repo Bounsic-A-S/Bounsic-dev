@@ -12,14 +12,17 @@ async def get_user_by_email_controller(email: str):
             "id_user": user["id_user"],
             "username": user["username"],
             "name": user["name"],
-            "last_name": user["last_name"],
             "email": user["email"],
             "role": user["role"],
+            "phone":user["phone"],
+            "country":user["country"],
             "profile_img": user["profile_img"],
             "preferences": {
                 "background": user["background"],
                 "typography": user["typography"],
-                "language": user["language"]
+                "language": user["language"],
+                "theme": user["theme"]
+
             }
         }
         return JSONResponse(
