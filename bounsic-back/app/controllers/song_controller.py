@@ -642,7 +642,7 @@ async def safe_choice_recomendation(email: str):
 
 async def feed_related_recomendations(email: str):
     try:
-        user = MySQLSongService.get_user_by_email(email)
+        user = await MySQLSongService.get_user_by_email(email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         

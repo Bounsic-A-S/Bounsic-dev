@@ -17,6 +17,10 @@ def get_all_songs():
         print(f"Error al obtener canciones: {e}")
         return []
 
+def get_all_data_songs():
+    songs_collection = db["songs"]
+    songs = list(songs_collection.find({}))
+    return songs
 
 def insert_one_song(data):
     try:
