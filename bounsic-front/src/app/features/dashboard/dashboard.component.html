@@ -1,5 +1,5 @@
 <main-navbar></main-navbar>
-<main class="bg-bounsic-gradient text-white p-8 pt-11 mt-14">
+<main [ngClass]="bg$ | async" class="text-white p-8 pt-11 mt-14">
   <!-- Header Section -->
   <section class="max-w-4xl mx-auto text-center mb-12">
     <h1 class="text-xl sm:text-2xl mb-6">
@@ -18,7 +18,9 @@
   <!-- Safe Choices Section -->
   <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
     <h3 class="text-lg sm:text-2xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.SAFE_CHOICES.TEXT1'  | translate}}</h3>
-    <dashboard-safe-choice-list></dashboard-safe-choice-list>
+    <dashboard-safe-choice-list
+    [songs]="songSafeChoices$ | async ">
+  </dashboard-safe-choice-list>
   </section>
 
   <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
@@ -32,6 +34,8 @@
   </section>
   <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
     <h2 class="text-xl sm:text-2xl xl:text-3xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.ARTISTS.TEXT1'  | translate}}</h2>
-    <dashboard-artist-list></dashboard-artist-list>
+    <dashboard-artist-list
+    [artists]="artists$ | async "
+    ></dashboard-artist-list>
   </section>
 </main>

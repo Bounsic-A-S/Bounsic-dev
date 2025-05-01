@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -16,6 +17,7 @@ import { AuthComponent } from '@app/auth/auth.component';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@app/services/auth/auth.service';
+
 @Component({
   selector: 'main-navbar',
   templateUrl: './navbar-app.component.html',
@@ -31,45 +33,48 @@ import { AuthService } from '@app/services/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarAppComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   isMobileMenuOpen = false;
-  userProfile: any = null;
+  userProfile$ = this.authService.userProfile$;
   isLoggingToggled = false;
-  //icons
+  isModalOpen = false;
+
+  // Icons
   readonly Heart = Heart;
   readonly loginIcon = LogIn;
   readonly logoutIcon = LogOut;
   readonly settingsIcon = Settings;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
-
-  isModalOpen = false; // Controla si el modal está abierto o cerrado
-
   ngOnInit(): void {
-    this.authService.initialize()
+    this.authService.initialize();
   }
+
   goToSettings() {
     this.router.navigate(['/settings']);
   }
-  isUserLogged(){
-    this.userProfile = this.authService.getUserProfile()
-    return this.userProfile !== null
+
+  isUserLogged() {
+    return this.userProfile$;
   }
+
   openModal() {
-    this.isModalOpen = true; // Abre el modal
+    this.isModalOpen = true;
   }
+
   closeModal() {
-    this.isModalOpen = false; // Cierra el modal
+    this.isModalOpen = false;
   }
-  logout():void{
+
+  logout(): void {
     this.authService.logout(true);
-    this.userProfile = this.authService.getUserProfile();
   }
+
   toggleLogin(): void {
     this.isLoggingToggled = !this.isLoggingToggled;
   }
+
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }

@@ -1,207 +1,144 @@
 <header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4">
   <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
 
-  <nav
-    class="relative mx-auto flex max-w-7xl items-center justify-between px-20 py-1 shadow-bounsic-navbar">
+  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-20 py-1 shadow-bounsic-navbar">
     <!-- Logo -->
-    <a
-      routerLink="/dashboard"
-      class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer"
-    >
+    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer">
       <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-24" />
     </a>
 
     <!-- Navigation Links -->
-    <div
-      class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32"
-    >
-      <a
-        routerLink="/ayuda"
-        routerLinkActive="text-white"
-        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
-      >
-        {{'BOUNSIC.NAVBAR.TRENDING'  | translate}}
-      </a>
-      <a
-        routerLink="/library"
-        routerLinkActive="text-white"
-        class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer"
-      >
-        {{'BOUNSIC.NAVBAR.LIBRARY'  | translate}}
-      </a>
-      <div class="text-md text-white/90 hover:text-white transition-colors">
-        <input class="w-24" type="text" name="" id="" placeholder="{{'BOUNSIC.NAVBAR.SEARCH'  | translate}}" />
+    <section class="flex items-center">
+      <div class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32">
+        <a routerLink="/ayuda" routerLinkActive="text-white"
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          {{ 'BOUNSIC.NAVBAR.TRENDING' | translate }}
+        </a>
+        <a routerLink="/library" routerLinkActive="text-white"
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          {{ 'BOUNSIC.NAVBAR.LIBRARY' | translate }}
+        </a>
+        <div class="text-md text-white/90 hover:text-white transition-colors">
+          <input class="w-24" type="text" placeholder="{{ 'BOUNSIC.NAVBAR.SEARCH' | translate }}" />
+        </div>
       </div>
-      <!-- Dropdown -->
-      <div class="relative">
-        <!-- Botón para abrir el menú -->
-        <button
-          (click)="toggleLogin()"
-          class="text-white rounded-md flex items-center"
-        >
-          <div
-            class="rounded-full w-10 h-10 overflow-hidden flex items-center justify-center cursor-pointer"
-          >
-            <img src="/User.svg" alt="user-icon" class="size-5 invert" />
-          </div>
+
+      <!-- Usuario / Avatar -->
+      <div class="relative ml-30 sm:ml-60 md:ml-0 md:px-8 xl:px-24 2xl:px-32">
+        <button (click)="toggleLogin()" class="text-white rounded-md flex items-center cursor-pointer">
+          <ng-container *ngIf="userProfile$ | async as userProfile; else anonymousUser">
+            <ng-container *ngIf="userProfile.profile_img; else avatarInitialLogged">
+              <div class="flex-shrink-0 size-9 rounded-full overflow-hidden mr-3">
+                <img [src]="userProfile.profile_img" alt="Profile" class="h-full w-full object-cover">
+              </div>
+            </ng-container>
+            <ng-template #avatarInitialLogged>
+              <div class="flex-shrink-0 size-9 rounded-full bg-gray-700 flex items-center justify-center mr-3">
+                <span class="text-sm font-medium text-white">
+                  {{ userProfile.username.charAt(0).toUpperCase() }}
+                </span>
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <ng-template #anonymousUser>
+            <div class="rounded-full w-10 h-10 overflow-hidden flex items-center justify-center cursor-pointer">
+              <img src="/User.svg" alt="user-icon" class="size-5 invert" />
+            </div>
+          </ng-template>
         </button>
 
         <!-- Menú desplegable -->
-        <div
-          *ngIf="isLoggingToggled"
+        <div *ngIf="isLoggingToggled"
           class="absolute right-0 mt-6 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg"
-          clickOutside (clickOutside)="toggleLogin()"
-          (click)="toggleLogin()"
-          >
+          clickOutside
+          (clickOutside)="toggleLogin()" 
+          (click)="toggleLogin()">
+          
           <!-- Usuario no autenticado -->
-          <ng-container *ngIf="!isUserLogged()">
-            <button
-              (click)="openModal()"
+          <ng-container *ngIf="!(userProfile$ | async); else loggedInMenu">
+            <button (click)="openModal()"
               class="flex items-center w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
-              role="menuitem"
-            >
-              <lucide-icon
-                [img]="loginIcon"
-                class="my-icon mr-2"
-                [size]="16"
-                [strokeWidth]="3"
-              >
-              </lucide-icon>
-              {{'BOUNSIC.NAVBAR.SIGNIN'  | translate}}
+              role="menuitem">
+              <lucide-icon [img]="loginIcon" class="my-icon mr-2" [size]="16" [strokeWidth]="3"></lucide-icon>
+              {{ 'BOUNSIC.NAVBAR.SIGNIN' | translate }}
             </button>
           </ng-container>
 
           <!-- Usuario autenticado -->
-          <ng-container *ngIf="isUserLogged()">
-            <!-- User Profile Button -->
-            <article class="w-full text-left">
-              <div class="px-4 py-1.5">
-                <div class="flex items-center">
-                  <!-- Avatar - Improved with conditional image support -->
-                  <div *ngIf="userProfile.profileImage; else initialAvatar" 
-                       class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
-                    <img [src]="userProfile.profileImage" alt="Profile" class="h-full w-full object-cover">
-                  </div>
-                  <ng-template #initialAvatar>
+          <ng-template #loggedInMenu>
+            <ng-container *ngIf="userProfile$ | async as userProfile">
+              <article class="w-full text-left">
+                <div class="px-4 py-1.5 flex items-center">
+                  <ng-container *ngIf="userProfile.profile_img; else avatarInitialMenu">
+                    <div class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
+                      <img [src]="userProfile.profile_img" alt="Profile" class="h-full w-full object-cover">
+                    </div>
+                  </ng-container>
+                  <ng-template #avatarInitialMenu>
                     <div class="flex-shrink-0 size-8 rounded-full bg-gray-700 flex items-center justify-center mr-3 border border-gray-600">
-                      <span class="text-sm font-medium text-white">{{ userProfile.name.charAt(0).toUpperCase() }}</span>
+                      <span class="text-sm font-medium text-white">
+                        {{ userProfile.username.charAt(0).toUpperCase() }}
+                      </span>
                     </div>
                   </ng-template>
-                  
-                  <!-- User Info - Added email -->
                   <div class="truncate">
-                    <p class="text-sm font-medium text-white">{{ userProfile.name }}</p>
+                    <p class="text-sm font-medium text-white">{{ userProfile.username }}</p>
                     <p class="text-xs text-gray-400 truncate">{{ userProfile.email }}</p>
                   </div>
                 </div>
-              </div>
-            </article>
-            
-            <!-- First Divider -->
-            <div class="h-[1px] bg-bounsic-gray-3 mx-3 my-1"></div>
-            
-            <!-- Settings Button - Made consistent with other buttons -->
-            <button class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
-            (click)="goToSettings()">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
-                  <lucide-icon
-                    [img]="settingsIcon" 
-                    class="my-icon"
-                    [size]="20"
-                    [strokeWidth]="1.5"
-                  ></lucide-icon>
+              </article>
+
+              <div class="h-[1px] bg-bounsic-gray-3 mx-3 my-1"></div>
+
+              <button (click)="goToSettings()"
+                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                    <lucide-icon [img]="settingsIcon" class="my-icon" [size]="20" [strokeWidth]="1.5"></lucide-icon>
+                  </div>
+                  <p class="text-sm font-medium">{{ 'BOUNSIC.NAVBAR.SETTINGS' | translate }}</p>
                 </div>
-                <div class="truncate">
-                  <p class="text-sm font-medium">{{'BOUNSIC.NAVBAR.SETTINGS'  | translate}}</p>
+              </button>
+
+              <button (click)="logout()"
+                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
+                role="menuitem">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                    <lucide-icon [img]="logoutIcon" class="my-icon" [size]="20" [strokeWidth]="1.5"></lucide-icon>
+                  </div>
+                  <span class="text-sm font-medium">{{ 'BOUNSIC.NAVBAR.SIGNOUT' | translate }}</span>
                 </div>
-              </div>
-            </button>
-            <button
-              (click)="logout()"
-              class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
-              role="menuitem"
-            >
-              <div class="flex items-center">
-                <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
-                  <lucide-icon
-                    [img]="logoutIcon"
-                    class="my-icon"
-                    [size]="20"
-                    [strokeWidth]="1.5"
-                  ></lucide-icon>
-                </div>
-                <span class="text-sm font-medium">{{'BOUNSIC.NAVBAR.SIGNOUT'  | translate}}</span>
-              </div>
-            </button>
-          </ng-container>
+              </button>
+            </ng-container>
+          </ng-template>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Mobile menu button -->
-    <button
-      class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20"
-      (click)="toggleMobileMenu()"
-    >
-      <svg
-        class="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"
-        />
+    <!-- Mobile menu toggle -->
+    <button class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20" (click)="toggleMobileMenu()">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
   </nav>
 
   <!-- Mobile menu -->
-  <div
-    *ngIf="isMobileMenuOpen"
-    class="md:hidden absolute w-full border-t border-white/10 bg-bounsic-gray-4"
-  >
+  <div *ngIf="isMobileMenuOpen" class="md:hidden absolute w-full border-t border-white/10 bg-bounsic-gray-4">
     <div class="px-4 py-3 space-y-3">
-      <a
-        routerLink="/ayuda"
-        routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors"
-      >
-        {{'BOUNSIC.NAVBAR.TRENDING'  | translate}}
+      <a routerLink="/ayuda" routerLinkActive="text-white"
+        class="block text-sm text-white/90 hover:text-white transition-colors">
+        {{ 'BOUNSIC.NAVBAR.TRENDING' | translate }}
       </a>
-      <a
-        routerLink="/library"
-        routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors"
-      >
-        {{'BOUNSIC.NAVBAR.LIBRARY'  | translate}}
+      <a routerLink="/library" routerLinkActive="text-white"
+        class="block text-sm text-white/90 hover:text-white transition-colors">
+        {{ 'BOUNSIC.NAVBAR.LIBRARY' | translate }}
       </a>
-      <a
-        routerLink="/buscar"
-        routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors"
-      >
-        <input type="text" name="" id="" placeholder="{{'BOUNSIC.NAVBAR.SEARCH'  | translate}}" />
-      </a>
-
-      <!-- Mobile Login / Logout -->
-      <button
-        *ngIf="!isUserLogged()"
-        class="block text-sm text-white/90 hover:text-[#2D1B69] transition-colors"
-      >
-        {{'BOUNSIC.NAVBAR.SIGNIN'  | translate}}
-      </button>
-      <button
-        *ngIf="isUserLogged()"
-        (click)="logout()"
-        class="block text-sm text-white/90 hover:text-red-600 transition-colors"
-      >
-        {{'BOUNSIC.NAVBAR.SIGNOUT'  | translate}}
-      </button>
+      <div class="text-sm text-white/90 hover:text-white transition-colors">
+        <input type="text" placeholder="{{ 'BOUNSIC.NAVBAR.SEARCH' | translate }}" />
+      </div>
     </div>
   </div>
 </header>

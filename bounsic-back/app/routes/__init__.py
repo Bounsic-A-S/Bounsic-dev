@@ -9,3 +9,4 @@ from .spotify_routes import router as spotify_router
 from .playlist_routes import router as playlist_router
 from .algorithms_routes import router as algorithms_router
 from .mysql_routes import router as mysql_router
+from .user_routes import router as user_router

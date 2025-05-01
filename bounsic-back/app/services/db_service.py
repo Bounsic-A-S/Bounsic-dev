@@ -2,10 +2,20 @@ from app.provider import db
 import random
 
 def get_all_songs():
-    songs_collection = db["songs"]
-    # print(db.list_collection_names())
-    songs = list(songs_collection.find({}))
-    return songs
+    try:
+        songs_collection = db["songs"]
+        
+        # Excluir los campos 'fingerprint' y 'genres'
+        songs_cursor = songs_collection.find({}, {"fingerprint": 0, "genres": 0})
+        songs = list(songs_cursor)
+
+        for song in songs:
+            song["_id"] = str(song["_id"])
+
+        return songs
+    except Exception as e:
+        print(f"Error al obtener canciones: {e}")
+        return []
 
 
 def insert_one_song(data):

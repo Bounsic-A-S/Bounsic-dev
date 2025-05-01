@@ -11,8 +11,7 @@
   <audio
     #audio
     preload="metadata"
-    slot="media"
-    [src]="song"
+    type="audio/mpeg"
   ></audio>
 
   <!-- Layout con los subcomponentes -->
@@ -21,13 +20,13 @@
     <!-- Song Info -->
     <div class="flex justify-center items-center gap-4">
       <img
-        src="https://i.pinimg.com/736x/a5/6a/9c/a56a9cf5cef88c0d18f100d86766049c.jpg"
-        alt="Cover"
+        [src]="song.img_url"
+        [alt]="song.title"
         class="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-cover flex-shrink-0"
       />
       <div class="min-w-0">
-        <h3 class="text-base sm:text-lg font-semibold truncate">No One Noticed</h3>
-        <p class="text-sm text-bounsic-gray-2 truncate">The Marias</p>
+        <h3 class="text-base sm:text-lg font-semibold truncate">{{song.title}}</h3>
+        <p class="text-sm text-bounsic-gray-2 truncate">{{song.artist}}</p>
       </div>
       <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
         <button class="text-bounsic-gray-2 hover:text-white transition-colors">
@@ -48,7 +47,7 @@
       (playPause)="togglePlayPause()"
       (seek)="onSeek($event)"
       (skip)="skip($event)"
-      
+        
       class="w-full"></player-music-playbar>
     </div>
 

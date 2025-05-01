@@ -8,8 +8,10 @@
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
         <!-- Playlist Cards -->
-        <library-item *ngFor="let playlist of playlistsT$ | async" [playlist]="playlist">
-        </library-item>
+        <ng-container *ngIf="playlistsT$ | async as playlists; else loading">
+          <library-item *ngFor="let playlist of playlists" [playlist]="playlist">
+          </library-item>
+        </ng-container>
 
         <!-- Add Playlist Button -->
         <button class="cursor-pointer flex items-center ">
@@ -40,3 +42,8 @@
     </section>
   </main>
 </div>
+<ng-template #loading>
+  <div class="w-full h-full flex justify-center items-center">
+    <p class="text-lg text-gray-500">Cargando playlists...</p>
+  </div>
+</ng-template>
