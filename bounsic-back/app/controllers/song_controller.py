@@ -607,27 +607,76 @@ def sanitize_filename(name: str) -> str:
 
 async def safe_choice_recomendation(email: str):
     try:
+        # Obtener canciones de reproducción segura desde MySQL
         mysql_songs = await MySQLSongService.get_safe_choices(email)
         if not mysql_songs:
-            return JSONResponse(status_code=200, content={"message": "No hay recomendaciones disponibles", "songs": []})
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No hay recomendaciones disponibles", "songs": []}
+            )
 
-        song_ids = [song["song_mongo_id"] for song in mysql_songs]
+        # Obtener los IDs únicos de canciones Mongo
+        song_ids = list({song["song_mongo_id"] for song in mysql_songs})
         mongo_songs = get_songs_by_ids(song_ids)
-        if not mongo_songs:
-            return JSONResponse(status_code=200, content={"message": "No se encontraron canciones en MongoDB", "songs": []})
 
-        mongo_map = {song["_id"]: song for song in mongo_songs}
-        final_songs = []
+        if not mongo_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No se encontraron canciones en MongoDB", "songs": []}
+            )
+
+        # Crear un mapa para acceso rápido por ID
+        mongo_map = {str(song["_id"]): song for song in mongo_songs}
         keys = ["_id", "artist", "title", "album", "img_url"]
 
-        for song in mysql_songs:
-            mongo_song = mongo_map.get(song["song_mongo_id"])
-            if mongo_song:
-                combined = {k: mongo_song.get(k) for k in keys}
-                final_songs.append(combined)
+        # Combinar información de MySQL y MongoDB
+        final_songs = [
+            {k: mongo_map[song["song_mongo_id"]].get(k) for k in keys}
+            for song in mysql_songs
+            if song["song_mongo_id"] in mongo_map
+        ]
 
         return JSONResponse(status_code=200, content={"songs": final_songs})
 
     except Exception as e:
         logging.error(f"Error en safe_choice_recommendation: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+
+    
+async def get_most_listened(email: str):
+    try:
+        # Obtener historial reciente (máximo 12 canciones)
+        mysql_songs = await MySQLSongService.get_history_month(email)
+        if not mysql_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No hay recomendaciones disponibles", "songs": []}
+            )
+
+        # Extraer los IDs únicos de Mongo
+        song_ids = list({song["song_mongo_id"] for song in mysql_songs})
+        mongo_songs = get_songs_by_ids(song_ids)
+
+        if not mongo_songs:
+            return JSONResponse(
+                status_code=200,
+                content={"message": "No se encontraron canciones en MongoDB", "songs": []}
+            )
+
+        # Mapear canciones Mongo por ID para acceso rápido
+        mongo_map = {str(song["_id"]): song for song in mongo_songs}
+        keys = ["_id", "artist", "title", "album", "img_url"]
+
+        # Combinar resultados
+        final_songs = [
+            {k: mongo_map[song["song_mongo_id"]].get(k) for k in keys}
+            for song in mysql_songs
+            if song["song_mongo_id"] in mongo_map
+        ]
+
+        return JSONResponse(status_code=200, content={"songs": final_songs})
+
+    except Exception as e:
+        logging.error(f"Error en get_most_listened: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+
