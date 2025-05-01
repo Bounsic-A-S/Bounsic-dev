@@ -174,11 +174,9 @@ export class AuthService implements OnDestroy {
               "name": activeAccount.name,
               "last_name": activeAccount.name,
             }
-            console.log("No existe el usuario, creando uno nuevo", data);
             this.userService.registerUser(data).subscribe({
               next: (res) => {
                 if (res) {
-                  console.log("Usuario creado correctamente", res);
                   this.userProfileSubject.next(res);
                 } else {
                   console.error("Error al crear el usuario");
