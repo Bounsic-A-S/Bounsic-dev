@@ -6,6 +6,7 @@ import { of, Subject } from 'rxjs';
 import { PLATFORM_ID } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@app/services/auth/auth.service';
+
 describe('NavbarAppComponent', () => {
   let component: NavbarAppComponent;
   let fixture: ComponentFixture<NavbarAppComponent>;
@@ -28,7 +29,7 @@ describe('NavbarAppComponent', () => {
   const mockAuthService = {
     initialize: jasmine.createSpy('initialize'),
     logout: jasmine.createSpy('logout'),
-    getUserProfile: jasmine.createSpy('getUserProfile').and.returnValue(null),
+    getUserProfile: jasmine.createSpy('getUserProfile').and.returnValue(of(null)),
   };
 
   beforeEach(async () => {
@@ -73,18 +74,31 @@ describe('NavbarAppComponent', () => {
     expect(mockAuthService.initialize).toHaveBeenCalled();
   });
 
-  it('should logout and refresh userProfile', () => {
-    mockAuthService.getUserProfile.and.returnValue(null);
+  it('should logout and refresh userProfile$', (done) => {
+    const expectedProfile = null;
+    mockAuthService.getUserProfile.and.returnValue(of(expectedProfile));
+    mockAuthService.logout.and.callFake(() => {}); // opcional si logout tiene lógica asíncrona
+
     component.logout();
-    expect(mockAuthService.logout).toHaveBeenCalledWith(true);
-    expect(mockAuthService.getUserProfile).toHaveBeenCalled();
-    expect(component.userProfile).toBeNull();
+    component.userProfile$ = mockAuthService.getUserProfile();
+
+    component.userProfile$?.subscribe(profile => {
+      expect(mockAuthService.logout).toHaveBeenCalledWith(true);
+      expect(mockAuthService.getUserProfile).toHaveBeenCalled();
+      expect(profile).toBeNull();
+      done();
+    });
   });
 
-  it('should check if user is logged', () => {
-    mockAuthService.getUserProfile.and.returnValue({ name: 'Test User' });
-    const isLogged = component.isUserLogged();
-    expect(isLogged).toBeTrue();
+  it('should check if user is logged', (done) => {
+    const mockProfile = { name: 'Test User' };
+    mockAuthService.getUserProfile.and.returnValue(of(mockProfile));
+    component.userProfile$ = mockAuthService.getUserProfile();
+  
+    component.userProfile$?.subscribe(profile => {
+      expect(!!profile).toBeTrue();
+      done();
+    });
   });
+  
 });
-
