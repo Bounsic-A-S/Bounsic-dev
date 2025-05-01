@@ -1,9 +1,9 @@
-
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_feed_recomendations
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song
 from app.services import MySQLSongService
+import logging
 import re
 import json
 import os
@@ -231,7 +231,8 @@ async def feed_related_recomendations(email: str):
         user_id = user_json["id_user"]
         
         # get recommendations
-        
+        get_feed_recomendations(user_id)
+
         return JSONResponse(
             status_code=200,
             content={
@@ -241,8 +242,5 @@ async def feed_related_recomendations(email: str):
     except HTTPException:
         raise
     except Exception as e:
-        print.error(f"Error in safe_choice_recomendation: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error while processing recommendations"
-        )
+        logging.error(f"Error en feed_related_recommendations: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno en la recomendación")

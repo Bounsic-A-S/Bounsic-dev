@@ -2,10 +2,11 @@ from .bert_service import pregunta_respuesta
 from .crawl_service import crawler
 from .srapping_service import scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen, get_lyrics
 from .song_service import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song,get_song_by_id
-from .db_service import get_all_songs,insert_one_song
+from .db_service import get_all_songs,insert_one_song, get_random_songs, get_random_song_by_album, get_relative_genres
 from .algorithms.fingerprint_service import generate_fingerprint
 from .algorithms.rhythm_service import get_alikes
 from .artist_service import getSongsByArtist, getDesc
 from .spotify_service import get_album_images,get_artist_and_genre_by_track
 from .playlist_service import getPlaylistById,getAllPlaylists
 from .mysql_service  import MySQLSongService
+from .feed_service import get_feed_recomendations

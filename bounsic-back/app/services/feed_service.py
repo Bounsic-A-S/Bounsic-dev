@@ -1,40 +1,44 @@
 from app.services import get_alikes, getSongByTitle, getSongByArtist, getSongByGenre, get_song_by_id
-from mysql_service import MySQLSongService
+from .mysql_service import MySQLSongService
+from .db_service import get_all_songs, get_random_songs, get_random_song_by_album, get_relative_genres
 
 def get_feed_recomendations(user_id: str):
-    size = 16
-    liked_songs = MySQLSongService.get_random_likes(user_id, size/2)
+    size = 16 # size of recomendation (pair number)
+    liked_songs = MySQLSongService.get_random_likes(user_id, size//2)
     latest_songs = [] # get latest songs reproductions
-    songs = []
+    songs = [] # songs to evaluate
+    res_songs = [] # final recomendations
+    database_songs = get_all_songs()
 
-    for i in range(size/2):
-        songs.append(get_song_by_id(liked_songs[i]["song_mongo_id"]))
-        # songs.append(get_song_by_id(latest_songs[i]))
+    for i in range(size//2):
+        if (i < len(liked_songs)):
+            songs.append(get_song_by_id(liked_songs[i]["song_mongo_id"]))
+        if (i < len(latest_songs)):
+            songs.append(get_song_by_id(latest_songs[i]))
 
-
-    # {'_id': '67f7dead113e278a2622c2b4', 
-    # 'artist': 'Ariana Grande', 
-    # 'title': 'positions', 
-    # 'album': 'Positions', 
-    # 'img_url': 'https://i.scdn.co/image/ab67616d0000b2735ef878a782c987d38d82b605', 
-    # 'mp3_url': 'C:\\Users\\angie\\OneDrive\\Documentos\\AngieSextoSemestre\\ProyectoIntegrador2\\Bounsic\\bounsic-back\\app\\services\\audios\\Ariana Grande - positions (official video).mp3', 
-    # 'release_year': 2020, 
-    # 'genres': [{'genre': 'pop'}], 
-    # 'fingerprint': []}
-    for i in range(size):
-        if (i % 3 == 0): # Fingerprint based
-            get_alikes(song_name=songs[i]["title"])
-
-        elif (i & 2 == 0): # Artist bases
+    for s in songs:
+        if (i % 3 == 0): # Artist bases
             # Tomar album de la cancion y devolver una cancion aleatoria de ese album
-            # o
-            # Tomar cancion aleatoria del mismo artista
-            s
+            temp = get_random_song_by_album(s["album"])
+            temp = get_song_by_id(temp)
+            res_songs.append(temp)
+
+            # O Tomar cancion aleatoria del mismo artista
+            if (temp is None):
+                res_songs.append(get_random_songs(1))
+
+        elif (i & 2 == 0): # Fingerprint based
+            alikes = get_alikes(target_song=s, database_songs=database_songs, size=1)
+            res_songs += alikes
 
         else: # Genre based
             # Buscar canciones con mismos generos
-            curr_song = songs[i]
-            
+            genres = s["genres"]
+
+            curr_song = s
+
+    if (len(songs) < size):
+        songs += get_random_songs(size - len(songs))            
 
 
 
