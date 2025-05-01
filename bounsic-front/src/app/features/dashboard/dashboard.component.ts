@@ -66,23 +66,31 @@ export class DashboardComponent implements OnInit {
   private getBackground(background: string): void {
     const savedBackground = localStorage.getItem('background');
     if (savedBackground) {
-      this.bg$.next(savedBackground);
+      if (savedBackground !== this.bg$.value) {
+        this.bg$.next(savedBackground);
+      }
     } else {
       this.bg$.next(background);
       localStorage.setItem('background', background);
     }
   }
+  
   private getLanguage(language: string): void {
     const savedLanguage = localStorage.getItem('language');
-    if (!savedLanguage && language !== null) {
+    if (!savedLanguage && language) {
       localStorage.setItem('language', language);
     }
   }
-  getCurrentTheme(theme : string): void {
-    if(theme) {
-      document.documentElement.classList.add(theme)
+  
+  private getCurrentTheme(theme: string): void {
+    if (!theme) return;
+  
+    const savedTheme = localStorage.getItem('theme');
+  
+    if (savedTheme !== theme || !document.documentElement.classList.contains(theme)) {
+      document.documentElement.className = '';
+      document.documentElement.classList.add(theme);
       localStorage.setItem('theme', theme);
-      console.log(theme)
     }
   }
 }
