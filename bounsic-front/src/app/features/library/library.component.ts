@@ -5,6 +5,7 @@ import { LibraryItemComponent } from './library_item/library_item.component';
 import { PlaylistService } from '@app/services/playlist.service';
 import { catchError, map, of, Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { BackgroundService } from '@app/services/background.service';
 interface Playlist {
     id: number;
     title: string;
@@ -21,7 +22,8 @@ interface Playlist {
 })
 export class LibraryComponent implements OnInit {
     private playlistService = inject(PlaylistService);
-
+    private backgroundService = inject(BackgroundService)
+    bg$ : Observable<string> = this.backgroundService.background$;
     favorites: Playlist = {
         id: 4,
         title: 'Lista de Me gustas',

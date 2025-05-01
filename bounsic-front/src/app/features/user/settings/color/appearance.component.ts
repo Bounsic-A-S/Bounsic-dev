@@ -71,6 +71,11 @@ export class SettingsAppearanceComponent {
       },
     });
     localStorage.setItem('background', this.customThemeSelected);
-    localStorage.setItem('theme', this.theme);
+    
+    if (this.theme !== localStorage.getItem('theme')) {
+      document.documentElement.className = '';
+      document.documentElement.classList.add(this.theme);
+      localStorage.setItem('theme', this.theme);
+    }
   }
 }
