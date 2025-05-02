@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit {
   private backgroundService = inject(BackgroundService);
   artists$!: Observable<DashboardArtist[]>;
   songSafeChoices$!: Observable<DashboardSong[]>;
+  songRelated$!: Observable<DashboardSong[]>;
   bg$ : Observable<string> = this.backgroundService.background$;
   
   ngOnInit(): void {
@@ -62,6 +63,7 @@ export class DashboardComponent implements OnInit {
   private getData(email: string): void {
     this.artists$ = this.artistService.getArtistsByUser(email);
     this.songSafeChoices$ = this.songService.getSafeChoices(email);
+    this.songRelated$ = this.songService.getRelatedSongs(email);
   }
   
   private getLanguage(language: string): void {
@@ -71,10 +73,8 @@ export class DashboardComponent implements OnInit {
     }
   }
   private getCurrentTheme(theme: string): void {
-    if (!theme) return;
-  
+    if(!theme) return
     const savedTheme = localStorage.getItem('theme');
-  
     if (savedTheme !== theme || !document.documentElement.classList.contains(theme)) {
       document.documentElement.className = '';
       document.documentElement.classList.add(theme);

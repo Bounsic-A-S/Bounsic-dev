@@ -55,5 +55,4 @@ async def get_safe_choice(request: Request):
 @router.post("/getRelated")
 async def get_related_songs(request: Request):
     data = await request.json()
-    res = await feed_related_recomendations(data.get("email"))
-    return res
+    return await feed_related_recomendations(data.get("email"))
