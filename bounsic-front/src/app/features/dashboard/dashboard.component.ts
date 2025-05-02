@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
   
   ngOnInit(): void {
     this.authService.userProfile$.subscribe((user) => {
-      if (user) this.getData(user.email);
+      if (user?.email) this.getData(user.email);
       if (user && user.preferences) {
         this.backgroundService.setBackground(user.preferences.background);
         this.getLanguage(user.preferences.language);
