@@ -37,7 +37,7 @@
             }"
           >
             <ng-container *ngIf="item.route; else staticContent">
-              <a [routerLink]="item.route" class="flex items-center w-full">
+              <a [routerLink]="[item.route]" class="flex items-center w-full">
                 <lucide-icon
                   [img]="item.icon"
                   class="my-icon mr-2"
