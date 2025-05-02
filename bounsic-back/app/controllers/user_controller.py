@@ -12,14 +12,17 @@ async def get_user_by_email_controller(email: str):
             "id_user": user["id_user"],
             "username": user["username"],
             "name": user["name"],
-            "last_name": user["last_name"],
             "email": user["email"],
             "role": user["role"],
+            "phone":user["phone"],
+            "country":user["country"],
             "profile_img": user["profile_img"],
             "preferences": {
                 "background": user["background"],
                 "typography": user["typography"],
-                "language": user["language"]
+                "language": user["language"],
+                "theme": user["theme"]
+
             }
         }
         return JSONResponse(
@@ -31,9 +34,9 @@ async def get_user_by_email_controller(email: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-async def set_background_controller(id: int,background:str):
+async def set_background_controller(id: int,background:str, theme:str):
     try:
-        res = await MySQLSongService.update_background(id,background)
+        res = await MySQLSongService.update_background(id,background, theme)
         if not res:
             return JSONResponse(status_code=404, content={"error": "Data not updated correctly"})
         return JSONResponse(

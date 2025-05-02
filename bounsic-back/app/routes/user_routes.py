@@ -13,7 +13,8 @@ async def get_user_by_email(email: str):
 async def set_background(id: int , request: Request):
     req = await request.json()
     background = req.get("background")
-    return await set_background_controller(id,background)
+    theme = req.get("theme")
+    return await set_background_controller(id,background,theme)
 
 @router.put("/typography/{id}")
 async def set_typography(id: str , request: Request):

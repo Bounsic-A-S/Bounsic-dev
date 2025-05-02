@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { PlayerSong } from './info/song/song.component';
 import Song from 'src/types/Song';
 import { ActivatedRoute } from '@angular/router';
+import { BackgroundService } from '@app/services/background.service';
 @Component({
   selector: 'app-player',
   standalone: true,
@@ -19,6 +20,9 @@ import { ActivatedRoute } from '@angular/router';
 export class PlayerComponent {
   private songService = inject(SongService);
   private route = inject(ActivatedRoute);
+  private backgroundService = inject(BackgroundService);
+  bg$: Observable<string> = this.backgroundService.background$;
+
 
   song$: Observable<Song> = this.route.paramMap.pipe(
     map(params => params.get('id')),

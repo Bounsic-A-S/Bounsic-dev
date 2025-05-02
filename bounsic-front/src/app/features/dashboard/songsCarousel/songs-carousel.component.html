@@ -1,6 +1,6 @@
 <div class="relative">
   <button
-    class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer not-dark:bg-white/50"
     (click)="scrollLeft()"
   >
     <lucide-angular
@@ -20,13 +20,13 @@
         [alt]="album.title"
         class="w-full aspect-square object-cover rounded-md mb-2"
       />
-      <h4 class="lg:text-lg">{{ album.title }}</h4>
-      <p class="font-light text-sm lg:text-base text-bounsic-gray-1">{{ album.artist }}</p>
+      <h4 class="font-medium lg:text-lg">{{ album.title }}</h4>
+      <p class="text-sm lg:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">{{ album.artist }}</p>
     </div>
   </div>
 
   <button
-    class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer not-dark:bg-white/50"
     (click)="scrollRight()"
   >
     <lucide-angular

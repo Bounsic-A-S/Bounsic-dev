@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule, ChevronLeft, Menu, UserRoundPen, Lock, Workflow, MessageSquare, Palette, Languages, AudioLines } from 'lucide-angular';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
+import { BackgroundService } from '@app/services/background.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -32,8 +33,9 @@ export class SettingsComponent {
   readonly language = Languages;
 
   constructor(private router: Router) {}
-
+  private backgroundService = inject(BackgroundService)
   public sideBarOpen = true;
+  bg$ = this.backgroundService.background$
 
   goBack(): void {
     this.router.navigate(['/dashboard']);

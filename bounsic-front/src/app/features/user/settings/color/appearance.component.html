@@ -11,8 +11,8 @@
     <button
       (click)="toggleTheme('light')"
       [ngClass]="{
-        'border-white bg-white text-black': isLightTheme(),
-        'border-white/20 hover:bg-white/10': !isLightTheme()
+        'border-white bg-white text-black not-dark:border-black not-dark:bg-black not-dark:text-white': isLightTheme(),
+        'border-white/20 hover:bg-white/10 not-dark:border-black/40 not-dark:hover:bg-black/20': !isLightTheme()
       }"
       class="text-sm sm:text-base px-4 py-1 rounded-full border cursor-pointer transition-all ease-in-out duration-300"
     >
@@ -21,8 +21,8 @@
     <button
       (click)="toggleTheme('dark')"
       [ngClass]="{
-        'border-white bg-white text-black': !isLightTheme(),
-        'border-white/20 hover:bg-white/10': isLightTheme()
+        'border-white bg-white text-black not-dark:border-black not-dark:bg-black not-dark:text-white': !isLightTheme(),
+        'border-white/20 hover:bg-white/ not-dark:border-black/40 not-dark:hover:bg-black/20': isLightTheme()
       }"
       class="text-sm sm:text-base px-4 py-1 rounded-full border cursor-pointer transition-all ease-in-out duration-300"
     >
@@ -40,15 +40,20 @@
     <ng-container *ngFor="let theme of customThemes[0].bounsic">
       <button
         (click)="setCustomTheme(theme.name)"
+        [disabled]="isLightTheme() !== theme.isLight"
         [ngClass]="[
           theme.name,
-          'w-18 h-10 rounded-full cursor-pointer transition-colors duration-300',
+          'w-18 h-10 rounded-full transition-colors duration-300 filter saturate-200',
           customThemeSelected === theme.name
             ? 'border-white/80 border'
-            : 'hover:border-white/40 hover:border-[0.5px]'
+            : '',
+          !isLightTheme() === theme.isLight
+            ? 'opacity-50 cursor-not-allowed grayscale border-red-400 ring-2 ring-red-400/40'
+            : 'cursor-pointer hover:border-white/40 hover:border-[0.5px]'
         ]"
       ></button>
     </ng-container>
+    
   </div>
 </div>
 
@@ -61,13 +66,17 @@
     <ng-container *ngFor="let theme of customThemes[0].gradient">
       <button
         (click)="setCustomTheme(theme.name)"
+        [disabled]="isLightTheme() !== theme.isLight"
         [ngClass]="[
-          theme.name,
-          'size-12 rounded-full cursor-pointer transition-colors duration-300',
-          customThemeSelected === theme.name
-            ? 'border-white/80 border'
-            : 'hover:border-white/40 hover:border-[0.5px]'
-        ]"
+        theme.name,
+        'size-12 rounded-full transition-colors duration-300 filter saturate-150',
+        customThemeSelected === theme.name
+          ? 'border-white/80 border'
+          : '',
+        !isLightTheme() === theme.isLight
+          ? 'opacity-50 cursor-not-allowed grayscale border-red-400 ring-2 ring-red-400/40'
+          : 'cursor-pointer hover:border-white/40 hover:border-[0.5px]'
+      ]"
       ></button>
     </ng-container>
   </div>
@@ -96,7 +105,7 @@
 
 <!-- Tamaño de fuente -->
 <div class="mt-12 pt-4">
-  <label for="country" class="text-bounsic-gray-2 mb-1 block">{{
+  <label for="country" class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1">{{
     "BOUNSIC.SETTINGS.PREFERENCES.FONT_SIZE" | translate
   }}</label>
   <div
@@ -104,7 +113,7 @@
   >
     <select
       id="fontSize"
-      class="bg-bounsic-gray-4 text-white w-full focus:outline-none"
+      class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
     >
       <option value="normal" selected>Predeterminada</option>
       <option value="lg">Mediana</option>
@@ -115,7 +124,7 @@
 </div>
 <ng-container *ngIf="hasThemeChange()">
   <div class="flex justify-end mt-12 mr-20 pt-4">
-    <button (click)="saveTheme()" class="text-black rounded-full bg-white py-2 px-4 cursor-pointer">
+    <button (click)="saveTheme()" class="text-black rounded-full bg-white py-2 px-4 cursor-pointer not-dark:text-white not-dark:bg-black">
       {{"BOUNSIC.SETTINGS.PREFERENCES.SAVE" | translate}}
     </button>
   </div>

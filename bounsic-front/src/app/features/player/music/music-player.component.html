@@ -15,7 +15,7 @@
   ></audio>
 
   <!-- Layout con los subcomponentes -->
-  <div class="bg-bounsic-gray-4 text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1 items-center justify-between gap-6">
+  <div class="bg-bounsic-gray-4 text-white w-full h-full px-4 sm:px-6 py-4 flex flex-1 items-center justify-between gap-6 not-dark:bg-bounsic-light-1">
     
     <!-- Song Info -->
     <div class="flex justify-center items-center gap-4">
@@ -25,14 +25,14 @@
         class="w-14 h-14 sm:w-16 sm:h-16 rounded-md object-cover flex-shrink-0"
       />
       <div class="min-w-0">
-        <h3 class="text-base sm:text-lg font-semibold truncate">{{song.title}}</h3>
-        <p class="text-sm text-bounsic-gray-2 truncate">{{song.artist}}</p>
+        <h3 class="text-base sm:text-lg font-semibold truncate not-dark:text-black">{{song.title}}</h3>
+        <p class="text-sm text-bounsic-gray-2 truncate not-dark:text-bounsic-dark-1">{{song.artist}}</p>
       </div>
       <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
-        <button class="text-bounsic-gray-2 hover:text-white transition-colors">
+        <button class="text-bounsic-gray-2 hover:text-white transition-colors not-dark:text-bounsic-dark-1">
           <lucide-angular [img]="Heart" class="my-icon" [size]="20"></lucide-angular>
         </button>
-        <button class="hidden sm:block text-bounsic-gray-2 hover:text-white transition-colors">
+        <button class="hidden sm:block text-bounsic-gray-2 not-dark:text-bounsic-dark-1 hover:text-white transition-colors">
           <lucide-angular [img]="MoreVertical" class="my-icon" [size]="20"></lucide-angular>
         </button>
       </div>

@@ -1,31 +1,32 @@
-<header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4">
+<header class="fixed top-0 left-0 w-full z-10 bg-bounsic-gray-4 shadow-bounsic-navbar not-dark:bg-bounsic-light-1">
   <app-auth [isOpen]="isModalOpen" (closeModal)="closeModal()"></app-auth>
 
-  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-20 py-1 shadow-bounsic-navbar">
+  <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-20 py-1">
     <!-- Logo -->
-    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer">
-      <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-24" />
+    <a routerLink="/dashboard" class="flex items-center gap-2 text-2xl font-bold text-white cursor-pointer dark:text-black">
+      <img src="/logo/logoBounsicBlack.png" alt="Bounsic_light_logo" class="h-auto w-24 dark:hidden" />
+      <img src="/logo/logoBounsic.png" alt="Bounsic_dark_logo" class="h-auto w-24 hidden dark:block" />
     </a>
 
     <!-- Navigation Links -->
     <section class="flex items-center">
       <div class="font-semibold hidden md:flex items-center gap-8 xl:gap-x-24 2xl:gap-x-32">
         <a routerLink="/ayuda" routerLinkActive="text-white"
-          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer not-dark:text-black/90 not-dark:hover:text-black">
           {{ 'BOUNSIC.NAVBAR.TRENDING' | translate }}
         </a>
         <a routerLink="/library" routerLinkActive="text-white"
-          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer">
+          class="text-md text-white/90 hover:text-white transition-colors hover:cursor-pointer not-dark:text-black/90 not-dark:hover:text-black">
           {{ 'BOUNSIC.NAVBAR.LIBRARY' | translate }}
         </a>
-        <div class="text-md text-white/90 hover:text-white transition-colors">
+        <div class="text-md text-white/90 hover:text-white transition-colors not-dark:text-black/90 not-dark:hover:text-black">
           <input class="w-24" type="text" placeholder="{{ 'BOUNSIC.NAVBAR.SEARCH' | translate }}" />
         </div>
       </div>
 
       <!-- Usuario / Avatar -->
       <div class="relative ml-30 sm:ml-60 md:ml-0 md:px-8 xl:px-24 2xl:px-32">
-        <button (click)="toggleLogin()" class="text-white rounded-md flex items-center cursor-pointer">
+        <button (click)="toggleLogin()" class="text-white rounded-md flex items-center cursor-pointer not-dark:text-black">
           <ng-container *ngIf="userProfile$ | async as userProfile; else anonymousUser">
             <ng-container *ngIf="userProfile.profile_img; else avatarInitialLogged">
               <div class="flex-shrink-0 size-9 rounded-full overflow-hidden mr-3">
@@ -43,14 +44,14 @@
 
           <ng-template #anonymousUser>
             <div class="rounded-full w-10 h-10 overflow-hidden flex items-center justify-center cursor-pointer">
-              <img src="/User.svg" alt="user-icon" class="size-5 invert" />
+              <img src="/User.svg" alt="user-icon" class="size-5 dark:invert" />
             </div>
           </ng-template>
         </button>
 
         <!-- Menú desplegable -->
         <div *ngIf="isLoggingToggled"
-          class="absolute right-0 mt-6 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg"
+          class="absolute right-0 mt-6 w-48 bg-bounsic-gray-4 text-white shadow-lg rounded-lg not-dark:bg-bounsic-light-1 not-dark:text-black"
           clickOutside
           (clickOutside)="toggleLogin()" 
           (click)="toggleLogin()">
@@ -71,7 +72,7 @@
               <article class="w-full text-left">
                 <div class="px-4 py-1.5 flex items-center">
                   <ng-container *ngIf="userProfile.profile_img; else avatarInitialMenu">
-                    <div class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600">
+                    <div class="flex-shrink-0 size-8 rounded-full overflow-hidden mr-3 border border-gray-600 not-dark:border-gray-100">
                       <img [src]="userProfile.profile_img" alt="Profile" class="h-full w-full object-cover">
                     </div>
                   </ng-container>
@@ -83,8 +84,8 @@
                     </div>
                   </ng-template>
                   <div class="truncate">
-                    <p class="text-sm font-medium text-white">{{ userProfile.username }}</p>
-                    <p class="text-xs text-gray-400 truncate">{{ userProfile.email }}</p>
+                    <p class="text-sm font-medium text-white not-dark:text-black">{{ userProfile.username }}</p>
+                    <p class="text-xs text-bounsic-gray-2 truncate not-dark:text-bounsic-dark-1">{{ userProfile.email }}</p>
                   </div>
                 </div>
               </article>
@@ -92,9 +93,9 @@
               <div class="h-[1px] bg-bounsic-gray-3 mx-3 my-1"></div>
 
               <button (click)="goToSettings()"
-                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer">
+                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer not-dark:hover:bg-gray-300 not-dark:focus:bg-gray-200">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-bounsic-gray-2 not-dark:text-bounsic-dark-1">
                     <lucide-icon [img]="settingsIcon" class="my-icon" [size]="20" [strokeWidth]="1.5"></lucide-icon>
                   </div>
                   <p class="text-sm font-medium">{{ 'BOUNSIC.NAVBAR.SETTINGS' | translate }}</p>
@@ -102,10 +103,10 @@
               </button>
 
               <button (click)="logout()"
-                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer"
+                class="w-full text-left px-4 py-1.5 hover:bg-gray-800 rounded-lg transition-colors duration-150 focus:outline-none focus:bg-gray-700 cursor-pointer not-dark:hover:bg-gray-300 not-dark:focus:bg-gray-200"
                 role="menuitem">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-gray-400">
+                  <div class="flex-shrink-0 size-8 flex items-center justify-center mr-2 text-bounsic-gray-2 not-dark:text-bounsic-dark-1">
                     <lucide-icon [img]="logoutIcon" class="my-icon" [size]="20" [strokeWidth]="1.5"></lucide-icon>
                   </div>
                   <span class="text-sm font-medium">{{ 'BOUNSIC.NAVBAR.SIGNOUT' | translate }}</span>
@@ -118,7 +119,7 @@
     </section>
 
     <!-- Mobile menu toggle -->
-    <button class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20" (click)="toggleMobileMenu()">
+    <button class="md:hidden rounded-lg bg-white/10 p-2 text-white hover:bg-white/20 not-dark:bg-black/10 not-dark:hover:bg-black/20 not-dark:text-black" (click)="toggleMobileMenu()">
       <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
@@ -126,17 +127,17 @@
   </nav>
 
   <!-- Mobile menu -->
-  <div *ngIf="isMobileMenuOpen" class="md:hidden absolute w-full border-t border-white/10 bg-bounsic-gray-4">
+  <div *ngIf="isMobileMenuOpen" class="md:hidden absolute w-full border-t border-white/10 bg-bounsic-gray-4 not-dark:bg-bounsic-light-1">
     <div class="px-4 py-3 space-y-3">
       <a routerLink="/ayuda" routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors">
+        class="block text-sm text-white/90 hover:text-white transition-colors not-dark:text-black/90 not-dark:hover:text-black">
         {{ 'BOUNSIC.NAVBAR.TRENDING' | translate }}
       </a>
       <a routerLink="/library" routerLinkActive="text-white"
-        class="block text-sm text-white/90 hover:text-white transition-colors">
+        class="block text-sm text-white/90 hover:text-white transition-colors not-dark:text-black/90 not-dark:hover:text-black">
         {{ 'BOUNSIC.NAVBAR.LIBRARY' | translate }}
       </a>
-      <div class="text-sm text-white/90 hover:text-white transition-colors">
+      <div class="text-sm text-white/90 hover:text-white transition-colors not-dark:text-black/90 not-dark:hover:text-black">
         <input type="text" placeholder="{{ 'BOUNSIC.NAVBAR.SEARCH' | translate }}" />
       </div>
     </div>

@@ -42,8 +42,8 @@ class MySQLSongService:
     async def insert_user(data):
         try:
             query = """
-                INSERT INTO Bounsic_Users (name, last_name,username, email, profile_img, rol_user)
-                VALUES (:name, :last_name, :name , :email,null, 2 )
+                INSERT INTO Bounsic_Users (name, username, email, profile_img, rol_user, phone, country )
+                VALUES (:name, :username, :email, null, 2, :phone, colombia  )
             """
             return await MySQLSongService._db.execute_query(query, data)
         except Exception as e:
@@ -57,23 +57,23 @@ class MySQLSongService:
             query = """
                 UPDATE Bounsic_Users
                 SET name = :name,
-                    last_name = :last_name,
                     email = :new_email,
-                    pwd = :pwd,
                     profile_img = :profile_img,
                     rol_user = :rol_user,
-                    username = :username
+                    username = :username,
+                    phone= :phone,
+                    country= :country
                 WHERE email = :email
             """
             params = {
                 "name": data["name"],
-                "last_name": data["last_name"],
                 "new_email": data["email"],  # el nuevo email
-                "pwd": data["pwd"],
                 "profile_img": data.get("profile_img"),
                 "rol_user": data["rol_user"],
                 "username": data["username"],
-                "email": email  # el email viejo (el del WHERE)
+                "phone" : data["phone"],
+                "country" :data["country"],
+                "email": email  
             }
             return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
@@ -268,17 +268,19 @@ class MySQLSongService:
 
 
     @staticmethod
-    async def update_background( user_id, background):
+    async def update_background( user_id, background, theme):
         try:
-            query = "UPDATE Bounsic_Preferences SET background= :background WHERE user_id= :user_id"
+            query = "UPDATE Bounsic_Preferences SET background= :background, theme= :theme WHERE user_id= :user_id"
             values = {
             "user_id": user_id,
-            "background": background
+            "background": background,
+            "theme": theme
         }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"update_preference error: {e}")
             return False
+        
     @staticmethod
     async def update_font_size( user_id, fontSize):
         try:
@@ -588,13 +590,16 @@ class MySQLSongService:
                         u.id_user,
                         u.username,
                         u.name,
-                        u.last_name,
                         u.email,
+                        u.country,
+                        u.phone,
+                        u.creation_date AS membre_since,
                         r.name_rol AS role,
                         u.profile_img,
                         p.background,
                         p.typography,
-                        p.language
+                        p.language,
+                        p.theme
                     FROM 
                         Bounsic_Users u
                     INNER JOIN 

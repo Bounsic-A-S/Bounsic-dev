@@ -1,7 +1,7 @@
 <!-- Control Buttons -->
 <div class="flex items-center justify-end gap-4 py-10" (hoverExit)="closeVolume()">
   <!-- Lista -->
-  <button class="text-bounsic-gray-2 hover:text-white">
+  <button class="text-bounsic-gray-2 hover:text-white not-dark:text-bounsic-dark-1 not-dark:hover:text-black">
     <lucide-icon [img]="List" class="my-icon" [size]="24"></lucide-icon>
   </button>
 
@@ -11,7 +11,7 @@
     <button
       (click)="toggleMute.emit()"
       (mouseenter)="openVolume()"
-      class="hidden md:block text-bounsic-gray-2 hover:text-white transition duration-300"
+      class="hidden md:block text-bounsic-gray-2 hover:text-white transition duration-300 not-dark:text-bounsic-dark-1 not-dark:hover:text-black"
     >
       <lucide-icon [name]="isMuted ? VolumeX : Volume2" class="size-6" />
     </button>
@@ -30,7 +30,7 @@
         step="0.01"
         [value]="volume"
         (input)="onVolumeChange_($event)"
-        class="w-full h-1 accent-white"
+        class="w-full h-1 accent-white not-dark:accent-black"
       />
     </div>
     </ng-container>

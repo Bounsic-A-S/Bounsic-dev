@@ -10,16 +10,17 @@ import { Observable } from 'rxjs';
 export class UserService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
   getUserByEmail(email: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/${email}`);
   }
   registerUser(user: any): Observable<boolean> {
     return this.http.post<boolean>(`${this.apiUrl}/user/register`, user);
   }
-  setLanguage(language: string,id:number): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/user/language/${id}`,{"language": language});
+  setLanguage(language: string, id: number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/user/language/${id}`, { "language": language });
   }
-  setBackground(background: string,id:number): Observable<boolean> {
-    return this.http.put<boolean>(`${this.apiUrl}/user/background/${id}`,{"background": background});
-  }}
+  setBackground(data: any, id: number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/user/background/${id}`, data);
+  }
+}
