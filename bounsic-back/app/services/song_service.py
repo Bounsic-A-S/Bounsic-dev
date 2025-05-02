@@ -516,3 +516,26 @@ def add_song_to_album(album_id: ObjectId, song_id: ObjectId) -> bool:
     except PyMongoError as e:
         print(f"Error al agregar canción al álbum: {e}")
         return False
+
+
+def update_song_lyrics(song_id:ObjectId, lyrics):
+    """
+    Agrega un campo 'lyrics' a una canción existente en la base de datos.
+
+    Args:
+        song_id (ObjectId): ID de la canción a actualizar.
+        lyrics (str): Letra de la canción a agregar.
+
+    Returns:
+        bool: True si se actualizó, False si no se modificó o hubo error.
+    """
+    try:
+        result = db["songs"].update_one(
+            {"_id":song_id},
+            {"$set":{"lyrics": lyrics}}
+        )
+        return result.modified_count > 0
+
+    except PyMongoError as e:
+        print(f"Error al agregar letras a la canción: {e}")
+        return False

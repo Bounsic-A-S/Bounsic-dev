@@ -6,6 +6,13 @@ def get_all_songs():
     songs = list(songs_collection.find({}, {"_id": 0}))
     return songs
 
+def get_all_songs_mongo():
+    songs_collection = db["songs"]
+    print(db.list_collection_names())
+    songs = list(songs_collection.find())  # Esto incluye _id automáticamente
+    return songs
+
+
 
 def insert_one_song(data):
     try:

@@ -8,7 +8,8 @@ from app.controllers import (
     insert_bs_controller,
     insert_song_controller,
     safe_choice_recomendation,
-    get_most_listened
+    get_most_listened, 
+    update_lyrics_controller
 )
 
 router = APIRouter()
@@ -40,6 +41,10 @@ async def insert_bs():
 @router.put("/insert/{track_name}")
 async def create_song(track_name: str):
     return await insert_song_controller(track_name)
+
+@router.put("/update/lyrics")
+async def update_lyrics():
+    return await update_lyrics_controller()
 
 @router.post("/safeChoice")
 async def get_safe_choice(request: Request):

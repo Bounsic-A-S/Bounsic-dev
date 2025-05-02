@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids, get_lyrics,get_all_songs_mongo, update_song_lyrics
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song , get_album_images, get_artist_and_genre_by_track, get_track_details
 from app.services import MySQLSongService, generate_fingerprint, insert_song_mongo, add_song_to_album, add_album_to_artist, insert_album, add_artist_to_album,insert_artist, searchAlbum,searchArtist, get_artist_info, get_album_info, search_song_exact
 import re
@@ -309,12 +309,14 @@ async def process_single_song(title: str, artist: str, spotify_data: dict = None
             return {"status": "error", "error": "blob_upload_failed"}
 
         fingerprint = await generate_fingerprint(audio_path)
+        scraping_letra = await get_lyrics(title,artist)
         
         song_data = {
             "title": title,
             "artist": artist,
             "album": spotify_data["album"],
             "genres": [{"genre": g} for g in spotify_data["genres"]],
+            "lyrics":scraping_letra,
             "img_url": spotify_data["image_url"],
             "mp3_url": mp3_blob_url,
             "release_year": spotify_data["release_year"],
@@ -680,3 +682,16 @@ async def get_most_listened(email: str):
         logging.error(f"Error en get_most_listened: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno en la recomendación")
 
+async def update_lyrics_controller():
+    songs_mongo =  get_all_songs_mongo()
+    song_in = []
+    for song in songs_mongo:
+        _id= song["_id"]
+        title= song["title"]
+        artist= song["artist"]
+        lyrics= await get_lyrics(title,artist)
+        insert_mongo =  update_song_lyrics(_id,lyrics)
+        if insert_mongo: 
+            print("lyrics inserted of:", title)
+            song_in.append(title)
+    return JSONResponse(status_code=200, content={"data": song_in})

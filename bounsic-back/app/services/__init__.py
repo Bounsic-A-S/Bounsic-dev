@@ -1,8 +1,8 @@
 from .bert_service import pregunta_respuesta 
 from .crawl_service import crawler
 from .srapping_service import scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen, get_lyrics
-from .song_service import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song,get_song_by_id,get_songs_by_ids,insert_song_mongo,add_song_to_album,add_album_to_artist, add_artist_to_album,insert_album,insert_artist, searchArtist, searchAlbum, search_song_exact
-from .db_service import get_all_songs,insert_one_song
+from .song_service import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song,get_song_by_id,get_songs_by_ids,insert_song_mongo,add_song_to_album,add_album_to_artist, add_artist_to_album,insert_album,insert_artist, searchArtist, searchAlbum, search_song_exact,update_song_lyrics
+from .db_service import get_all_songs,insert_one_song,get_all_songs_mongo
 from .algorithms.fingerprint_service import generate_fingerprint
 from .artist_service import getSongsByArtist, getDesc
 from .spotify_service import get_album_images,get_artist_and_genre_by_track,get_artists_by_genre, get_track_details, get_artist_info, get_album_info

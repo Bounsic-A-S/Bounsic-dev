@@ -8,6 +8,7 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 import logging
+from functools import lru_cache
 
 
 # Configuración de logging
@@ -59,3 +60,23 @@ class SeleniumFacade:
             cls._driver.quit()
             cls._driver = None
             logger.info("Navegador Chrome cerrado")
+    
+
+    @lru_cache(maxsize=100)
+    def search_lyrics_link(self, song_name: str, artist: str) -> str:
+        """
+        Busca la canción en letras.com y retorna el enlace del primer resultado.
+        """
+        try:
+            search_url = f"https://www.letras.com/?q={song_name}-{artist}"
+            self.get_driver().get(search_url)
+
+            first_result = WebDriverWait(self.get_driver(), 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "div.gsc-webResult.gsc-result a.gs-title"))
+            )
+            return first_result.get_attribute('href')
+        
+        except TimeoutException:
+            return "No se encontraron resultados para la búsqueda"
+        except Exception as e:
+            return f"Error: {str(e)}"
