@@ -32,4 +32,3 @@ def crawler(url, visited=None):
         print(f"Error al acceder a {url}: {e}")
     return visited
 
-# crawler("https://www.letras.com/kendrick-lamar")

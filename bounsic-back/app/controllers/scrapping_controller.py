@@ -38,12 +38,12 @@ def search_youtube_request(query: str):
         raise HTTPException(status_code=404, detail="No se encontraron resultados")
     return search_response
 
-def get_song_lyrics(song_name: str, artist: str):
+async def get_song_lyrics(song_name: str, artist: str):
     if not song_name:
         raise HTTPException(status_code=400, detail="El nombre de canción es necesario")
     if not artist:
         raise HTTPException(status_code=400, detail="El nombre del artista es necesario")
-    lyric_response = get_lyrics(song_name, artist)
+    lyric_response =await get_lyrics(song_name, artist)
     if not lyric_response:
         raise HTTPException(status_code=404, detail="No se encontró la letra de la canción")
     return lyric_response

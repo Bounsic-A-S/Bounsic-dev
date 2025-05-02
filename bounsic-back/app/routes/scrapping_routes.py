@@ -39,7 +39,7 @@ async def buscar_youtube(q: str = Query(..., title="Término de búsqueda", desc
 @router.get("/getlyric/{song}/{artist}")
 async def buscar_letra(song: str, artist: str):
     try:
-        lyric = get_song_lyrics(song_name=song, artist=artist)
+        lyric = await get_song_lyrics(song_name=song, artist=artist)
         return JSONResponse(content=lyric)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

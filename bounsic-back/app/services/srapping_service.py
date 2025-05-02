@@ -3,8 +3,16 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 import yt_dlp
 import re
-from app.provider import get_ffmpeg_path
+from app.provider import get_ffmpeg_path, SeleniumFacade
 import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from functools import lru_cache
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
 
 def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
@@ -219,14 +227,13 @@ def descargar_imagen(url, title):
     return None  # Retorna None si la descarga falla
 
 
-def get_lyrics(song_name: str, artist: str):
+
+
+async def get_lyrics(song_name: str, artist: str):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     }
-    url = "https://www.letras.com"
-    song_name = song_name.replace(" ", "-")
-    artist = artist.replace(" ", "-")
-    url = f"{url}/{artist}/{song_name}/"
+    url = await get_lyrics1(song_name, artist)
 
     try:
         response = requests.get(url, headers=headers)
@@ -244,11 +251,38 @@ def get_lyrics(song_name: str, artist: str):
     except Exception as e:
         print(f"Error al procesar la URL {url}: {str(e)}")
         return str(e)
-    
-if __name__ == "__main__":
 
-    lyrics = get_lyrics("otro atardecer", "bad bunny")
-    
-    if lyrics:
-        print(lyrics)
-    
+# ThreadPoolExecutor reutilizable
+executor = ThreadPoolExecutor(max_workers=4)
+
+async def get_lyrics1(song_name: str, artist: str):
+    """Wrapper asíncrono para la búsqueda de letras"""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(executor, get_lyrics2, song_name, artist)
+
+@lru_cache(maxsize=100)
+def get_lyrics2(song_name: str, artist: str):
+    """
+    Retorna el enlace del primer resultado de búsqueda en Letras.com.
+    Ahora usa el SeleniumFacade para reutilizar el navegador.
+    """
+    try:
+        # Obtener el driver del Facade
+        driver = SeleniumFacade().get_driver()
+        
+        # Realizar búsqueda
+        search_url = f"https://www.letras.com/?q={song_name}-{artist}".replace(" ", "-")
+        driver.get(search_url)
+
+        # Esperar y obtener el primer resultado
+        first_result = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div.gsc-webResult.gsc-result a.gs-title"))
+        )
+        
+        return first_result.get_attribute('href')
+
+    except TimeoutException:
+        return "No se encontraron resultados para la búsqueda"
+    except Exception as e:
+        return f"Error: {str(e)}"
+    # No cerramos el driver aquí, se mantiene abierto para futuras peticiones

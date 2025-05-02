@@ -439,6 +439,7 @@ class MySQLSongService:
             logging.error(f"update_playlist error: {e}")
             return False
 
+    @staticmethod
     async def delete_playlist( playlist_id):
         try:
             return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
