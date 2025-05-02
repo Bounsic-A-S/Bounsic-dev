@@ -33,7 +33,7 @@
     "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
     "start:streaming": "cd streaming && powershell -Command \"venv\\Scripts\\activate;python hypercorn_server.py\"",
     "start:backend_linux": "cd bounsic-back && source venv/bin/activate && python -m app.main",
-    "start:streaming_linux": "cd streaming && source venv/bin/activate && uvicorn main:app --reload --port 4000",
+    "start:streaming_linux": "cd streaming && source venv/bin/activate && python hypercorn_server.py",
     "start": "concurrently --names \"frontend,backend,streaming\" \"bun run start:frontend\" \"bun run start:backend\" \"bun run start:streaming\"",
     "start_linux": "concurrently --names \"frontend,backend,streaming\" \"bun run start:frontend\" \"bun run start:backend_linux\" \"bun run start:streaming_linux\"",
     "test:frontend": "cd bounsic-front && bun run test",
