@@ -8,7 +8,8 @@ from app.controllers import (
     insert_bs_controller,
     insert_song_controller,
     safe_choice_recomendation,
-    get_allSongs
+    get_allSongs,
+    feed_related_recomendations
 )
 
 router = APIRouter()
@@ -50,3 +51,9 @@ async def get_safe_choice(request: Request):
     data = await request.json()
     user_email = data.get("email")
     return await safe_choice_recomendation(user_email)
+    
+@router.post("/getRelated")
+async def get_related_songs(request: Request):
+    data = await request.json()
+    res = await feed_related_recomendations(data.get("email"))
+    return res

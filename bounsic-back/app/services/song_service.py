@@ -50,7 +50,7 @@ def get_song_by_id(id: str):
     try:
         songs_collection = db["songs"]
         
-        song_id = ObjectId(id.strip())
+        song_id = ObjectId(id)
 
         song = songs_collection.find_one({"_id": song_id})
         

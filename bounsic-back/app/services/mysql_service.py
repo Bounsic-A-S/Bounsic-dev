@@ -512,6 +512,15 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"delete_like error: {e}")
             return False
+        
+    async def get_random_likes(user_id: int, number: int):
+        # Return (number) random song_id in likes of user (user_id)
+        try:
+            query = "SELECT song_mongo_id FROM Bounsic_Like WHERE user_id = :user_id ORDER BY RAND() LIMIT :number"
+            return await MySQLSongService._db.execute_query(query, ({"user_id": user_id, "number": number}))
+        except Exception as e:
+            logging.error(f"get_like error: {e}")
+            return False
 
     # recomendations ------ METHODS ACTUALLY USEFUL
     @staticmethod
@@ -558,7 +567,7 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"Error in get_safe_choices_by_email: {e}")
             return []
-
+        
     async def get_likes_by_user_email( email):
         try:
             query = """
@@ -599,3 +608,13 @@ class MySQLSongService:
         except Exception as e:
             print.error(f"get_full_user_by_email error: {e}")
             return None
+        
+    async def get_most_played_songs(user_id, size):
+        try:
+            query = """SELECT bh.song_mongo_id, bh.cant_repro AS play_count 
+                    FROM Bounsic_History bh 
+                    WHERE bh.user_id = :id ORDER BY  bh.cant_repro DESC LIMIT :size"""
+            return await MySQLSongService._db.execute_query(query, ({"id": user_id, "size": size}))
+        except Exception as e:
+            logging.error(f"get_most_played_songs error: {e}")
+            return False

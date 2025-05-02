@@ -1,8 +1,10 @@
-from fastapi import HTTPException
+
+from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids
+from app.services import insert_image,getSongByTitle,getSongByArtist,getSongByGenre,get_image,insert_song, get_song_by_id, get_songs_by_ids, get_feed_recomendations
 from app.services import scrappingBueno, descargar_audio , buscar_en_youtube, descargar_imagen,insert_one_song , get_album_images, get_artist_and_genre_by_track, get_track_details, get_all_songs
 from app.services import MySQLSongService, generate_fingerprint, insert_song_mongo, add_song_to_album, add_album_to_artist, insert_album, add_artist_to_album,insert_artist, searchAlbum,searchArtist, get_artist_info, get_album_info, search_song_exact
+import logging
 import re
 import json
 import os
@@ -636,4 +638,32 @@ async def safe_choice_recomendation(email: str):
 
     except Exception as e:
         logging.error(f"Error en safe_choice_recommendation: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+
+async def feed_related_recomendations(email: str):
+    try:
+        user = await MySQLSongService.get_user_by_email(email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_id = user[0]["id_user"]
+        
+        # get recommendations
+        res_songs = await get_feed_recomendations(user_id)
+        final_songs = []
+        keys = ["_id", "artist", "title", "album", "img_url"]
+
+        final_songs = [
+            {k: str(song.get(k, "")) for k in keys}
+            for song in res_songs
+        ]
+
+        return JSONResponse(
+            status_code=200,
+            content=final_songs
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error en feed_related_recommendations: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno en la recomendación")
