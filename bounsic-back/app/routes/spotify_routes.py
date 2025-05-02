@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Path, Query
-from app.controllers import get_album_cover_controller, get_track_info_controller
+from app.controllers import get_album_cover_controller, get_track_info_controller,get_top_tracks_controller
 
 router = APIRouter()
 
@@ -15,3 +15,8 @@ async def track_info(
     track_name: str = Query(..., description="Nombre de la canción a buscar")
 ):
     return await get_track_info_controller(track_name.strip())
+
+
+@router.get("/top-tracks-global")
+async def top_tracks_global(limit: int = 12):  
+    return await get_top_tracks_controller(limit=limit)

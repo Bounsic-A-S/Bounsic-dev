@@ -5,6 +5,8 @@ import yt_dlp
 import re
 from app.provider import get_ffmpeg_path
 import os
+from playwright.async_api import async_playwright
+
 
 def sanitize_filename(text):
     # Reemplaza los caracteres inválidos por guiones bajos o vacíos
@@ -215,3 +217,14 @@ if __name__ == "__main__":
     if lyrics:
         print(lyrics)
     
+async def obtener_top_youtube_charts(limit):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto("https://charts.youtube.com/charts/TopSongs/global")
+        
+        # Aquí haces el scraping y guardas los resultados en top_tracks
+        top_tracks = []  # tu lógica de scraping
+
+        await browser.close()
+        return top_tracks

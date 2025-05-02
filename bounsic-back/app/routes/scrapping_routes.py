@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, Query
 from fastapi.responses import JSONResponse
 from app.controllers import get_youtube_scrapping_request,get_youtube_download_request,search_youtube_request, get_song_lyrics
+from app.services import obtener_top_youtube_charts
 
 router = APIRouter()
 
@@ -43,3 +44,8 @@ async def buscar_letra(song: str, artist: str):
         return JSONResponse(content=lyric)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/youtube-top-tracks")
+async def get_top_youtube_tracks(limit: int = 10):
+    top_tracks = await obtener_top_youtube_charts(limit)
+    return {"tracks": top_tracks}
