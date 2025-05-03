@@ -1,11 +1,11 @@
 from .bert_service import pregunta_respuesta 
 from .crawl_service import crawler
 from .srapping_service import scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen, get_lyrics,obtener_top_youtube_charts
-from .song_service import insert_image,getSongByTitle,getSongByArtist,get_artist_and_genre_by_track,insert_song,get_image,get_album_images,generar_song_data,get_song_by_id,get_songs_by_ids,getSongByGenre,get_complete_top_12
+from .song_service import insert_image,getSongByTitle,getSongByArtist,insert_song,get_image,generar_song_data,get_song_by_id,get_songs_by_ids,getSongByGenre,get_complete_top_12
 from .db_service import get_all_songs,insert_one_song
 from .algorithms.fingerprint_service import generate_fingerprint
 from .artist_service import getSongsByArtist, getDesc
-from .spotify_service import get_album_images,get_artist_and_genre_by_track,get_artists_by_genre,get_top_tracks_global
+from .spotify_service import get_album_images,get_artists_by_genre,get_top_tracks_global,get_artist_and_genre_by_track
 from .playlist_service import getPlaylistById,getAllPlaylists
 from .mysql_service  import MySQLSongService
 from .lastfm_service import get_top_tracks_lastfm,get_titles_only,top_12_more_listen

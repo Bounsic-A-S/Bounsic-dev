@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
-from app.services import get_album_images, get_artist_and_genre_by_track,get_top_tracks_global
+from app.services import (get_album_images, get_artist_and_genre_by_track,get_top_tracks_global)
 
 async def get_album_cover_controller(album_name: str, artist_name: str = None):
     try:

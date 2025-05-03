@@ -5,9 +5,11 @@ from app.provider import db
 from app.provider import DatabaseFacade
 import re
 from bson import ObjectId
-from app.services import scrappingBueno,buscar_en_youtube,descargar_audio
-from app.services.spotify_service import get_artist_and_genre_by_track, get_album_images
-from app.services.lastfm_service import get_top_tracks_lastfm
+from app.services import (
+    scrappingBueno,
+    buscar_en_youtube,
+    descargar_audio,
+)
 
 
 def get_song_by_id(id:str):

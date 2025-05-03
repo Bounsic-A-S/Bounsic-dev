@@ -1,6 +1,6 @@
 from typing import Dict, List
 from fastapi import APIRouter, Body, Query
-from app.controllers.lastfm_controller import get_lastfm_top_tracks,procesar_top_12_songs
+from app.controllers import get_lastfm_top_tracks,procesar_top_12_songs
 
 router = APIRouter()
 
