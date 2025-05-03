@@ -1,13 +1,24 @@
-<h1 class="text-2xl md:text-3xl font-medium mb-8">{{'BOUNSIC.SETTINGS.ACCOUNT.TITLE1'  | translate}}</h1>
+<h1 class="text-2xl md:text-3xl font-medium mb-8">
+  {{ "BOUNSIC.SETTINGS.ACCOUNT.TITLE1" | translate }}
+</h1>
 
 <div class="flex flex-col md:flex-row gap-6 md:gap-0">
   <div class="flex-1 px-2 md:px-0 md:pr-8">
     <div class="mb-8">
-      <label for="email" class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1">{{'BOUNSIC.SETTINGS.ACCOUNT.EMAIL'  | translate}}</label>
+      <label
+        for="email"
+        class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1"
+        >{{ "BOUNSIC.SETTINGS.ACCOUNT.EMAIL" | translate }}</label
+      >
       <div
-        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black">
-        <input type="email" id="email" value="{{user?.email}}"
-          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4">
+        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black"
+      >
+        <input
+          type="email"
+          id="email"
+          value="{{ user?.email }}"
+          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
+        />
         <button class="text-bounsic-gray-3 ml-2">
           <i class="fas fa-pen"></i>
         </button>
@@ -15,22 +26,41 @@
     </div>
 
     <div class="mb-8">
-      <label for="username" class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1">{{'BOUNSIC.SETTINGS.ACCOUNT.USERNAME'  | translate}}</label>
+      <label
+        for="username"
+        class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1"
+        >{{ "BOUNSIC.SETTINGS.ACCOUNT.USERNAME" | translate }}</label
+      >
       <div
-        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black">
-        <input type="text" id="username" value="{{user?.username}}"
-          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4" placeholder="Agregar un nombre de usuario">
+        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black"
+      >
+        <input
+          type="text"
+          id="username"
+          value="{{ user?.username }}"
+          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
+          placeholder="Agregar un nombre de usuario"
+        />
         <button class="text-gray-400 ml-2">
           <i class="fas fa-pen"></i>
         </button>
       </div>
     </div>
     <div class="mb-8">
-      <label for="phone" class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1">{{'BOUNSIC.SETTINGS.ACCOUNT.PHONE_NUMBER'  | translate}}</label>
+      <label
+        for="phone"
+        class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1"
+        >{{ "BOUNSIC.SETTINGS.ACCOUNT.PHONE_NUMBER" | translate }}</label
+      >
       <div
-        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black">
-        <input type="tel" id="phone" placeholder="Agregar un número de teléfono"
-          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4 not-dark:placeholder-bounsic-gray-2">
+        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black"
+      >
+        <input
+          type="tel"
+          id="phone"
+          placeholder="Agregar un número de teléfono"
+          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4 not-dark:placeholder-bounsic-gray-2"
+        />
         <button class="text-gray-400 ml-2">
           <i class="fas fa-plus"></i>
         </button>
@@ -38,10 +68,18 @@
     </div>
 
     <div class="mb-8">
-      <label for="country" class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1">{{'BOUNSIC.SETTINGS.ACCOUNT.COUNTRY'  | translate}}</label>
+      <label
+        for="country"
+        class="text-bounsic-gray-2 mb-1 block not-dark:text-bounsic-dark-1"
+        >{{ "BOUNSIC.SETTINGS.ACCOUNT.COUNTRY" | translate }}</label
+      >
       <div
-        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black">
-        <select id="country" class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4">
+        class="flex justify-between border-b border-bounsic-gray-3 focus-within:border-white pb-2 transition-colors duration-200 not-dark:focus-within:border-black"
+      >
+        <select
+          id="country"
+          class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
+        >
           <option value="colombia" selected>Colombia</option>
           <option value="mexico">México</option>
           <option value="spain">España</option>
@@ -50,15 +88,41 @@
         </select>
       </div>
     </div>
-
   </div>
 
-  <div class="w-full md:w-64 flex flex-col items-center text-center mb-8 md:mb-0">
-    <div class="w-48 h-48 rounded-full overflow-hidden mb-4">
-      <img src="{{user?.profile_img}}" alt="Profile picture"
-        class="w-full h-full object-cover">
+  <div
+    class="w-full md:w-64 flex flex-col items-center text-center mb-8 md:mb-0"
+  >
+    <div class="w-48 h-48 rounded-full overflow-hidden mb-4 relative group">
+      <img
+        [src]="previewImg || user?.profile_img"
+        alt="Profile"
+        class="w-full h-full object-cover"
+      />
+
+      <label
+        for="profile-img-input"
+        class="absolute inset-0 bg-black/30 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer not-dark:bg-white/30 not-dark:text-black"
+      >
+        <lucide-angular
+          [img]="Pencil"
+          class="my-icon fill-white not-dark:fill-black"
+          [size]="36"
+        ></lucide-angular>
+      </label>
+
+      <input
+        id="profile-img-input"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        (change)="onImageChange($event)"
+      />
     </div>
-    <h2 class="text-2xl md:text-3xl font-bold">{{user?.username}}</h2>
-    <p class="text-gray-400 text-sm not-dark:text-bounsic-dark-1">{{'BOUNSIC.SETTINGS.ACCOUNT.MEMBER_SINCE'  | translate}}, Feb. 27 2023</p>
+
+    <h2 class="text-2xl md:text-3xl font-bold">{{ user?.username }}</h2>
+    <p class="text-gray-400 text-sm not-dark:text-bounsic-dark-1">
+      {{ "BOUNSIC.SETTINGS.ACCOUNT.MEMBER_SINCE" | translate }}, Feb. 27 2023
+    </p>
   </div>
 </div>

@@ -33,10 +33,10 @@ async def register(request: Request):
     data = await request.json()
     return await MySQLController.register_user(data)
 
-@router.put("/update/{user_email}")
-async def update_user(user_email: str, request: Request):
+@router.put("/update/{id}")
+async def update_user(id: str, request: Request):
     data = await request.json()
-    return MySQLController.update_user(user_email, data)
+    return MySQLController.update_user(id, data)
 
 
 # ROLES

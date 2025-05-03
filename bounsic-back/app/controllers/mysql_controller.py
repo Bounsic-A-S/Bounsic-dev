@@ -84,9 +84,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error creating user")
         
     @staticmethod
-    async def update_user(email, data):
+    async def update_user(id, data):
         try:
-            user = await MySQLSongService.update_user_by_email(email, data)
+            user = await MySQLSongService.update_user_by_email(id, data)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             return JSONResponse(status_code=200, content={"user": user})

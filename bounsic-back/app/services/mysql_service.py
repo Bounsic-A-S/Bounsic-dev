@@ -52,7 +52,7 @@ class MySQLSongService:
 
 
     @staticmethod
-    async def update_user_by_email(email, data):
+    async def update_user_by_email(id, data):
         try:
             query = """
                 UPDATE Bounsic_Users
@@ -63,7 +63,7 @@ class MySQLSongService:
                     username = :username,
                     phone= :phone,
                     country= :country
-                WHERE email = :email
+                WHERE user_id = :id
             """
             params = {
                 "name": data["name"],
@@ -73,11 +73,11 @@ class MySQLSongService:
                 "username": data["username"],
                 "phone" : data["phone"],
                 "country" :data["country"],
-                "email": email  
+                "id": id  
             }
             return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
-            logging.error(f"update_user_by_email error: {e}")
+            logging.error(f"update_user_by_id error: {e}")
             return False
 
 
