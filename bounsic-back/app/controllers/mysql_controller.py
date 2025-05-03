@@ -7,9 +7,10 @@ from app.services import MySQLSongService
 class MySQLController:
 
     dataPreference = {
-        "background":"bg-bounsic-black",
+        "background":"bg-bounsic-gradient",
         "typography":"",
-        "language":"ES"
+        "language":"es",
+        "theme": "dark"
     }
     # USERS
     @staticmethod
@@ -63,24 +64,21 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_users_by_username error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching user")
+        
     @staticmethod
     async def register_user(data):
         try:
-            email = data["email"]
-            getUser= await MySQLSongService.get_user_by_email(email)
-            if getUser:
-                getPreferences = await MySQLSongService.get_preferences_by_user(getUser["user_id"])
-                return JSONResponse(status_code=200, content ={ "preference" : getPreferences })
-            
             user = await MySQLSongService.insert_user(data)
             if not user:
-                return JSONResponse(status_code=400)
-
-            MySQLController.dataPreference["user_id"] = getUser["user_id"]
-
-
+                return JSONResponse(status_code=400, content={"message": "Err creating the user"})
+            
+            new_user = await MySQLSongService.get_user_by_email(data["email"])
+            MySQLController.dataPreference["user_id"] = new_user[0]["id_user"]
             preferences = await MySQLSongService.insert_preference(MySQLController.dataPreference)
-            return JSONResponse(status_code=201, content={"preference": preferences})
+            if not preferences:
+                return JSONResponse(status_code=400, content={"message": "Err creating the preferences"})
+            full_user = await MySQLSongService.get_full_user_by_email(data["email"])
+            return JSONResponse(status_code=201, content={"user":full_user})
         except Exception as e:
             logging.error(f"create_user error: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")

@@ -1,18 +1,36 @@
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import JSONResponse
-from app.controllers import MySQLController
+from fastapi import APIRouter , Request
+from app.controllers import MySQLController, User_controller
 
 router = APIRouter()# Create an instance of the controller
 
+# USERS
+@router.get("/{email}")
+async def get_user_by_email(email: str):
+    return await User_controller.get_user_by_email_controller(email)
 
-@router.get("/email/{user_email}")
-async def get_user_by_email(user_email: str):
-    return await MySQLController.get_users_by_email(user_email)
+@router.put("/background/{id}")
+async def set_background(id: int , request: Request):
+    req = await request.json()
+    background = req.get("background")
+    theme = req.get("theme")
+    return await User_controller.set_background_controller(id,background,theme)
+
+@router.put("/typography/{id}")
+async def set_typography(id: str , request: Request):
+    req = await request.json()
+    typography = req.get("typography")
+    return await User_controller.set_typography_controller(id,typography)
+
+@router.put("/language/{id}")
+async def set_language(id: str , request: Request):
+    req = await request.json()
+    language = req.get("language")
+    return await User_controller.set_language_controller(id,language)
 
 @router.post("/register")
 async def register(request: Request):
     data = await request.json()
-    return MySQLController.register_user(data)
+    return await MySQLController.register_user(data)
 
 @router.put("/update/{user_email}")
 async def update_user(user_email: str, request: Request):

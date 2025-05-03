@@ -47,25 +47,7 @@ class Song_service:
             return song
         else:
             return {"message": "Song not found"}
-
-    @staticmethod   
-    def get_song_by_id(id: str):
-        try:
-            songs_collection = db["songs"]
-            
-            song_id = ObjectId(id.strip())
-
-            song = songs_collection.find_one({"_id": song_id})
-            
-            if song:
-                song["_id"] = str(song["_id"])  
-                return song
-            return None
-            
-        except Exception as e:
-            print(f"Error getting song by ID {id}: {str(e)}")  
-            return None
-
+        
     @staticmethod 
     def get_songs_by_ids(ids: list[str]):
         try:

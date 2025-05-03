@@ -12,6 +12,8 @@ export class SongService {
   private apiUrl = environment.apiUrl;
   private songSafeChoicesSubject = new BehaviorSubject<DashboardSong[]>([]);
   private songSafeChoices$ = this.songSafeChoicesSubject.asObservable();
+  private songRelatedSubject = new BehaviorSubject<DashboardSong[]>([]);
+  private songRelated$ = this.songSafeChoicesSubject.asObservable();
 
 
   constructor(private http: HttpClient) {}
@@ -33,16 +35,28 @@ export class SongService {
     if(this.songSafeChoicesSubject.value.length > 0) {
       return this.songSafeChoices$;
     }
-    return this.http.post<any>(`${this.apiUrl}/song/safeChoice/`, { email: email }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/song/safeChoice`, { email: email }).pipe(
       tap((songSafeChoices) => {
         this.songSafeChoicesSubject.next(songSafeChoices);
-        console.log('Safe choices:', songSafeChoices);
       }),
       catchError((err) => {
         console.error('Error al obtener artistas:', err);
         return of([]);
       })  
     );
-
+  }
+  getRelatedSongs (email: string): Observable<DashboardSong[]> {
+    if(this.songRelatedSubject.value.length > 0) {
+      return this.songRelated$;
+    }
+    return this.http.post<any>(`${this.apiUrl}/song/getRelated`, { email: email }).pipe(
+      tap((songsRelated) => {
+        this.songRelatedSubject.next(songsRelated);
+      }),
+      catchError((err) => {
+        console.error('Error al obtener artistas:', err);
+        return of([]);
+      })  
+    );
   }
 }

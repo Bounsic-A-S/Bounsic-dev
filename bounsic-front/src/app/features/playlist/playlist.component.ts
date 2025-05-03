@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PlaylistService } from '@app/services/playlist.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { BackgroundService } from '@app/services/background.service';
 
 interface Song {
   id: number;
@@ -35,9 +36,13 @@ interface PlaylistDetail {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SongHeroComponent, PlayListSongItemComponent, CommonModule, NavbarAppComponent],
 })
-export class PlaylistComponent implements OnInit {
+export class PlaylistComponent {
   private route = inject(ActivatedRoute);
   private playlistService = inject(PlaylistService);
+  private backgroundService = inject(BackgroundService);
+  bg$: Observable<string> = this.backgroundService.background$;
+
+
 
   public loading = true; // init load always tru
 
@@ -91,6 +96,4 @@ export class PlaylistComponent implements OnInit {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  ngOnInit(): void {
-  }
 }

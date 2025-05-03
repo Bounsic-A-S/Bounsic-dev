@@ -115,8 +115,11 @@
         "TITLE": "Temas",
         "GRADIENTS": "Degradados",
         "SOLID_COLORS": "Colores sólidos",
-        "BASIC": "Básico",
-        "FONT_SIZE": "Tamaño de la fuente"
+        "BASE": "Tema Base",
+        "FONT_SIZE": "Tamaño de la fuente",
+        "LIGHT": "Claro",
+        "DARK": "Oscuro",
+        "SAVE":"Guardar"
       },
       "LANGUAGE": {
         "TITLE": "Idioma",

@@ -1,10 +1,10 @@
-<div class="bg-bounsic-gradient text-white min-h-screen pb-4">
+<div [ngClass]="bg$ | async" class="text-white min-h-screen pb-4 not-dark:text-black">
   <main-navbar></main-navbar>
   <main class="container mx-auto mt-14 pt-8 sm:pt-10 px-6 xl:px-2">
     <!-- Playlists Section -->
     <section class="mb-10">
       <h2 class="text-xl sm:text-3xl font-bold mb-4">{{'BOUNSIC.LIBRARY.PLAYLISTS'  | translate}}</h2>
-      <div class="h-px w-full bg-white mb-6"></div>
+      <div class="h-px w-full bg-white mb-6  not-dark:bg-black"></div>
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
         <!-- Playlist Cards -->
@@ -29,7 +29,7 @@
     <!-- Me gustas Section -->
     <section>
       <h2 class="text-xl sm:text-3xl font-bold mb-4">{{'BOUNSIC.LIBRARY.LIKES'  | translate}}</h2>
-      <div class="h-px w-full bg-white mb-6"></div>
+      <div class="h-px w-full bg-white mb-6 not-dark:bg-black"></div>
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
         <library-item [playlist]="favorites">

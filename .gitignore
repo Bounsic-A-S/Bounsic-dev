@@ -53,3 +53,12 @@ bun.lock
 # lock-json
 package-lock.json
 .qodo
+
+
+
+# Entornos virtuales
+venv/
+.env/
+*.venv/
+pip-log.txt
+pip-delete-this-directory.txt

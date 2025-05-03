@@ -1,6 +1,7 @@
 from fastapi import HTTPException
-# from app.services.algorithms_service import generate_fingerprint
 from app.services.algorithms.fingerprint_service import generate_fingerprint
+from app.services.algorithms.rhythm_service import get_alikes
+from app.provider import db
 
 class Algoritms_controller:
     

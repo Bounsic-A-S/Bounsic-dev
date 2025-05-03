@@ -85,12 +85,16 @@
 
 .animate-spin-custom1 {
   animation: spin-custom1 10s linear infinite;
+  will-change: transform,border-radius;
 }
 .animate-spin-custom2 {
   animation: spin-custom2 12s linear infinite;
+  will-change: transform, border-radius;
 }
 .animate-spin-custom3 {
   animation: spin-custom3 14s linear infinite;
+  will-change: transform, border-radius;
 }
+
 
 

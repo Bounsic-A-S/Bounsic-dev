@@ -8,3 +8,4 @@ from .artist_controller import Artist_controller
 from .spotify_controller import Spotify_controller
 from .playlist_controller import Playlist_controller
 from .mysql_controller import MySQLController
+from .user_controller import User_controller

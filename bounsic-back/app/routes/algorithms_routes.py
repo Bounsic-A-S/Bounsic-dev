@@ -18,4 +18,3 @@ async def generate_fingerprint(request: Request):
             status_code=500,
             content={"error": "Internal Server Error", "detail": str(e)}
         )
-    

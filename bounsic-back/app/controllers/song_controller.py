@@ -1,6 +1,8 @@
-from fastapi import HTTPException
+
+from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint
+from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint,get_feed_recomendations
+import logging
 import re
 import json
 import os
@@ -15,6 +17,13 @@ class Song_controller:
         if not id:
             raise HTTPException(status_code=400, detail="ID inválido")
         res = Song_service.get_song_by_id(id)
+        if not res:
+            raise HTTPException(status_code=404, detail="No se encontró canción con ese ID")
+        return JSONResponse(status_code=200, content=res)
+    
+    @staticmethod
+    async def get_allSongs():
+        res = Db_service.get_all_songs()
         if not res:
             raise HTTPException(status_code=404, detail="No se encontró canción con ese ID")
         return JSONResponse(status_code=200, content=res)
@@ -473,3 +482,32 @@ class Song_controller:
                 print(f"Error en {title}: {str(e)}")
 
         return JSONResponse(status_code=200, content={"data": song_in})
+    
+    @staticmethod
+    async def feed_related_recomendations(email: str):
+        try:
+            user = await MySQLSongService.get_user_by_email(email)
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            
+            user_id = user[0]["id_user"]
+            
+            # get recommendations
+            res_songs = await get_feed_recomendations(user_id)
+            final_songs = []
+            keys = ["_id", "artist", "title", "album", "img_url"]
+
+            final_songs = [
+                {k: str(song.get(k, "")) for k in keys}
+                for song in res_songs
+            ]
+
+            return JSONResponse(
+                status_code=200,
+                content=final_songs
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"Error en feed_related_recommendations: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno en la recomendación")

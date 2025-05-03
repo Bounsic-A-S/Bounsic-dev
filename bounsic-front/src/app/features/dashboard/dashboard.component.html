@@ -1,5 +1,5 @@
 <main-navbar></main-navbar>
-<main class="bg-bounsic-gradient text-white p-8 pt-11 mt-14">
+<main [ngClass]="bg$ | async" class="text-white p-8 pt-11 mt-14 not-dark:text-black">
   <!-- Header Section -->
   <section class="max-w-4xl mx-auto text-center mb-12">
     <h1 class="text-xl sm:text-2xl mb-6">
@@ -12,7 +12,9 @@
   <section class="max-w-6xl 2xl:max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
     <h2 class="text-sm sm:text-xl mb-2">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT1'  | translate}}</h2>
     <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT2'  | translate}}</h3>
-    <dashboard-songsCarousel></dashboard-songsCarousel>
+    <dashboard-songsCarousel
+    [songs]="songRelated$ | async ">
+    ></dashboard-songsCarousel>
   </section>
 
   <!-- Safe Choices Section -->

@@ -1,11 +1,16 @@
 from fastapi import APIRouter, Request
 from app.controllers import Song_controller
 
+
 router = APIRouter()
 
 @router.get("/id/{id}")
 async def get_song_by_id(id: str):
     return await Song_controller.get_song_by_id_controller(id)
+
+@router.get("/songs")
+async def get_songs():
+    return await Song_controller.get_allSongs()
 
 @router.get("/artist/{artist}")
 async def get_song_by_artist(artist: str):
@@ -40,6 +45,12 @@ async def get_safe_choice(request: Request):
     data = await request.json()
     user_email = data.get("email")
     return await Song_controller.safe_choice_recomendation(user_email)
+    
+@router.post("/getRelated")
+async def get_related_songs(request: Request):
+    data = await request.json()
+    user_email = data["email"]
+    return await Song_controller.feed_related_recomendations(user_email)
 
 @router.post("/lastMonth")
 async def get_most_listenes(request : Request):

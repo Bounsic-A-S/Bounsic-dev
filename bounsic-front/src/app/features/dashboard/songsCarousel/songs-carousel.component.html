@@ -1,6 +1,6 @@
 <div class="relative">
   <button
-    class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    class="absolute hidden md:block left-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer not-dark:bg-white/50"
     (click)="scrollLeft()"
   >
     <lucide-angular
@@ -9,24 +9,50 @@
       [size]="36"
     ></lucide-angular>
   </button>
-
-  <div
+  <ng-container *ngIf="songs !== undefined; else relatedSongs">
+    <div
+      #scrollContainer
+      class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
+    >
+      <div *ngFor="let song of songs" class="flex-none w-32 sm:w-36 lg:w-44">
+        <img
+          [src]="song.img_url"
+          [alt]="song.title"
+          class="w-full aspect-square object-cover rounded-md mb-2"
+        />
+        <h4 class="font-medium lg:text-lg">{{ song.title }}</h4>
+        <p
+          class="text-sm lg:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1"
+        >
+          {{ song.artist }}
+        </p>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #relatedSongs>
+    <div
     #scrollContainer
     class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
   >
     <div *ngFor="let album of albums" class="flex-none w-32 sm:w-36 lg:w-44">
       <img
-        [src]="album.cover"
+        [src]="album.img_url"
         [alt]="album.title"
         class="w-full aspect-square object-cover rounded-md mb-2"
       />
-      <h4 class="lg:text-lg">{{ album.title }}</h4>
-      <p class="font-light text-sm lg:text-base text-bounsic-gray-1">{{ album.artist }}</p>
+      <h4 class="font-medium lg:text-lg">{{ album.title }}</h4>
+      <p
+        class="text-sm lg:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1"
+      >
+        {{ album.artist }}
+      </p>
     </div>
   </div>
 
+  </ng-template>
+
   <button
-    class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer"
+    class="absolute hidden md:block right-0 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full cursor-pointer not-dark:bg-white/50"
     (click)="scrollRight()"
   >
     <lucide-angular

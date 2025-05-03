@@ -4,7 +4,7 @@
     <div
     *ngFor="let safeChoiceSong of songs | slice:0:maxSongsToShow"
     id="safeChoiceSong._id"
-    class="hover:bg-white/5 rounded-lg cursor-pointer"
+    class="hover:bg-white/5 rounded-lg cursor-pointer not-dark:hover:bg-black/10"
   >
   <a [routerLink]="['/player', safeChoiceSong._id]" class="flex items-center gap-4 p-2 w-full h-full">
     <div class="w-8 sm:w-10 lg:w-12">
@@ -17,7 +17,7 @@
 
       <div>
         <h4 class="text-base lg:text-lg">{{ safeChoiceSong.title }}</h4>
-        <p class="font-light text-sm sm:text-base text-bounsic-gray-1">
+        <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
           {{ safeChoiceSong.artist }} || {{ safeChoiceSong.album }}
         </p>
       </div>
@@ -41,7 +41,7 @@
 
       <div>
         <h4 class="text-base lg:text-lg">{{ safeChoiceSong.title }}</h4>
-        <p class="font-light text-sm sm:text-base text-bounsic-gray-1">
+        <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
           {{ safeChoiceSong.artist }} || {{ safeChoiceSong.album }}
         </p>
       </div>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* fonts */
   --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif,
@@ -11,6 +13,9 @@
   --color-bounsic-gray-2: #a7a7a7;
   --color-bounsic-gray-3: #6c6c6c;
   --color-bounsic-gray-4: #141313;
+    /* colors for light theme */
+  --color-bounsic-dark-1: #373739;
+  --color-bounsic-light-1: #F5F5F7;
   /* main */
   --color-bounsic-red: #df0e50;
   --color-bounsic-yellow: #f6a618;
@@ -21,6 +26,7 @@
   --color-bounsic-bg-main-pink: #21031B;
   /* shadows */
   --shadow-bounsic-navbar: 0px 3px 10px rgba(0, 0, 0, 0.16);
+  --shadow-bounsic-searchbar: 0px 0px 10px rgba(0, 0, 0, 0.16);
   --shadow-bounsic-sidebar-user: 6px 6px 15px rgba(0, 0, 0, 0.25);
 }
 /* custom classes */
@@ -48,6 +54,103 @@
   background-position: center;
   background-blend-mode: multiply, overlay;
 }
+/* custom bg classes*/
+@layer utilities {
+  .bg-bounsic-custom-gradient-blue {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      linear-gradient(
+        to bottom,
+        #060517,
+        #060514
+        ),
+      url('/background/PATTERNS.svg');
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-blend-mode: multiply, overlay;
+  }
+  .bg-bounsic-custom-gradient-purple {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      linear-gradient(
+        to bottom,
+        #382338,
+        #210414,
+        #08011c
+        ),
+      url('/background/PATTERNS.svg');
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-blend-mode: multiply, overlay;
+  }
+  /* BG IMG BASED -> */
+
+  .bg-bounsic-custom-gradient-pink-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.15)),
+      url('/background/custom/pink-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  
+  .bg-bounsic-custom-gradient-blue-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/blue-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  .bg-bounsic-custom-gradient-orange-purple-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/orange-purple-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  .bg-bounsic-custom-gradient-red-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/red-based.jpg');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+  .bg-bounsic-custom-gradient-green-based {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+      url('/background/custom/green-based.png');
+    background-size: cover, cover, auto;
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: center, center, center;
+    background-blend-mode: multiply, overlay, normal;
+  }
+
+  /* LIGHT PREFERENCES -> */
+  .bg-bounsic-custom-gradient-white {
+    background-image:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.15)),
+      linear-gradient(
+        to bottom,
+        #F3E8E8,
+        #faf8f8
+        ),
+      url('/background/PATTERNS.svg');
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-blend-mode: multiply, overlay;
+  }
+}
+
 
 @utility bg-bounsic-gradient-about {
   background-image: 
@@ -73,8 +176,6 @@
       var(--color-bounsic-bg-main-purple-light)
     )
 }
-
-
 
 
 /* FONTS */
