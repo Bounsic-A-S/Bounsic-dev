@@ -12,7 +12,12 @@ from functools import lru_cache
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import random
+import pickle
+import os
 from selenium.webdriver import ActionChains
+import undetected_chromedriver as uc
+import chromedriver_autoinstaller
+
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -30,60 +35,54 @@ class SeleniumFacade:
     
     @classmethod
     def _initialize_driver(cls):
-        """Inicializa el navegador optimizado para scraping"""
-        options = webdriver.ChromeOptions()
-        
-        # Configuración básica
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        
-        # Seguridad y certificados
-        options.add_argument('--ignore-certificate-errors')
-        options.add_argument('--ignore-ssl-errors')
-        
-        # Optimización de recursos
-        options.add_argument('--disable-software-rasterizer')
-        options.add_argument('--disable-extensions')
-        options.add_argument('--disable-infobars')
-        options.add_argument('--disable-browser-side-navigation')
-        options.add_argument('--disable-features=IsolateOrigins,site-per-process')
-        
-        # User-Agent y ventana
-        options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
-        options.add_argument('window-size=1920,1080')
-        
-        # Evitar detección
-        options.add_argument('disable-blink-features=AutomationControlled')
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_experimental_option("useAutomationExtension", False)
-        
-        # Configuración de red
-        options.add_argument('--disable-web-security')
-        options.add_argument('--allow-running-insecure-content')
-
-
-        options.add_argument('--disable-3d-apis')  # Deshabilitar WebGL completamente
-        options.add_argument('--disable-webgl') 
-        options.add_argument('--log-level=3')  # Reducir verbosidad de logs
-        
+        """Inicializa el navegador optimizado para scraping con undetected_chromedriver"""
         try:
-            cls._driver = webdriver.Chrome(
-                service=Service(ChromeDriverManager().install()),
-                options=options
+            chromedriver_autoinstaller.install()  # Esto descargará automáticamente el ChromeDriver correcto
+            options = uc.ChromeOptions()
+            
+            # ===== CONFIGURACIÓN ESENCIAL =====
+            # Modo headless (descomentar para producción)
+            options.add_argument('--headless=new')  # Nueva sintaxis para Chrome >= 112
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            
+            # ===== EVITAR DETECCIÓN =====
+            options.add_argument('--disable-blink-features=AutomationControlled')
+            options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36')  # Actualizado a versión reciente
+            
+            # ===== OPTIMIZACIONES ===== (selección de las más efectivas)
+            options.add_argument('--disable-extensions')
+            options.add_argument('--disable-infobars')
+            options.add_argument('--disable-web-security') 
+            options.add_argument('--log-level=3')
+            
+            # ===== QUITAR CONFIGURACIONES REDUNDANTES/INNECESARIAS =====
+            # Removidas:
+            # - --disable-gpu (obsoleto en Chrome modernos)
+            # - --ignore-certificate-errors (peligroso)
+            # - --disable-software-rasterizer (no necesario)
+            # - --disable-3d-apis (redundante con --disable-webgl)
+            # - Configuraciones duplicadas de AutomationControlled
+            
+            # ===== INICIALIZACIÓN CON UNDETECTED_CHROMEDRIVER =====
+            cls._driver = uc.Chrome(
+                options=options,
+                version_main=136,  # ¡Asegúrate que coincide con tu versión de Chrome!
+                driver_executable_path=None,  # Forzar nueva descarga
+                use_subprocess=True
             )
             
-            # Scripts para evadir detección
+            # ===== CONFIGURACIÓN ADICIONAL POST-INICIALIZACIÓN =====
             cls._driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
                 "source": """
                     Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-                    Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
-                    Object.defineProperty(navigator, 'languages', { get: () => ['es-ES', 'es'] });
+                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_JSON;
+                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
+                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
                 """
             })
             
-            logger.info("Navegador Chrome inicializado con configuración optimizada")
+            logger.info("Navegador Chrome inicializado correctamente con undetected_chromedriver")
             
         except Exception as e:
             logger.error(f"Error al inicializar el navegador: {str(e)}")
@@ -107,10 +106,11 @@ class SeleniumFacade:
 
     @lru_cache(maxsize=100)
     def search_lyrics_link(self, song_name: str, artist: str) -> str:
+        driver = self.get_driver()
         try:
             # Formar la URL de búsqueda
             search_url = f"https://www.letras.com/?q={song_name}-{artist}"
-            driver = self.get_driver()
+            self.load_cookies()
             driver.get(search_url)
 
             # Buscar si está el CAPTCHA
@@ -186,5 +186,27 @@ class SeleniumFacade:
         except Exception as e:
             logger.warning(f"❌ Error al intentar clic en el CAPTCHA: {e}")
             return False
+        
+    def save_cookies(self, path="cookies.pkl"):
+        with open(path, "wb") as f:
+            pickle.dump(self._driver.get_cookies(), f)
+
+    def load_cookies(self, url="https://www.letras.com", path="cookies.pkl"):
+        try:
+            self._driver.get(url)  # Primero carga la página
+            time.sleep(2)  # Espera para asegurar carga
+            
+            if os.path.exists(path):
+                with open(path, "rb") as f:
+                    cookies = pickle.load(f)
+                    for cookie in cookies:
+                        try:
+                            self._driver.add_cookie(cookie)
+                        except Exception as e:
+                            logger.warning(f"Error añadiendo cookie: {e}")
+                self._driver.refresh()  # Recarga para aplicar cookies
+        except Exception as e:
+            logger.error(f"Error cargando cookies: {e}")
+
 
 
