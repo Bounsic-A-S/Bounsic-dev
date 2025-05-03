@@ -5,9 +5,10 @@ from app.provider import db
 from app.provider import DatabaseFacade
 import re
 from bson import ObjectId
-from datetime import datetime
-from app.services.srapping_service import scrappingBueno,buscar_en_youtube,descargar_audio
+from app.services import scrappingBueno,buscar_en_youtube,descargar_audio
 from app.services.spotify_service import get_artist_and_genre_by_track, get_album_images
+from app.services.lastfm_service import get_top_tracks_lastfm
+
 
 def get_song_by_id(id:str):
     try:
@@ -233,3 +234,39 @@ def generar_song_data(track_name):
     }
 
     return song_data
+
+def get_complete_top_12():
+    try:
+        top_tracks = get_top_tracks_lastfm()  # Devuelve lista de títulos
+        if not top_tracks:
+            return {"error": "No se pudieron obtener las canciones desde Last.fm"}
+
+        result = []
+        for track_name in top_tracks:
+            # Verificar si ya está en la base de datos
+            song = getSongByTitle(track_name)
+
+            # Si no existe, intenta insertarla
+            if song is None or song.get("message") == "Song not found":
+                insert_result = insert_song(track_name)
+                if "song_id" in insert_result:
+                    song = getSongByTitle(track_name)
+                else:
+                    print(f"Error insertando canción {track_name}: {insert_result}")
+                    continue  # Salta si no se pudo insertar
+
+            # Armar respuesta
+            if song:
+                result.append({
+                    "title": song.get("title"),
+                    "album": song.get("album"),
+                    "image": song.get("img_url"),
+                    "audio": song.get("mp3_url")
+                })
+
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": "Error procesando las canciones", "details": str(e)}

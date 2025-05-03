@@ -1,6 +1,6 @@
 import httpx
 from typing import List
-from app.services import getSongByTitle,generar_song_data,insert_song
+from app.services.song_service import getSongByTitle,generar_song_data,insert_song
 
 API_KEY = "022ae4a2d6f3acc9d88dde7e24ffb2d1"
 BASE_URL = "http://ws.audioscrobbler.com/2.0/"

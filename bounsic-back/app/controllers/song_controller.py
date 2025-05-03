@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from app.services import (
     getSongByTitle, getSongByArtist, getSongByGenre, get_image, 
     insert_song, get_song_by_id, get_songs_by_ids, insert_image, 
-    scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen,
+    scrappingBueno, descargar_audio, buscar_en_youtube, descargar_imagen,get_complete_top_12,
     insert_one_song, MySQLSongService
 )
 import os, re, json, logging
@@ -150,3 +150,12 @@ async def safe_choice_recomendation(email: str):
     except Exception as e:
         logging.error(f"Error en safe_choice_recommendation: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+    
+async def get_top_12_songs_controller():
+    try:
+        songs = get_complete_top_12()
+        if not songs:
+            raise HTTPException(status_code=404, detail="No se encontraron canciones")
+        return JSONResponse(status_code=200, content={"data": songs})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno al obtener las canciones")

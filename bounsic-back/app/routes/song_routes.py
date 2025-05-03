@@ -7,7 +7,8 @@ from app.controllers import (
     get_song_image_controller,
     insert_bs_controller,
     insert_song_controller,
-    safe_choice_recomendation
+    safe_choice_recomendation,
+    get_top_12_songs_controller
 )
 
 router = APIRouter()
@@ -45,3 +46,7 @@ async def get_safe_choice(request: Request):
     data = await request.json()
     user_email = data.get("email")
     return await safe_choice_recomendation(user_email)
+
+@router.get("/top12")
+async def get_top_12_songs():
+    return await get_top_12_songs_controller()
