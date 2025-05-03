@@ -10,3 +10,4 @@ from .spotify_service import get_album_images,get_artist_and_genre_by_track,get_
 from .playlist_service import getPlaylistById,getAllPlaylists
 from .mysql_service  import MySQLSongService
 from .feed_service import get_feed_recomendations
+from .user_service import insert_usr_image

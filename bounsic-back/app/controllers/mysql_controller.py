@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import logging
-from app.services import MySQLSongService
+from app.services import MySQLSongService , insert_usr_image
 
 
 class MySQLController:
@@ -86,7 +86,11 @@ class MySQLController:
     @staticmethod
     async def update_user(id, data):
         try:
-            user = await MySQLSongService.update_user_by_email(id, data)
+            img = "same"
+            if data["profile_img"] != None:
+                img = await insert_usr_image(data["profile_img"])
+            
+            user = await MySQLSongService.update_user_by_email(id, data,img)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             return JSONResponse(status_code=200, content={"user": user})

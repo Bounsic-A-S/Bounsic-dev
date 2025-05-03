@@ -118,9 +118,9 @@
         "BASE": "Tema Base",
         "FONT_SIZE": "Tamaño de la fuente",
         "LIGHT": "Claro",
-        "DARK": "Oscuro",
-        "SAVE":"Guardar"
+        "DARK": "Oscuro"
       },
+      "SAVE":"Guardar",
       "LANGUAGE": {
         "TITLE": "Idioma",
         "WELCOME": "Bienvenido a"

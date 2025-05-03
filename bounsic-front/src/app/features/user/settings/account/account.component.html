@@ -16,12 +16,10 @@
         <input
           type="email"
           id="email"
-          value="{{ user?.email }}"
+          [value]="user?.email"
           class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
+          disabled
         />
-        <button class="text-bounsic-gray-3 ml-2">
-          <i class="fas fa-pen"></i>
-        </button>
       </div>
     </div>
 
@@ -37,15 +35,13 @@
         <input
           type="text"
           id="username"
-          value="{{ user?.username }}"
+          [(ngModel)]="dataToUpdate.username"
           class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
           placeholder="Agregar un nombre de usuario"
         />
-        <button class="text-gray-400 ml-2">
-          <i class="fas fa-pen"></i>
-        </button>
       </div>
     </div>
+
     <div class="mb-8">
       <label
         for="phone"
@@ -58,12 +54,10 @@
         <input
           type="tel"
           id="phone"
-          placeholder="Agregar un número de teléfono"
+          [(ngModel)]="dataToUpdate.phone"
           class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4 not-dark:placeholder-bounsic-gray-2"
+          placeholder="Agregar un número de teléfono"
         />
-        <button class="text-gray-400 ml-2">
-          <i class="fas fa-plus"></i>
-        </button>
       </div>
     </div>
 
@@ -78,6 +72,7 @@
       >
         <select
           id="country"
+          [(ngModel)]="dataToUpdate.country"
           class="placeholder-bounsic-gray-3 text-white w-full focus:outline-none not-dark:text-black dark:bg-bounsic-gray-4"
         >
           <option value="colombia" selected>Colombia</option>
@@ -87,6 +82,14 @@
           <option value="chile">Chile</option>
         </select>
       </div>
+    <ng-container *ngIf="hasChanges()">
+      <button
+      (click)="updateUser()"
+      class="mt-12 px-6 py-2 text-black rounded-full bg-white cursor-pointer not-dark:text-white not-dark:bg-black"
+    >
+    {{"BOUNSIC.SETTINGS.SAVE" | translate}}
+  </button>
+    </ng-container>
     </div>
   </div>
 
@@ -123,6 +126,6 @@
     <h2 class="text-2xl md:text-3xl font-bold">{{ user?.username }}</h2>
     <p class="text-gray-400 text-sm not-dark:text-bounsic-dark-1">
       {{ "BOUNSIC.SETTINGS.ACCOUNT.MEMBER_SINCE" | translate }}, Feb. 27 2023
-    </p>
+    </p>  
   </div>
 </div>
