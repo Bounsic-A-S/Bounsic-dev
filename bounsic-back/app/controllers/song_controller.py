@@ -685,13 +685,18 @@ async def get_most_listened(email: str):
 async def update_lyrics_controller():
     songs_mongo =  get_all_songs_mongo()
     song_in = []
+
     for song in songs_mongo:
-        _id= song["_id"]
-        title= song["title"]
-        artist= song["artist"]
-        lyrics= await get_lyrics(title,artist)
-        insert_mongo =  update_song_lyrics(_id,lyrics)
-        if insert_mongo: 
-            print("lyrics inserted of:", title)
-            song_in.append(title)
+        try:
+            _id = song["_id"]
+            title = song["title"]
+            artist = song["artist"]
+            lyrics = await get_lyrics(title, artist)
+            success =  update_song_lyrics(_id, lyrics)
+            if success:
+                print("lyrics inserted of:", title)
+                song_in.append(title)
+        except Exception as e:
+            print(f"Error en {title}: {str(e)}")
+
     return JSONResponse(status_code=200, content={"data": song_in})

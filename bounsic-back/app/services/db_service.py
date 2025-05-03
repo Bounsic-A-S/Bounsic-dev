@@ -8,7 +8,6 @@ def get_all_songs():
 
 def get_all_songs_mongo():
     songs_collection = db["songs"]
-    print(db.list_collection_names())
     songs = list(songs_collection.find())  # Esto incluye _id automáticamente
     return songs
 
