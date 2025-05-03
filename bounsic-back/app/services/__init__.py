@@ -8,4 +8,4 @@ from .artist_service import getSongsByArtist, getDesc
 from .spotify_service import get_album_images,get_artist_and_genre_by_track,get_artists_by_genre,get_top_tracks_global
 from .playlist_service import getPlaylistById,getAllPlaylists
 from .mysql_service  import MySQLSongService
-from .lastfm_service import get_top_tracks_lastfm
+from .lastfm_service import get_top_tracks_lastfm,get_titles_only,top_12_more_listen

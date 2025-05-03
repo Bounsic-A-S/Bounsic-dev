@@ -8,4 +8,4 @@ from .artist_controller import get_artist_desc_controller, get_songs_by_artist_c
 from .spotify_controller import get_album_cover_controller, get_track_info_controller,get_top_tracks_controller
 from .playlist_controller import get_playlist_by_id_controller, get_all_playlists_controller
 from .mysql_controller import MySQLController
-from. lastfm_controller import get_lastfm_top_tracks
+from. lastfm_controller import get_lastfm_top_tracks,procesar_top_12_songs
