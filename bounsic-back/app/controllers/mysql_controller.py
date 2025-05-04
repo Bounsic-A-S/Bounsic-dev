@@ -451,7 +451,7 @@ class MySQLController:
     @staticmethod
     async def create_like( data):
         try:
-            like = await MySQLSongService.create_like(data)
+            like = await MySQLSongService.insert_like(data)
             return JSONResponse(status_code=201, content={"like": like})
         except Exception as e:
             logging.error(f"create_like error: {e}")
