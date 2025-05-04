@@ -66,16 +66,21 @@
 
   <div class="w-full md:w-64 flex flex-col items-center text-center mb-8 md:mb-0">
     <div class="w-48 h-48 rounded-full overflow-hidden mb-4 relative group">
-      <ng-container *ngIf="user?.profile_img; else avatarInitialLogged">
-        <img [src]="previewImg || user?.profile_img" alt="Profile" class="w-full h-full object-cover" />
+      <ng-container *ngIf="previewImg; else userIMG">
+        <img [src]="previewImg" alt="Profile" class="w-full h-full object-cover" />
       </ng-container>
 
-      <ng-template #avatarInitialLogged>
-        <div class="flex-shrink-0 w-full h-full rounded-full bg-gray-700 flex items-center justify-center">
-          <span class="text-4xl font-medium text-white">
-            {{ user?.username?.charAt(0)?.toUpperCase() }}
-          </span>
-        </div>
+      <ng-template #userIMG>
+        <ng-container *ngIf="user?.profile_img else avatarInitialLogged" >
+          <img [src]="user?.profile_img" alt="Profile" class="w-full h-full object-cover" />
+        </ng-container>
+        <ng-template #avatarInitialLogged>
+          <div class="flex-shrink-0 w-full h-full rounded-full bg-gray-700 flex items-center justify-center">
+            <span class="text-4xl font-medium text-white">
+              {{ user?.username?.charAt(0)?.toUpperCase() }}
+            </span>
+          </div>
+        </ng-template>
       </ng-template>
       <label for="profile-img-input"
         class="absolute inset-0 bg-black/30 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer not-dark:bg-white/30 not-dark:text-black">
