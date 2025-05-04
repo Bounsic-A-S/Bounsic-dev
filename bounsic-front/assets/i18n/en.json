@@ -118,9 +118,9 @@
         "BASE": "Base Theme",
         "FONT_SIZE": "Font Size",
         "LIGHT": "Light",
-        "DARK": "Dark",
-        "SAVE":"Save"
+        "DARK": "Dark"
       },
+      "SAVE":"Save",
       "LANGUAGE": {
         "TITLE": "Language",
         "WELCOME": "Welcome to"

@@ -1,4 +1,5 @@
 from fastapi import APIRouter , Request
+from fastapi import UploadFile, Form, File, APIRouter
 from app.controllers import MySQLController, User_controller
 
 router = APIRouter()# Create an instance of the controller
@@ -32,11 +33,21 @@ async def register(request: Request):
     data = await request.json()
     return await MySQLController.register_user(data)
 
-@router.put("/update/{user_email}")
-async def update_user(user_email: str, request: Request):
-    data = await request.json()
-    return MySQLController.update_user(user_email, data)
-
+@router.put("/update/{id}")
+async def update_user(
+    id: str,
+    username: str = Form(...),
+    phone: str = Form(...),
+    country: str = Form(...),
+    profile_img: UploadFile = File(None)  
+):
+    data = {
+        "username": username,
+        "phone": phone,
+        "country": country,
+        "profile_img": profile_img  
+    }
+    return await MySQLController.update_user(id, data)
 
 # ROLES
 @router.get("/roles/{user_email}")

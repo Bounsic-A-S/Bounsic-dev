@@ -17,6 +17,9 @@ export class UserService {
   registerUser(user: any): Observable<boolean> {
     return this.http.post<boolean>(`${this.apiUrl}/user/register`, user);
   }
+  updateUser(user:any,id:number) : Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/user/update/${id}`, user);
+  }
   setLanguage(language: string, id: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.apiUrl}/user/language/${id}`, { "language": language });
   }

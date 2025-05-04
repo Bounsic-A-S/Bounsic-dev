@@ -52,32 +52,33 @@ class MySQLSongService:
 
 
     @staticmethod
-    async def update_user_by_email(email, data):
+    async def update_user_by_email(id, data, img):
         try:
-            query = """
-                UPDATE Bounsic_Users
-                SET name = :name,
-                    email = :new_email,
-                    profile_img = :profile_img,
-                    rol_user = :rol_user,
-                    username = :username,
-                    phone= :phone,
-                    country= :country
-                WHERE email = :email
-            """
+            fields = []
             params = {
-                "name": data["name"],
-                "new_email": data["email"],  # el nuevo email
-                "profile_img": data.get("profile_img"),
-                "rol_user": data["rol_user"],
                 "username": data["username"],
-                "phone" : data["phone"],
-                "country" :data["country"],
-                "email": email  
+                "phone": data["phone"],
+                "country": data["country"],
+                "id": id
             }
+            if img != "same" and img is not None:
+                fields.append("profile_img = :profile_img")
+                params["profile_img"] = img
+
+            fields.append("username = :username")
+            fields.append("phone = :phone")
+            fields.append("country = :country")
+
+            query = f"""
+                UPDATE Bounsic_Users
+                SET {', '.join(fields)}
+                WHERE id_user = :id
+            """
+
             return await MySQLSongService._db.execute_query(query, params)
+
         except Exception as e:
-            logging.error(f"update_user_by_email error: {e}")
+            logging.error(f"update_user_by_id error: {e}")
             return False
 
 
