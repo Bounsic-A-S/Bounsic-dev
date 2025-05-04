@@ -8,12 +8,13 @@ import { UserService } from '@app/services/auth/user.service';
 import { FormsModule } from '@angular/forms';
 import UpdateUser from 'src/types/user/UpdateUser';
 import { ChangeDetectorRef } from '@angular/core';
+import { LoaderComponent } from '@app/shared/ui/loaders/loader.component';
 
 
 @Component({
   selector: 'user-settings-account',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, TranslateModule, LucideAngularModule, FormsModule,LoaderComponent],
   templateUrl: './account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,6 +23,7 @@ export class SettingsAccountComponent implements OnInit {
   private userService = inject(UserService);
   private cdRef = inject(ChangeDetectorRef);
 
+  public loading = false
   user: User | null = null;
   Pencil = Pencil;
   previewImg: string | null = null;
@@ -64,6 +66,7 @@ export class SettingsAccountComponent implements OnInit {
   }
 
   updateUser(): void {
+    this.loading = true
     if (!this.user) return;
 
     const formData = new FormData();
@@ -88,12 +91,12 @@ export class SettingsAccountComponent implements OnInit {
         this.previewImg = null;
         this.selectedImageFile = null;
         this.cdRef.markForCheck();
+        this.loading = false
       },
       error: err => {console.error('Error actualizando usuario:', err)
         console.log('Detalles del error:', err.error);  
-        
+        this.loading = false
       }
-      
     });
   }
 }

@@ -35,8 +35,8 @@ import { BackgroundService } from '@app/services/background.service';
     ArtistListComponent,
     LastMonthSongsComponent,
     TranslateModule,
-    CommonModule,
-  ],
+    CommonModule
+],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,9 +45,13 @@ export class DashboardComponent implements OnInit {
   private artistService = inject(ArtistService);
   private songService = inject(SongService);
   private backgroundService = inject(BackgroundService);
+  //artist
   artists$!: Observable<DashboardArtist[]>;
+  //songs
   songSafeChoices$!: Observable<DashboardSong[]>;
   songRelated$!: Observable<DashboardSong[]>;
+  songLastMonth$!: Observable<DashboardSong[]>;
+  // bg
   bg$ : Observable<string> = this.backgroundService.background$;
   
   ngOnInit(): void {
@@ -64,6 +68,8 @@ export class DashboardComponent implements OnInit {
     this.artists$ = this.artistService.getArtistsByUser(email);
     this.songSafeChoices$ = this.songService.getSafeChoices(email);
     this.songRelated$ = this.songService.getRelatedSongs(email);
+    this.songLastMonth$ = this.songService.getLastMonthSongs(email);
+
   }
   
   private getLanguage(language: string): void {

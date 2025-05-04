@@ -9,7 +9,7 @@
       [size]="36"
     ></lucide-angular>
   </button>
-  <ng-container *ngIf="songs !== undefined; else relatedSongs">
+  <ng-container *ngIf="!loading; else skeletonLoader">
     <div
       #scrollContainer
       class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
@@ -29,26 +29,15 @@
       </div>
     </div>
   </ng-container>
-  <ng-template #relatedSongs>
+  <ng-template #skeletonLoader>
     <div
-    #scrollContainer
-    class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
-  >
-    <div *ngFor="let album of albums" class="flex-none w-32 sm:w-36 lg:w-44">
-      <img
-        [src]="album.img_url"
-        [alt]="album.title"
-        class="w-full aspect-square object-cover rounded-md mb-2"
-      />
-      <h4 class="font-medium lg:text-lg">{{ album.title }}</h4>
-      <p
-        class="text-sm lg:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1"
-      >
-        {{ album.artist }}
-      </p>
+      #scrollContainer
+      class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
+    >
+      <app-skeleton-song-card-col
+        *ngFor="let _ of [].constructor(8)"
+      ></app-skeleton-song-card-col>
     </div>
-  </div>
-
   </ng-template>
 
   <button
