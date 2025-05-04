@@ -456,6 +456,7 @@ class MySQLSongService:
             logging.error(f"update_playlist error: {e}")
             return False
 
+    @staticmethod
     async def delete_playlist( playlist_id):
         try:
             return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
@@ -571,6 +572,7 @@ class MySQLSongService:
             logging.error(f"Error in get_safe_choices_by_email: {e}")
             return []
         
+    @staticmethod
     async def get_likes_by_user_email( email):
         try:
             query = """
@@ -581,9 +583,33 @@ class MySQLSongService:
             """
             return await MySQLSongService._db.execute_query(query, {"email": email})
         except Exception as e:
-            print.error(f"get_likes_by_user error: {e}")
+            logging.error(f"get_lsafe_choices error: {e}")
+            return None
+        
+    @staticmethod
+    async def get_history_month(email):
+        try:
+            query = """
+                SELECT 
+                    song_mongo_id,
+                    last_listened,
+                    cant_repro
+                FROM (
+                    SELECT h.song_mongo_id, h.last_listened, h.cant_repro
+                    FROM Bounsic_Users u
+                    JOIN Bounsic_History h ON u.id_user = h.user_id
+                    WHERE u.email = :email
+                    ORDER BY h.last_listened DESC
+                    LIMIT 12
+                ) AS ultimas
+                ORDER BY RAND();
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            logging.error(f"get_history_month error: {e}")
             return None
 
+    @staticmethod
     async def get_full_user_by_email( email):
         try:
             query = """ 

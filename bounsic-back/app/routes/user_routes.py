@@ -1,33 +1,32 @@
 from fastapi import APIRouter , Request
-from fastapi import UploadFile, Form, File, APIRouter
 from app.controllers import get_user_by_email_controller,set_background_controller,set_language_controller
-from app.controllers import MySQLController
+from app.controllers import MySQLController, User_controller
 
 router = APIRouter()# Create an instance of the controller
 
 # USERS
 @router.get("/{email}")
 async def get_user_by_email(email: str):
-    return await get_user_by_email_controller(email)
+    return await User_controller.get_user_by_email_controller(email)
 
 @router.put("/background/{id}")
 async def set_background(id: int , request: Request):
     req = await request.json()
     background = req.get("background")
     theme = req.get("theme")
-    return await set_background_controller(id,background,theme)
+    return await User_controller.set_background_controller(id,background,theme)
 
 @router.put("/typography/{id}")
 async def set_typography(id: str , request: Request):
     req = await request.json()
     typography = req.get("typography")
-    return await set_typography_controller(id,typography)
+    return await User_controller.set_typography_controller(id,typography)
 
 @router.put("/language/{id}")
 async def set_language(id: str , request: Request):
     req = await request.json()
     language = req.get("language")
-    return await set_language_controller(id,language)
+    return await User_controller.set_language_controller(id,language)
 
 @router.post("/register")
 async def register(request: Request):

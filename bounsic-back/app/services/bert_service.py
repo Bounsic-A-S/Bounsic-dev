@@ -10,11 +10,11 @@
 
 
 # nlp = pipeline('question-answering', model=model, tokenizer=tokenizer)
-
-
-def pregunta_respuesta(question : str): # model, contexto, nlp
-  if not question:
-    return {"error": "No question provided"}
-    
-  # result = nlp({"question": question, "context": contexto})
-  # return {"question": question, "answer": result["answer"]}
+class Bert_service:
+  @staticmethod
+  def pregunta_respuesta(question : str): # model, contexto, nlp
+    if not question:
+      return {"error": "No question provided"}
+      
+    # result = nlp({"question": question, "context": contexto})
+    # return {"question": question, "answer": result["answer"]}
