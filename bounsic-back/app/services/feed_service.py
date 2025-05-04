@@ -1,22 +1,24 @@
 from app.services import get_alikes, Song_service, Db_service
 from app.services import MySQLSongService
 from app.provider import db
+from app.provider import Songs_db_provider
 import random
 import time
 
 async def get_feed_recomendations(user_id: str):
     ginicio = time.time()
     binicio = time.time()
-
-    size = 16 # size of recomendation (pair number)
+    songs_provider = Songs_db_provider()
+    size = 16 # size of recomendation
     ainicio = time.time()
     liked_songs = await MySQLSongService.get_random_likes(user_id, 2)
-    latest_songs = await MySQLSongService.get_most_played_songs(user_id, 2) # get latest songs reproductions
+    latest_songs = await MySQLSongService.get_most_played_songs(user_id, 2)
     afin = time.time()
     print(f"get likes_&_lastest: {afin - ainicio:.6f} segundos")
 
     linicio = time.time()
-    database_songs = Db_service.get_all_data_songs()
+    # database_songs = Db_service.get_all_data_songs()
+    database_songs = songs_provider.get_all()
     lfin = time.time()
     print(f"get all songs: {lfin - linicio:.6f} segundos\n")
     songs = [] # songs to evaluate
@@ -41,7 +43,7 @@ async def get_feed_recomendations(user_id: str):
             alikes = get_alikes(target_song=s, database_songs=database_songs, size=4)
             if (len(alikes) < 4):
                 print(".fill in (Alikes)")
-                alikes += Song_service.get_random_songs(4 - len(alikes))
+                alikes += Db_service.get_random_songs(4 - len(alikes))
             
             res_songs += alikes
             fin = time.time()
@@ -67,8 +69,8 @@ async def get_feed_recomendations(user_id: str):
         res_songs += Db_service.get_random_songs(size - len(res_songs))
     
     # Size recomendation = 16 :
-    # ArtistRecom:  5
-    # FingerRecom:  5
+    # ArtistRecom:  2
+    # FingerRecom:  8
     # GenreRecom:  6
     gfin = time.time()
     print(f"Tiempo (feed_service): {gfin - ginicio:.6f} segundos")

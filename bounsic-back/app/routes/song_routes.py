@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Request
 from app.controllers import Song_controller
-
+from app.provider import Songs_db_provider
 
 router = APIRouter()
+songs_provider = Songs_db_provider()
 
 @router.get("/id/{id}")
 async def get_song_by_id(id: str):
