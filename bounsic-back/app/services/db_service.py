@@ -71,10 +71,10 @@ class Db_service:
         
         album = albums_collection.find_one({ "name": album_name })
         
-        if album and len(album) > 4: # Validar que es un album y no un sencillo
-            return random.choice(album["songs"])
+        if album and len(album) > 3: # Validar que es un album y no un sencillo
+            return random.choice(album["songs"]), album["_id"]
         else:
-            return None
+            return None, ""
     
     @staticmethod
     def get_relative_genres(keyword: str):
