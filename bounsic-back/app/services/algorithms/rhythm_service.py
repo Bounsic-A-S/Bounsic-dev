@@ -64,9 +64,10 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
         if total_score > min_alike:
             resSongs.append(song)
 
-
-    size = min(size, len(resSongs))
-    return random.sample(resSongs, size)
+    if (size < len(resSongs)):
+        return random.sample(resSongs, size)
+    else: 
+        return resSongs
 
 def load_fingerprints(without: str, directory="fingerprints") -> dict[str, FingerprintData]: # key "name"
     jsonDir_path = os.path.join("app", "services", directory)
