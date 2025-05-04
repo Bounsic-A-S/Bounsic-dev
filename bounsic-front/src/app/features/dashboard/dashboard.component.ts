@@ -35,8 +35,8 @@ import { BackgroundService } from '@app/services/background.service';
     ArtistListComponent,
     LastMonthSongsComponent,
     TranslateModule,
-    CommonModule,
-  ],
+    CommonModule
+],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
