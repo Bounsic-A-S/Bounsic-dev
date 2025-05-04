@@ -303,7 +303,7 @@ class Song_controller:
             if not youtube_data:
                 return {"status": "error", "error": "youtube_not_found"}
             
-            
+            print(artist,title )
 
             # Generar nombre seguro para el blob
             safe_name = f"{Song_controller.sanitize_filename(artist)}_{Song_controller.sanitize_filename(title)}.mp3"
@@ -353,22 +353,11 @@ class Song_controller:
             return {"status": "error", "error": str(e)}
         
 
-    @staticmethod
-    # Helper function to convert ObjectIds to strings for JSON serialization
-    async def serialize_for_json(obj):
-        """Convert MongoDB ObjectIds to strings in a dict or list"""
-        if isinstance(obj, ObjectId):
-            return str(obj)
-        elif isinstance(obj, dict):
-            return {k: Song_controller.serialize_for_json(v) for k, v in obj.items()}
-        elif isinstance(obj, list):
-            return [Song_controller.serialize_for_json(item) for item in obj]
-        else:
-            return obj
+
         
 
     @staticmethod
-    async def sanitize_filename(name: str) -> str:
+    def sanitize_filename(name: str) -> str:
         """Limpia nombres para usar en archivos, manejando caracteres Unicode."""
         # Normalizar caracteres Unicode (convertir acentos a formas básicas)
         name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')

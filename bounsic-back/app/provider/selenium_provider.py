@@ -67,8 +67,6 @@ class SeleniumFacade:
             # ===== INICIALIZACIÓN CON UNDETECTED_CHROMEDRIVER =====
             cls._driver = uc.Chrome(
                 options=options,
-                version_main=136,  # ¡Asegúrate que coincide con tu versión de Chrome!
-                driver_executable_path=None,  # Forzar nueva descarga
                 use_subprocess=True
             )
             

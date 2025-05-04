@@ -92,7 +92,7 @@ class Scrapping_service:
 
 
     @staticmethod
-    async def descargar_audio(url, safe_name: str= None):
+    async def descargar_audio(url, safe_name: str):
         base_path = Path(__file__).resolve().parent
         audio_dir = base_path / "audios"
         audio_dir.mkdir(parents=True, exist_ok=True)
