@@ -18,7 +18,7 @@ class Songs_db_provider:
             songs_collection = db["songs"]
             self.songs = list(songs_collection.find({}))
 
-            print(f"Se cargaron {len(self.songs_cache)} canciones en caché")
+            print(f"Se cargaron {len(self.songs)} canciones en caché")
         except Exception as e:
             print(f"Error al cargar canciones: {e}")
             self.songs = []
