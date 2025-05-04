@@ -1,5 +1,5 @@
 from itertools import chain
-from app.services import Artis_service,MySQLSongService,Song_service,Spotify_service
+from app.services import MySQLSongService,Song_service,Artist_service, Spotify_service
 from fastapi.responses import JSONResponse
 class Artist_controller:
     @staticmethod
@@ -8,7 +8,7 @@ class Artist_controller:
             return {"error": "Artist not provided"}
         
         print(f"Buscando canciones del artista: {artist}")
-        res = Artis_service.getSongsByArtist(artist)
+        res = Artist_service.getSongsByArtist(artist)
         
         if not res:
             return {"error": "No songs found for this artist"}
@@ -21,7 +21,7 @@ class Artist_controller:
             return {"error": "Artist not provided"}
         
         print(f"Obteniendo descripción del artista: {artist}")
-        res = Artis_service.getDesc(artist)
+        res = Artist_service.getDesc(artist)
 
         if not res or isinstance(res, dict) and res.get("message"):
             return {"error": "Artist not found"}
@@ -53,10 +53,15 @@ class Artist_controller:
             }
             # get artists by genre
             all_artists = []
+            seen_names = set()
             for genre in genres:
                 artists = Spotify_service.get_artists_by_genre(genre)
                 if artists:
-                    all_artists.extend(artists)
+                    for artist in artists:
+                        name = artist.get("artist_name")
+                        if name and name not in seen_names:
+                            seen_names.add(name)
+                            all_artists.append(artist)
 
             if not all_artists:
                 return JSONResponse(

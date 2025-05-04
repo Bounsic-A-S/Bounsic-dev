@@ -395,7 +395,7 @@ class Song_controller:
             if not mysql_songs:
                 return JSONResponse(
                     status_code=200,
-                    content={"message": "No hay recomendaciones disponibles", "songs": []}
+                    content=[]
                 )
 
             # Obtener los IDs únicos de canciones Mongo
@@ -405,7 +405,7 @@ class Song_controller:
             if not mongo_songs:
                 return JSONResponse(
                     status_code=200,
-                    content={"message": "No se encontraron canciones en MongoDB", "songs": []}
+                    content=[]
                 )
 
             # Crear un mapa para acceso rápido por ID
@@ -419,7 +419,7 @@ class Song_controller:
                 if song["song_mongo_id"] in mongo_map
             ]
 
-            return JSONResponse(status_code=200, content={"songs": final_songs})
+            return JSONResponse(status_code=200, content=final_songs)
 
         except Exception as e:
             logging.error(f"Error en safe_choice_recommendation: {str(e)}", exc_info=True)
@@ -433,7 +433,7 @@ class Song_controller:
             if not mysql_songs:
                 return JSONResponse(
                     status_code=200,
-                    content={"message": "No hay recomendaciones disponibles", "songs": []}
+                    content=[]
                 )
 
             # Extraer los IDs únicos de Mongo
@@ -443,7 +443,7 @@ class Song_controller:
             if not mongo_songs:
                 return JSONResponse(
                     status_code=200,
-                    content={"message": "No se encontraron canciones en MongoDB", "songs": []}
+                    content=[]
                 )
 
             # Mapear canciones Mongo por ID para acceso rápido
@@ -457,7 +457,7 @@ class Song_controller:
                 if song["song_mongo_id"] in mongo_map
             ]
 
-            return JSONResponse(status_code=200, content={"songs": final_songs})
+            return JSONResponse(status_code=200, content=final_songs)
 
         except Exception as e:
             logging.error(f"Error en get_most_listened: {str(e)}", exc_info=True)

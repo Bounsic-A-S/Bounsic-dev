@@ -3,7 +3,7 @@ from app.provider import db
 import re
 from bson import ObjectId
 
-class Artis_service:
+class Artist_service:
 
     collection = db["artists"]
     @staticmethod
@@ -14,9 +14,9 @@ class Artis_service:
     @staticmethod
     def getSongsByArtist(artist_name: str):
         try:
-            normalized_artist = Artis_service.normalize_string(artist_name)
+            normalized_artist = Artist_service.normalize_string(artist_name)
             
-            artist = Artis_service.collection.find_one({
+            artist = Artist_service.collection.find_one({
                 "$expr": {
                     "$eq": [
                         {"$toLower": {"$replaceAll": {"input": "$artist_name", "find": " ", "replacement": ""}}},
@@ -50,8 +50,8 @@ class Artis_service:
     @staticmethod
     def getDesc(artist_name: str):
         try:
-            normalized_artist = Artis_service.normalize_string(artist_name)
-            artist = Artis_service.collection.find_one({
+            normalized_artist = Artist_service.normalize_string(artist_name)
+            artist = Artist_service.collection.find_one({
                 "$expr": {
                     "$eq": [
                         {"$toLower": {"$replaceAll": {"input": "$artist_name", "find": " ", "replacement": ""}}},
