@@ -199,6 +199,10 @@ export class AuthService implements OnDestroy {
   getUserProfile(): User | null {
     return this.userProfileSubject.value;
   }
+  setUserProfile(user: User) {
+    this.userProfileSubject.next(user);
+  }
+
 
   /**
    * Limpia el observable al destruir el servicio

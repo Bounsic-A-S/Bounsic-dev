@@ -74,10 +74,23 @@ export class SettingsAccountComponent implements OnInit {
       formData.append('profile_img', this.selectedImageFile);
     }
     this.userService.updateUser(formData, this.user.id_user).subscribe({
-      next: () => {console.log('Usuario actualizado'),      this.cdRef.detectChanges();
+      next: () => {
+        const updatedUser: User = {
+          ...this.user!,
+          username: this.dataToUpdate.username,
+          phone: this.dataToUpdate.phone,
+          country: this.dataToUpdate.country,
+          profile_img: this.previewImg ?? this.user?.profile_img ?? ''
+        };
+      
+        this.authService.setUserProfile(updatedUser);
+        this.user = updatedUser;
+        this.previewImg = null;
+        this.selectedImageFile = null;
+        this.cdRef.markForCheck();
       },
       error: err => {console.error('Error actualizando usuario:', err)
-        console.log('Detalles del error:', err.error);  // Aquí podrías obtener más detalles
+        console.log('Detalles del error:', err.error);  
         
       }
       
