@@ -1,34 +1,59 @@
-<main class="bg-black text-white min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
+<main
+  class="bg-black text-white xl:max-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
+>
+  <header class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+    <img
+      src="/logo/logoBounsic.png"
+      alt="Bounsic_logo"
+      class="h-auto w-36 md:w-44"
+    />
+  </header>
 
-    <header class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
-      <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-36 md:w-44" />
-    </header>
-  
-    <div class="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl mx-auto">
-        <!-- Texto -->
-        <div class="w-full md:w-1/2 md:pr-8 text-center md:text-left z-10 order-1 md:order-1 lg:translate-x-28">
-          <div class="mb-4">
-            <h1 class="text-5xl md:text-8xl font-bold leading-none first-title error-shadow">
-              <span>ERROR</span>
-              <span class="text-6xl md:text-9xl">404</span>
-            </h1>
-            <h2 class="text-3xl md:text-7xl font-bold font-roboto mt-4 md:mt-0 w-full error-shadow">Page not found</h2>
-          </div>
-        </div>
-      
-        <!-- Imagen -->
-        <div class="w-full md:w-1/2 flex justify-center items-center mt-2 md:mt-0 z-0 order-2 md:order-2 lg:-translate-x-12">
-          <img src="/error/jukebox.svg" alt="Jukebox SVG" class="object-contain w-60 md:w-full h-auto mt-8 md:mt-16" />
+  <div
+    class="flex flex-col md:flex-row items-center justify-between w-full container mt-28 lg:mt-6 mx-auto"
+  >
+    <!-- Texto -->
+    <div
+      class="w-full md:w-1/2 md:pr-8 text-center md:text-left z-10 order-1 md:order-1 lg:translate-x-50"
+    >
+      <div class="mb-4">
+        <h1
+          class="text-5xl md:text-8xl font-bold leading-none first-title error-shadow"
+        >
+          <span>ERROR</span>
+          <span class="text-6xl md:text-9xl">404</span>
+        </h1>
+        <h2
+          class="text-3xl md:text-7xl font-bold font-roboto mt-4 md:mt-0 w-full error-shadow"
+        >
+          Page not found
+        </h2>
+      </div>
+      <div>
+        <!-- Frase y botón -->
+        <div class="text-pretty max-w-2xl font-roboto mt-4">
+          <p class="text-base md:text-lg mb-2 italic">
+            "{{ chose_phrase().phrase }}"
+          </p>
+          <p class="text-base md:text-lg mb-4">
+            - {{ phrase.song }}, {{ phrase.artist }}
+          </p>
+          <router-err-button
+            [redirectToDashboard]="redirectToDashboard"
+          ></router-err-button>
         </div>
       </div>
-      
-  
-    <!-- Frase y botón -->
-    <div class="text-center max-w-2xl mx-auto font-roboto mt-0 px-4">
-      <p class="text-base md:text-lg mb-2 italic">"{{chose_phrase().phrase}}"</p>
-      <p class="text-base md:text-lg mb-4">- {{phrase.song}}, {{phrase.artist}}</p>
-      <router-err-button [redirectToDashboard]="redirectToDashboard"></router-err-button>
     </div>
-  
-  </main>
-  
+
+    <!-- Imagen -->
+    <div
+      class="w-full md:w-1/2 flex justify-center items-center mt-2 p-6 md:mt-0 z-0 order-2 md:order-2 lg:-translate-x-12"
+    >
+      <img
+        src="/error/jukebox.svg"
+        alt="Jukebox SVG"
+        class="object-contain w-60 md:w-full h-auto mt-8 md:mt-16"
+      />
+    </div>
+  </div>
+</main>
