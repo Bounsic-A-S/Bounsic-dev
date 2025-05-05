@@ -1,35 +1,47 @@
 {
-    "name": "bounsic",
-    "version": "1.0.0",
-    "private": true,
-    "author": "Bounsic",
-    "contributors": [
-      {
-        "name": "Juan David Patiño Parra",
-        "email": "juandavidp1127@gmail.com"
-      },
-      {
-        "name": "Juan David Carvajal Rondón",
-        "email": "juandacr25@gmail.com"
-      },
-      {
-        "name": "Christian Mauricio Rodriguez Curubo",
-        "email": "cmrcurubo@gmail.com"
-      },
-      {
-        "name": "Jose Daniel Montero Gutierrez",
-        "email": "jmontero.gutierrez2002@gmail.com"
-      }
-    ],
-    "scripts": {
-        "install:frontend": "cd bounsic-front && bun install",
-        "install:backend": "cd bounsic-back && powershell -Command python -m venv venv && powershell -Command \"venv\\Scripts\\activate;pip install -r requirements.txt\"",
-        "install": "bun run install:frontend && bun run install:backend",
-        "start:frontend": "cd bounsic-front && bun run start",
-        "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
-        "start": "concurrently \"bun run start:frontend\" \"bun run start:backend\""
+  "name": "bounsic",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Bounsic",
+  "contributors": [
+    {
+      "name": "Juan David Patiño Parra",
+      "email": "juandavidp1127@gmail.com"
     },
-    "dependencies": {
-        "concurrently": "^9.1.2"
+    {
+      "name": "Juan David Carvajal Rondón",
+      "email": "juandacr25@gmail.com"
+    },
+    {
+      "name": "Christian Mauricio Rodriguez Curubo",
+      "email": "cmrcurubo@gmail.com"
+    },
+    {
+      "name": "Jose Daniel Montero Gutierrez",
+      "email": "jmontero.gutierrez2002@gmail.com"
     }
+  ],
+  "scripts": {
+    "install:frontend": "cd bounsic-front && bun install",
+    "install:backend": "cd bounsic-back && powershell -Command python -m venv venv && powershell -Command \"venv\\Scripts\\activate;pip install -r requirements.txt\"",
+    "install:streaming": "cd streaming && powershell -Command python -m venv venv && powershell -Command \"venv\\Scripts\\activate;pip install -r requirements.txt\"",
+    "install:backend_linux": "cd bounsic-back && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
+    "install:streaming_linux": "cd streaming && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
+    "install": "bun run install:frontend && bun run install:backend && bun run install:streaming",
+    "install_linux": "bun run install:frontend && bun run install:backend_linux && bun run install:streaming_linux",
+    "start:frontend": "cd bounsic-front && bun run start",
+    "start:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;python -m app.main\"",
+    "start:streaming": "cd streaming && powershell -Command \"venv\\Scripts\\activate;python hypercorn_server.py\"",
+    "start:backend_linux": "cd bounsic-back && source venv/bin/activate && python -m app.main",
+    "start:streaming_linux": "cd streaming && source venv/bin/activate && python hypercorn_server.py",
+    "start": "concurrently --names \"frontend,backend,streaming\" \"bun run start:frontend\" \"bun run start:backend\" \"bun run start:streaming\"",
+    "start_linux": "concurrently --names \"frontend,backend,streaming\" \"bun run start:frontend\" \"bun run start:backend_linux\" \"bun run start:streaming_linux\"",
+    "test:frontend": "cd bounsic-front && bun run test",
+    "test:frontend_linux": "cd bounsic-front && export CHROME_BIN=/snap/bin/chromium && bun run test",
+    "test:backend": "cd bounsic-back && powershell -Command \"venv\\Scripts\\activate;pytest\"",
+    "test": "concurrently \"bun run test:frontend\" \"bun run test:backend\""
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
 }

@@ -1,21 +1,21 @@
 <div class="mb-6">
   <input
     type="text"
-    placeholder="Buscar..."
-    class="w-full max-w-2xl px-8 py-2 md:py-4 bg-bounsic-gray rounded-4xl text-white placeholder-gray-400 focus:outline-none focus:border-white"
+    placeholder="{{'BOUNSIC.DASHBOARD.SEARCH'  | translate}}"
+    class="w-full max-w-2xl px-8 py-2 md:py-4 bg-bounsic-gray-4 rounded-4xl shadow-bounsic-searchbar text-white placeholder-white/80 focus:outline-none focus:border-white not-dark:text-black not-dark:placeholder-black/80 not-dark:bg-bounsic-light-1"
   />
 </div>
 
 <!-- Filter Tags -->
 <section class="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-  <p class="px-4 py-1">Similar en:</p>
+  <p class="px-4 py-1">{{'BOUNSIC.DASHBOARD.FILTER'  | translate}}</p>
   <div class="flex items-center justify-center flex-wrap gap-2 xl:gap-4">
     <ng-container *ngFor="let tag of filterTags">
       <span
         (click)="toggleTag(tag)"
         [ngClass]="{
-          'border-white bg-white text-black': isTagSelected(tag),
-          'border-white/20 hover:bg-white/10': !isTagSelected(tag)
+          'border-white bg-white text-black not-dark:text-white not-dark:border-black not-dark:bg-black': isTagSelected(tag),
+          'border-white/20 hover:bg-white/10 not-dark:border-black/20 not-dark:hover:border-black/10': !isTagSelected(tag)
         }"
         class="text-sm sm:text-base px-4 py-1 rounded-full border cursor-pointer transition-all ease-in-out duration-300"
       >

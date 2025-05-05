@@ -1,0 +1,131 @@
+{
+  "BOUNSIC": {
+    "LOADING":"Cargando...",
+    "LANDING": {
+      "TITLE1": "TU MÚSICA TU ESCENCIA",
+      "TITLE2": "ESCUCHAR AHORA",
+      "NAVBAR": {
+        "HELP": "Ayuda",
+        "ABOUT": "Sobre nosotros",
+        "SIGNIN": "Iniciar Sesión",
+        "PLAYER": "Reproductor Web"
+      }
+    },
+    "ABOUT_US": {
+      "TITLE1": "LA MEJOR CALIDAD",
+      "TEXT1": "¡No dejes que una mala calidad de sonido arruine tu experiencia musical! Con nuestro reproductor de música, disfrutarás de un sonido cristalino y definido que te hará apreciar cada nota y cada detalle de tu música favorita, como si estuvieras escuchándola por primera vez. ¡Haz que tu música cobre vida con nuestro reproductor de música!",
+      "TITLE2": "DISFRUTA",
+      "TEXT2": "¿Quieres disfrutar de la mejor calidad de sonido y escuchar tu música favorita como nunca antes? Descubre nuestro reproductor de música de última generación y sumérgete en una experiencia única y envolvente que te hará sentir como si estuvieras en el concierto en vivo de tu artista favorito!"
+    },
+    "404": {
+      "BACKGROUND": "404",
+      "TITLE1": "Oops => 404",
+      "TEXT1": "No pudimos encontrar la página que buscas.",
+      "TEXT2": "♪ Parece que te perdiste en el ritmo ♪",
+      "BUTTON": "Regresar al inicio"
+    },
+    "NAVBAR": {
+      "TRENDING": "Tendencias",
+      "LIBRARY": "Biblioteca",
+      "SEARCH": "Buscar...",
+      "SIGNIN": "Iniciar Sesión",
+      "SIGNOUT": "Cerrar Sesión",
+      "SETTINGS": "Configuración"
+    },
+    "DASHBOARD": {
+      "TITLE1": "Inicia la radio a partir de una canción",
+      "SEARCH": "Buscar...",
+      "FILTER": "Similar en:",
+      "NEW_DESCOVERY": {
+        "TEXT1": "Nuevos descubrimientos",
+        "TEXT2": "Podría interesarte..."
+      },
+      "SAFE_CHOICES": {
+        "TEXT1": "Elecciones seguras"
+      },
+      "THIS_WEEK": {
+        "TEXT1": "Esta semana",
+        "TEXT2": "Tendencias"
+      },
+      "LAST_MONTH": {
+        "TEXT1": "Último mes"
+      },
+      "ARTISTS": {
+        "TEXT1": "Artistas que podrían interesarte"
+      }
+    },
+    "LIBRARY": {
+      "PLAYLISTS": "Playlists",
+      "LIKES": "Me gustas"
+    },
+    "PLAYLIST": {
+      "PLAYLIST": "Listas de reproducción",
+      "LIKES": "Me gustas",
+      "SONGS":"Canciones",
+      "ID":{
+        "UPDATED":"Actualizada en",
+        "PLAYMIX":"Play mix",
+        "LENGTH":"Duración"
+      }
+    },
+    "LOGIN": {
+      "TITLE1": "Inciar Sesión",
+      "TEXT1": "Inicio seguro con Azure",
+      "TEXT2": "Tu cuenta, tu música. Conéctate con confianza.",
+      "BUTTON": "Ingresar",
+      "TEXT3": "No tienes una cuenta?"
+    },
+    "REGISTER": {
+      "TITLE1": "Registrarse",
+      "TEXT1": "Nombre de usuario",
+      "TEXT1_ERR": "Necesitas un nombre de usuario",
+      "TEXT2": "Email",
+      "TEXT2_ERR": "Necesitas un Email",
+      "TEXT2_ERR_2":"Email no válido",
+      "TEXT3": "Contraseña",
+      "BUTTON": "Crear cuenta",
+      "TEXT4": "Ya tienes una cuenta?"
+    },
+    "SETTINGS": {
+      "SIDEBAR":{
+        "ACCOUNT":"Cuenta",
+        "PRIVACY":"Privacidad",
+        "CONNECTIONS":"Conexiones",
+        "NOTIFICATIONS":"Notificaciones",
+        "PLAN":"Plan",
+        "PLAYER":"Reproducción",
+        "PREFERENCES":"Apariencia",
+        "LANGUAGE":"Idioma"
+      },
+      "ACCOUNT": {
+        "TITLE1": "Información de la cuenta",
+        "EMAIL": "Correo electrónico",
+        "USERNAME": "Nombre de usuario",
+        "BIRTHDAY": "Cumpleaños",
+        "MEMBER_SINCE": "Miembro desde",
+        "PHONE_NUMBER": "Número de teléfono",
+        "COUNTRY": "País",
+        "PLAN": "Plan"
+      },
+      "PRIVACY": {},
+      "CONNECTIONS": {},
+      "NOTIFICATIONS": {},
+      "PLAN": {},
+      "PLAYER": {},
+      "PREFERENCES": {
+        "TITLE": "Temas",
+        "GRADIENTS": "Degradados",
+        "SOLID_COLORS": "Colores sólidos",
+        "BASE": "Tema Base",
+        "FONT_SIZE": "Tamaño de la fuente",
+        "LIGHT": "Claro",
+        "DARK": "Oscuro"
+      },
+      "SAVE":"Guardar",
+      "LANGUAGE": {
+        "TITLE": "Idioma",
+        "WELCOME": "Bienvenido a"
+      }
+    }
+  }
+}

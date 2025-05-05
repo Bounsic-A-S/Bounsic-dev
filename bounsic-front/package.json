@@ -40,6 +40,8 @@
     "@angular/router": "^19.1.0",
     "@azure/msal-angular": "^4.0.5",
     "@azure/msal-browser": "^4.4.0",
+    "@ngx-translate/http-loader": "16.0.1",
+    "@ngx-translate/core": "16.0.4",
     "@tailwindcss/postcss": "^4.0.4",
     "lucide-angular": "^0.475.0",
     "postcss": "^8.5.1",
@@ -58,8 +60,10 @@
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
+    "karma-html-reporter": "^0.2.7",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "karma-junit-reporter": "^2.0.1",
     "typescript": "~5.7.2"
   }
 }

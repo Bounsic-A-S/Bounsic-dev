@@ -9,6 +9,14 @@
     user-select: none;
   }
   
+  /* Custom gradient shadow for the ERROR text */
+  .error-shadow, .number-shadow, .subtitle-shadow {
+    text-shadow: 14px 14px 15px rgba(0, 0, 0, 0.85);
+    mix-blend-mode: multiply;
+    color: white;
+  }
+  
+  
   /* Para asegurar compatibilidad con más navegadores */
   @supports not (-webkit-text-stroke: 1px rgba(255, 255, 255, 0.3)) {
     .outline-404 {

@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 *.so
+.cache
 
 # Entornos virtuales
 venv/
@@ -32,8 +33,6 @@ logs/
 .ipynb_checkpoints/
 
 # Docker y compilaciones
-Dockerfile
-*.dockerignore
 dist/
 build/
 *.egg-info/

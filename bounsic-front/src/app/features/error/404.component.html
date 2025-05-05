@@ -1,28 +1,34 @@
-<main class="bg-black text-white min-h-screen flex flex-col justify-center px-6 relative overflow-hidden">
-    
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h1 class="outline-404">404</h1>
-    </div>
-    
-    <header class="absolute top-0 left-1/2 -translate-x-1/2 sm:top-8 sm:left-8 sm:translate-x-0 z-10">
-        <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-40" />
+<main class="bg-black text-white min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
+
+    <header class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
+      <img src="/logo/logoBounsic.png" alt="Bounsic_logo" class="h-auto w-36 md:w-44" />
     </header>
-    
-    <div class="flex flex-col md:flex-row items-center max-w-6xl w-full gap-12 mx-auto z-10 relative">
-        <div class="w-full md:w-1/2 flex justify-center">
-            <div class="relative p-0.5 rounded-lg bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 shadow-lg">
-                <img src="/background/background.png" alt="Persona con auriculares" 
-                     class="h-auto w-full max-w-xl rounded-lg shadow-inner" />
-            </div>
+  
+    <div class="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl mx-auto">
+        <!-- Texto -->
+        <div class="w-full md:w-1/2 md:pr-8 text-center md:text-left z-10 order-1 md:order-1 lg:translate-x-28">
+          <div class="mb-4">
+            <h1 class="text-5xl md:text-8xl font-bold leading-none first-title error-shadow">
+              <span>ERROR</span>
+              <span class="text-6xl md:text-9xl">404</span>
+            </h1>
+            <h2 class="text-3xl md:text-7xl font-bold font-roboto mt-4 md:mt-0 w-full error-shadow">Page not found</h2>
+          </div>
         </div>
-        
-        <div class="w-full md:w-1/2 md:text-left">
-            <h1 class="text-5xl lg:text-6xl 2xl:text-7xl font-bold text-red-500 mb-6">Oops ... 404</h1>
-            <p class="text-xl sm:text-2xl mb-6">No pudimos encontrar la página que buscas.</p>
-            <p class="text-xl sm:text-2xl mb-8">
-                <span class="text-red-500">♪</span> Parece que te perdiste en el ritmo <span class="text-red-500">♪</span>
-            </p>
-            <router-err-button [redirectToDashboard]="redirectToDashboard"></router-err-button>              
+      
+        <!-- Imagen -->
+        <div class="w-full md:w-1/2 flex justify-center items-center mt-2 md:mt-0 z-0 order-2 md:order-2 lg:-translate-x-12">
+          <img src="/error/jukebox.svg" alt="Jukebox SVG" class="object-contain w-60 md:w-full h-auto mt-8 md:mt-16" />
         </div>
+      </div>
+      
+  
+    <!-- Frase y botón -->
+    <div class="text-center max-w-2xl mx-auto font-roboto mt-0 px-4">
+      <p class="text-base md:text-lg mb-2 italic">"{{chose_phrase().phrase}}"</p>
+      <p class="text-base md:text-lg mb-4">- {{phrase.song}}, {{phrase.artist}}</p>
+      <router-err-button [redirectToDashboard]="redirectToDashboard"></router-err-button>
     </div>
-</main>
+  
+  </main>
+  

@@ -1,0 +1,131 @@
+{
+  "BOUNSIC": {
+    "LOADING":"카르간도",
+    "LANDING": {
+      "TITLE1": "당신의 음악. 당신의 분위기.",
+      "TITLE2": "듣기 시작하세요.",
+      "NAVBAR": {
+        "HELP": "도움말",
+        "ABOUT": "우리에 대해",
+        "SIGNIN": "로그인",
+        "PLAYER": "웹 플레이어"
+      }
+    },
+    "ABOUT_US": {
+      "TITLE1": "차이를 느껴보세요",
+      "TEXT1": "저질 음질에 작별을 고하세요. 우리의 음악 플레이어는 정밀하고 상세한 스튜디오 품질의 오디오를 제공합니다. 음악을 원래 의도된 대로 듣고, 모든 음을 처음처럼 경험하세요.",
+      "TITLE2": "음악 그 이상",
+      "TEXT2": "단순한 소리가 아닙니다 — 감정의 파도, \n각 음에서 느껴지는 심장박동. \n음악을 원래 그 모습대로 느껴보세요 — \n살아있고, 거칠고, 진짜. \n그것이 우리의 플레이어의 힘입니다."
+    },
+    "404": {
+      "BACKGROUND": "404",
+      "TITLE1": "오류 => 404",
+      "TEXT1": "찾고 있는 페이지를 찾을 수 없습니다.",
+      "TEXT2": "♪ 여기선 리듬이 조금 어긋났지만, 우리가 길을 안내해줄게요 ♪",
+      "BUTTON": "홈으로 돌아가기"
+    },
+    "NAVBAR": {
+      "TRENDING": "인기",
+      "LIBRARY": "라이브러리",
+      "SEARCH": "검색...",
+      "SIGNIN": "로그인",
+      "SIGNOUT": "로그아웃",
+      "SETTINGS": "설정"
+    },
+    "DASHBOARD": {
+      "TITLE1": "노래를 기반으로 라디오를 틀어보세요",
+      "SEARCH": "검색...",
+      "FILTER": "비슷한:",
+      "NEW_DESCOVERY": {
+        "TEXT1": "새로운 발견",
+        "TEXT2": "이걸 좋아할 수도 있어요..."
+      },
+      "SAFE_CHOICES": {
+        "TEXT1": "안전한 선택"
+      },
+      "THIS_WEEK": {
+        "TEXT1": "이번 주",
+        "TEXT2": "인기"
+      },
+      "LAST_MONTH": {
+        "TEXT1": "지난 달"
+      },
+      "ARTISTS": {
+        "TEXT1": "당신이 좋아할 아티스트"
+      }
+    },
+    "LIBRARY": {
+      "PLAYLISTS": "재생목록",
+      "LIKES": "좋아요"
+    },
+    "PLAYLIST": {
+      "PLAYLIST": "재생목록",
+      "LIKES": "좋아요",
+      "SONGS":"노래",
+      "ID":{
+        "UPDATED":"수정된",
+        "PLAYMIX":"플레이믹스",
+        "LENGTH":"길이"
+      }
+    },
+    "LOGIN": {
+      "TITLE1": "로그인",
+      "TEXT1": "Azure로 로그인",
+      "TEXT2": "당신의 계정, 당신의 음악. 자신감을 가지고 연결하세요.",
+      "BUTTON": "로그인",
+      "TEXT3": "계정이 없으신가요?"
+    },
+    "REGISTER": {
+      "TITLE1": "회원가입",
+      "TEXT1": "사용자 이름",
+      "TEXT1_ERR": "사용자 이름이 필요합니다",
+      "TEXT2": "이메일",
+      "TEXT2_ERR": "이메일이 필요합니다",
+      "TEXT2_ERR_2":"이메일이 유효하지 않습니다",
+      "TEXT3": "비밀번호",
+      "BUTTON": "계정 만들기",
+      "TEXT4": "이미 계정이 있나요?"
+    },
+    "SETTINGS": {
+      "SIDEBAR":{
+        "ACCOUNT":"계정",
+        "PRIVACY":"프라이버시",
+        "CONNECTIONS":"연결",
+        "NOTIFICATIONS":"알림",
+        "PLAN":"플랜",
+        "PLAYER":"생식",
+        "PREFERENCES":"외관",
+        "LANGUAGE":"언어"
+      },
+      "ACCOUNT": {
+        "TITLE1": "계정 정보",
+        "EMAIL": "이메일 주소",
+        "USERNAME": "사용자 이름",
+        "BIRTHDAY": "생일",
+        "MEMBER_SINCE": "가입일",
+        "PHONE_NUMBER": "전화번호",
+        "COUNTRY": "국가",
+        "PLAN": "구독 계획"
+      },
+      "PRIVACY": {},
+      "CONNECTIONS": {},
+      "NOTIFICATIONS": {},
+      "PLAN": {},
+      "PLAYER": {},
+      "PREFERENCES": {
+        "TITLE": "테마",
+        "GRADIENTS": "그라디언트",
+        "SOLID_COLORS": "단색",
+        "BASE": "기본 테마",
+        "FONT_SIZE": "폰트 크기",        
+        "LIGHT": "빛",
+        "DARK": "어두운"
+      },
+      "SAVE":"구하다",
+      "LANGUAGE": {
+        "TITLE": "언어",
+        "WELCOME": "환영합니다"
+      }
+    }
+  }
+}

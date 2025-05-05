@@ -11,11 +11,12 @@ export function MSALInstanceFactory(): IPublicClientApplication {
         auth: {
             clientId: environment.msalConfig.auth.clientId,
             authority: environment.msalConfig.auth.authority,
-            redirectUri: 'http://localhost:4200/dashboard',
-            postLogoutRedirectUri: '/'
+            redirectUri: '/dashboard',
+            postLogoutRedirectUri: '/dashboard'
         },
-        cache: {
-            cacheLocation: BrowserCacheLocation.LocalStorage
+        cache: {    
+            cacheLocation: BrowserCacheLocation.LocalStorage,
+            storeAuthStateInCookie: true,
         },
         system: {
             // allowNativeBroker: false, // Disables WAM Broker

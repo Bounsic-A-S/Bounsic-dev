@@ -1,0 +1,83 @@
+<body [ngClass]="bg$ | async" class="min-h-screen flex text-white relative not-dark:text-black">
+  <button
+    class="absolute w-auto top-4 left-4 z-20 md:hidden p-2 rounded cursor-pointer bg-bounsic-gray-4 hover:bg-bounsic-gray-3/60 not-dark:bg-bounsic-light-1 not-dark:hover:bg-black/10"
+    (click)="toggleSidebar()"
+    clickOutside
+    (clickOutside)="closeSideBar()"
+    aria-label="Abrir menú"
+  >
+    <lucide-icon [img]="menuIcon" [size]="24" [strokeWidth]="3"></lucide-icon>
+  </button>
+
+  <aside
+    [ngClass]="{
+      'translate-x-0': sideBarOpen,
+      '-translate-x-full': !sideBarOpen
+    }"
+    class="fixed md:relative top-0 left-0 h-full md:h-screen w-[45vw] md:w-[14vw] bg-bounsic-gray-4 shadow-bounsic-sidebar-user z-10 transform transition-transform duration-300 ease-in-out flex flex-col not-dark:bg-bounsic-light-1"
+  >
+    <button class="p-4 cursor-pointer hidden md:block" (click)="goBack()">
+      <lucide-icon
+        [img]="leftArrow"
+        class="my-icon"
+        [size]="24"
+        [strokeWidth]="3"
+      ></lucide-icon>
+    </button>
+
+    <nav class="flex-1 overflow-y-auto scroll-hidden">
+      <ul class="space-y-4 py-4 mt-16 md:mt-0">
+        <ng-container *ngFor="let item of menuItems">
+          <li
+            class="flex flex-1 px-4 py-2"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [ngClass]="{
+              'bg-gradient-to-r from-bounsic-red to-bounsic-yellow font-medium': rla.isActive
+            }"
+          >
+            <ng-container *ngIf="item.route; else staticContent">
+              <a [routerLink]="[item.route]" class="flex items-center w-full">
+                <lucide-icon
+                  [img]="item.icon"
+                  class="my-icon mr-2"
+                  [size]="20"
+                  [strokeWidth]="2"
+                ></lucide-icon>
+                {{ item.label | translate }}
+              </a>
+            </ng-container>
+            <ng-template #staticContent>
+              <div class="flex items-center w-full">
+                <lucide-icon
+                  [img]="item.icon"
+                  class="my-icon mr-2"
+                  [size]="20"
+                  [strokeWidth]="2"
+                ></lucide-icon>
+                {{ item.label | translate }}
+              </div>
+            </ng-template>
+          </li>
+        </ng-container>
+        
+      </ul>
+    </nav>
+
+    <!-- Logo -->
+    <div class="p-6 flex justify-center cursor-pointer" (click)="goBack()">
+      <img
+        class="size-12 not-dark:invert"
+        src="/logo/svg/logoBounsic_reduced.svg"
+        alt="Logo_Bounsic"
+      />
+    </div>
+  </aside>
+
+  <!-- Contenido principal scrollable -->
+  <main
+    class="flex-1 max-h-screen overflow-y-auto pt-20 md:pt-[10vh] px-4 md:px-10"
+  >
+    <router-outlet></router-outlet>
+  </main>
+</body>
