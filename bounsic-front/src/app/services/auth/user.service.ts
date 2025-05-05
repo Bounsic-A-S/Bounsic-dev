@@ -14,10 +14,13 @@ export class UserService {
   getUserByEmail(email: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user/${email}`);
   }
+  isSongLikedByUser(user_id:number,song_id:String): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/user/hasLike/${user_id}/${song_id}`);
+  }
   registerUser(user: any): Observable<boolean> {
     return this.http.post<boolean>(`${this.apiUrl}/user/register`, user);
   }
-  updateUser(user:any,id:number) : Observable<boolean> {
+  updateUser(user: any, id: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.apiUrl}/user/update/${id}`, user);
   }
   setLanguage(language: string, id: number): Observable<boolean> {

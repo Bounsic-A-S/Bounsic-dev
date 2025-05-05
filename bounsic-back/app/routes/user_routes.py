@@ -134,6 +134,10 @@ async def delete_playlist(playlist_id: int):
 async def get_likes_by_user(user_email: str):
     return await MySQLController.get_likes_by_user(user_email)
 
+@router.get("/hasLike/{user_id}/{id}")
+async def check_like_by_user(user_id: int , id :str):
+    return await MySQLController.check_like_by_user(user_id,id)
+
 @router.post("/likes")
 async def create_like(request: Request):
     data = await request.json()

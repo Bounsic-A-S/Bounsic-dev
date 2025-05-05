@@ -508,6 +508,14 @@ class MySQLSongService:
             return None
 
     @staticmethod
+    async def check_like_by_user( user_id , song_id):
+        try:
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            return None
+
+    @staticmethod
     async def insert_like(data):
         try:
             query = """

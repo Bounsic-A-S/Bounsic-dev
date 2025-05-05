@@ -92,6 +92,9 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     audio.muted = !audio.muted;
     this.volume.set(audio.muted ? 0 : this.lastVolume);
   }
+  toggleLike(){
+    console.log(this.song.isLiked ? "quit like":"add like")
+  }
 
   onVolumeChange(vol: number) {
     const audio = this.audioRef?.nativeElement;

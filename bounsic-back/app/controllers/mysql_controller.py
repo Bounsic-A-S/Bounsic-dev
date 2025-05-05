@@ -447,6 +447,18 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching likes by user")
+    @staticmethod
+    async def check_like_by_user( user_id , song_id):
+        try:
+            likes = await MySQLSongService.check_like_by_user(user_id,song_id)
+            if not likes:
+                return JSONResponse(status_code=200, content=False)
+            return JSONResponse(status_code=200, content=True)
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            raise HTTPException(status_code=500, detail="Error fetching likes by user")
 
     @staticmethod
     async def create_like( data):
