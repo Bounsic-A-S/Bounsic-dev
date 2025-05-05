@@ -141,7 +141,7 @@ async def check_like_by_user(user_id: int , song_id :str):
 @router.post("/likes/add")
 async def create_like(request: Request):
     data = await request.json()
-    user_id = data.get("email")
+    user_id = data.get("user_id")
     song_mongo_id = data.get("song_mongo_id")
     return await MySQLController.create_like(user_id,song_mongo_id)
 

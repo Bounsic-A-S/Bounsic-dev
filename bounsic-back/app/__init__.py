@@ -36,7 +36,7 @@ print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
 # Opcional: Importar y registrar routers aquí
 from app.routes import algorithms_router, bert_router, crawl_router, scrapping_router, song_router, db_router, health_router, artist_router, spotify_router, playlist_router, mysql_router,user_router
 
-
+print("im here")
 # app.include_router(bert_router, prefix="/bert", tags=["BERT NLP"])
 app.include_router(crawl_router, prefix="/crawl", tags=["Crawling"])
 app.include_router(scrapping_router, prefix="/scrapping", tags=["Scrapping"])

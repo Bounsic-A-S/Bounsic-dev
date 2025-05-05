@@ -7,12 +7,11 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { HoverExitDirective } from '@app/directive/onhoverexit.directive';
 import { LucideAngularModule, Volume2, VolumeX, List } from 'lucide-angular';
 @Component({
   selector: 'player-music-playbar-controllers',
   standalone: true,
-  imports: [LucideAngularModule, CommonModule, HoverExitDirective],
+  imports: [LucideAngularModule, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './playbar-controllers.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,16 +26,7 @@ export class PlayerBarControllersComponent {
   @Input() volume!: number;
   @Output() toggleMute = new EventEmitter<void>();
   @Output() onVolumeChange = new EventEmitter<number>();
-  //vars
-  public isVolumeOpen = false;
 
-  openVolume() {
-    console.log('hi');
-    this.isVolumeOpen = true;
-  }
-  closeVolume() {
-    if (this.isVolumeOpen) this.isVolumeOpen = false;
-  }
   onVolumeChange_(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.onVolumeChange.emit(parseFloat(value));
