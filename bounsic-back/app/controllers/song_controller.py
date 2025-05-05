@@ -153,9 +153,13 @@ async def safe_choice_recomendation(email: str):
     
 async def get_top_12_songs_controller():
     try:
-        songs = get_complete_top_12()
+        print("entro al controlador de top12")
+        songs = await get_complete_top_12() 
         if not songs:
             raise HTTPException(status_code=404, detail="No se encontraron canciones")
         return JSONResponse(status_code=200, content={"data": songs})
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Error interno al obtener las canciones")
+        
+

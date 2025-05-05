@@ -195,6 +195,7 @@ def insert_song(track_name: str):
         return {"error": "Database error", "details": str(e)}
 
 def generar_song_data(track_name):
+    from app.services import get_artist_and_genre_by_track,get_album_images
     video_url = buscar_en_youtube(track_name)
     if not video_url:
         print("No se encontró el video en YouTube.")
@@ -237,14 +238,19 @@ def generar_song_data(track_name):
 
     return song_data
 
-def get_complete_top_12():
+async def get_complete_top_12():
+    from app.services import get_top_tracks_lastfm
     try:
-        top_tracks = get_top_tracks_lastfm()  # Devuelve lista de títulos
+        print("entra al get_complete_top_12")
+        top_tracks = await get_top_tracks_lastfm()
+        print(top_tracks)
+
         if not top_tracks:
             return {"error": "No se pudieron obtener las canciones desde Last.fm"}
 
         result = []
-        for track_name in top_tracks:
+        for track in top_tracks:
+            track_name = track.get("name")  # Asegúrate de que tomas el nombre de la canción
             # Verificar si ya está en la base de datos
             song = getSongByTitle(track_name)
 
@@ -253,11 +259,12 @@ def get_complete_top_12():
                 insert_result = insert_song(track_name)
                 if "song_id" in insert_result:
                     song = getSongByTitle(track_name)
+                    print(f"Verificando canción: {track_name} - Resultado: {song}")
                 else:
                     print(f"Error insertando canción {track_name}: {insert_result}")
                     continue  # Salta si no se pudo insertar
 
-            # Armar respuesta
+            # Si la canción existe (ya sea insertada o encontrada)
             if song:
                 result.append({
                     "title": song.get("title"),
