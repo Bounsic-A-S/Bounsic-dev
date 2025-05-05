@@ -17,6 +17,8 @@ import { PlayerBarComponent } from './playbar/playbar.component';
 import { PlayerBarControllersComponent } from './controllers/playbar-controllers.component';
 import Song from 'src/types/Song';
 import { AudioStreamService } from '@app/services/streaming.service';
+import { AuthService } from '@app/services/auth/auth.service';
+import { UserService } from '@app/services/auth/user.service';
 
 @Component({
   selector: 'player-music',
@@ -46,6 +48,8 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
 
   @ViewChild('audio') audioRef?: ElementRef<HTMLAudioElement>;
   private audioStreamService = inject(AudioStreamService);
+  private authService = inject(AuthService)
+  private userService = inject(UserService)
 
   
   ngAfterViewInit() {
@@ -92,9 +96,34 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     audio.muted = !audio.muted;
     this.volume.set(audio.muted ? 0 : this.lastVolume);
   }
-  toggleLike(){
-    console.log(this.song.isLiked ? "quit like":"add like")
+  toggleLike() {
+    this.authService.userProfile$.subscribe(user => {
+      if (!user || !this.song) {
+        console.error('Usuario o canción no disponible');
+        return;
+      }
+      const songId = this.song._id;
+      const userId = user.id_user;
+      if (this.song.isLiked) {
+        this.userService.removeLike(userId, songId).subscribe({
+          next: () => {
+            console.log('Like removed');
+            this.song.isLiked = false;
+          },
+          error: err => console.error('err on removing like:', err)
+        });
+      } else {
+        this.userService.addLike(userId, songId).subscribe({
+          next: () => {
+            console.log('Like added');
+            this.song.isLiked = true;
+          },
+          error: err => console.error('err on adding like:', err)
+        });
+      }
+    });
   }
+  
 
   onVolumeChange(vol: number) {
     const audio = this.audioRef?.nativeElement;

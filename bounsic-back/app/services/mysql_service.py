@@ -516,15 +516,15 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def insert_like(data):
+    async def insert_like(user_id , song_id):
         try:
             query = """
                 INSERT INTO Bounsic_Like (user_id, song_mongo_id)
                 VALUES (:user_id, :song_mongo_id)
             """
             return await MySQLSongService._db.execute_query(query, {
-                "user_id": data["user_id"],
-                "song_mongo_id": data["song_mongo_id"]
+                "user_id": user_id,
+                "song_mongo_id": song_id
             })
         except Exception as e:
             logging.error(f"insert_like error: {e}")
@@ -541,9 +541,9 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def delete_like( like_id):
+    async def delete_like( user_id,song_id):
         try:
-            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE like_id = :like_id", ({"like_id":like_id},))
+            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
         except Exception as e:
             logging.error(f"delete_like error: {e}")
             return False
