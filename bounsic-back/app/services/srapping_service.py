@@ -259,10 +259,10 @@ class Scrapping_service:
     async def get_lyrics(song_name: str, artist: str):
         facade = SeleniumFacade()
         search_url = await Scrapping_service.get_lyrics1(song_name, artist, facade)
-        if not search_url:
-            return None
+        if not search_url or "letra no disponible" in search_url.lower():
+            lyrics = "Letra no disponible en el momento"
+            return lyrics
         url = Scrapping_service.limpiar_url(search_url)
-        print(url)
 
         lyrics = await Scrapping_service.get_lyrics_bs(url)
         if lyrics:
@@ -276,7 +276,7 @@ class Scrapping_service:
             return lyrics
 
         print(f"❌ Letra no encontrada: {song_name}")
-        return None
+        return "Letra no disponible en el momento"
 
     @staticmethod
     async def get_lyrics_bs(url):
@@ -299,7 +299,7 @@ class Scrapping_service:
     async def get_lyrics_selenium(url, driver):
         try:
             driver.get(url)
-            lyric_div = WebDriverWait(driver, 5).until(
+            lyric_div = WebDriverWait(driver, 3).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div.lyric-original"))
             )
             html = lyric_div.get_attribute("innerHTML")

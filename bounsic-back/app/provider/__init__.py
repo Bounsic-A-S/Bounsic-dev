@@ -5,3 +5,4 @@ from .mysql_db import DatabaseFacade
 from .spotify_provider import sp
 from .selenium_provider import SeleniumFacade
 from .songs_db_provider import Songs_db_provider
+from .lastfm_provider import API_KEY, BASE_URL
