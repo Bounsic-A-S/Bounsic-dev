@@ -10,10 +10,71 @@
   }
   
   /* Custom gradient shadow for the ERROR text */
-  .error-shadow, .number-shadow, .subtitle-shadow {
-    text-shadow: 14px 14px 15px rgba(0, 0, 0, 0.85);
+  .error-shadow {
+    text-shadow: 20px 20px 40px rgba(0, 0, 0, 0.85);
     mix-blend-mode: multiply;
     color: white;
+  }
+
+  .subtitle-shadow{
+    text-shadow: 15px 15px 30px rgba(0, 0, 0, 0.85);
+    mix-blend-mode: multiply;
+    color: white;
+  }
+
+  .custom-h1 {
+    font-size: 8rem; /* Tamaño muy grande para pantallas grandes */
+    line-height: 0.8;
+    margin-bottom: 0;
+
+  }
+  
+  .custom-h1 .number {
+    font-size: 12rem; /* Tamaño muy grande para el número */
+  }
+  
+  .custom-h2 {
+    font-size: 4.5rem; /* Tamaño muy grande para pantallas grandes */
+    line-height: 1;
+  }
+  
+
+  @media (max-width: 1537px) {
+    .custom-h1 {
+      font-size: 7.5rem; /* Tamaño más pequeño para pantallas medianas */
+    }
+    .custom-h1 .number {
+      font-size: 11rem; /* Tamaño más pequeño para el número */
+    }
+    .custom-h2 {
+      font-size: 3.5rem; /* Tamaño más pequeño para el h2 */
+    }
+  }
+  
+  /* Pantallas medianas y menores (tablets, móviles grandes) */
+  @media (max-width: 1024px) {
+    .custom-h1 {
+      font-size: 7rem; /* Tamaño más pequeño para pantallas medianas */
+    }
+    .custom-h1 .number {
+      font-size: 10rem; /* Tamaño más pequeño para el número */
+    }
+    .custom-h2 {
+      font-size: 3.2rem; /* Tamaño más pequeño para el h2 */
+    }
+  }
+  
+  /* Pantallas pequeñas (móviles) */
+  @media (max-width: 640px) {
+    .custom-h1 {
+      font-size: 4.5rem; /* Tamaño aún más pequeño para móviles */
+    }
+    .custom-h1 .number {
+      font-size: 6rem; /* Tamaño más pequeño para el número */
+    }
+    .custom-h2 {
+      font-size: 2.5rem; /* Tamaño más pequeño para el h2 */
+    }
   }
   
   

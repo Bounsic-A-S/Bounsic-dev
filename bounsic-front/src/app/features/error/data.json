@@ -10,11 +10,6 @@
         "artist": "Lionel Richie"
     },
     {
-        "phrase": "I still haven't found what I'm looking for",
-        "song": "I Still Haven't Found What I'm Looking For",
-        "artist": "U2"
-    },
-    {
         "phrase": "Where did I go wrong?",
         "song": "How to Save a Life",
         "artist": "The Fray"
@@ -105,11 +100,6 @@
         "artist": "Avenged Sevenfold"
     },
     {
-        "phrase": "You can't always get what you want",
-        "song": "You Can't Always Get What You Want",
-        "artist": "The Rolling Stones"
-    },
-    {
         "phrase": "¡Qué lástima, pero adiós!",
         "song": "Me Voy",
         "artist": "Julieta Venegas"
@@ -140,7 +130,7 @@
         "artist": "Maluma"
     },
     {
-        "phrase": "¿Qué-Qué-Qué-Qué-Qué-Qué pasó, pa'?",
+        "phrase": "All aboard! Britney, before you go",
         "song": "Oops!... I Did It Again",
         "artist": "Britney Spears"
     },
