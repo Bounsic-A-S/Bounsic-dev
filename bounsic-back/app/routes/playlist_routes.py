@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Body, HTTPException, Request
 from bson import ObjectId
 from pymongo.errors import PyMongoError
@@ -32,10 +33,9 @@ def get_playlist_by_id(playlist_id: str):
 @router.post("/create")
 def create_playlist(
     user_id: int = Body(..., embed=True),
-    is_public: bool = Body(..., embed=True),
-    img_url: str = Body(..., embed=True)
+    img_url: Optional[str] = Body(None, embed=True)
 ):
-    return create_user_playlist_controller(user_id, is_public, img_url)
+    return create_user_playlist_controller(user_id, img_url)
     
 @router.post("/add-song")
 def add_song_to_playlist(

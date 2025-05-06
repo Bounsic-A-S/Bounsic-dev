@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
+from fastapi.staticfiles import StaticFiles
+
 dotenv_path = Path(__file__).resolve().parent.parent / "env" / ".env.dev"
 if not load_dotenv(dotenv_path):
     print(f"⚠️ No se pudo cargar el archivo {dotenv_path}")
@@ -30,7 +32,11 @@ debug_mode = os.getenv("DEBUG", "False") == "True"
 env_mode = "debug" if debug_mode else "production"
 os.environ["PYTHONPYCACHEPREFIX"] = os.path.abspath("./.pycache_project")
 
+
 print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
+
+
+app.mount("/static", StaticFiles(directory="app/services/images"), name="static")
 
 
 # Opcional: Importar y registrar routers aquí
