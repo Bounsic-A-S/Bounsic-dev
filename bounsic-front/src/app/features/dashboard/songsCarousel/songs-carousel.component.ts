@@ -7,6 +7,7 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { SkeletonSongInColComponent } from '@app/shared/ui/skeletons/song_in_col/skeleton-song-card-col.component';
 import { LucideAngularModule, ChevronRight, ChevronLeft } from 'lucide-angular';
 import DashboardSong from 'src/types/dashboard/DashboardSong';
@@ -14,7 +15,7 @@ import DashboardSong from 'src/types/dashboard/DashboardSong';
 @Component({
   selector: 'dashboard-songsCarousel',
   templateUrl: 'songs-carousel.component.html',
-  imports: [CommonModule, LucideAngularModule,SkeletonSongInColComponent],
+  imports: [CommonModule, LucideAngularModule,SkeletonSongInColComponent,RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongsCarouselComponent {

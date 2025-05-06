@@ -14,7 +14,7 @@ import { ArtistListComponent } from './artistList/artist_list.component';
 import { LastMonthSongsComponent } from './lastMonthSongs/last-month-songs.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ArtistService } from '@app/services/artist.service';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SongService } from '@app/services/song.service';
 import DashboardSong from 'src/types/dashboard/DashboardSong';
@@ -67,7 +67,9 @@ export class DashboardComponent implements OnInit {
   private getData(email: string): void {
     this.artists$ = this.artistService.getArtistsByUser(email);
     this.songSafeChoices$ = this.songService.getSafeChoices(email);
-    // this.songRelated$ = this.songService.getRelatedSongs(email);
+    this.songRelated$ = this.songService.getRelatedSongs(email).pipe(
+      take(1)
+    );
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }
