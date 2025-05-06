@@ -31,12 +31,13 @@ def get_playlist_by_id(playlist_id: str):
         raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")
     
 @router.post("/create")
-def create_playlist(
+async def create_playlist(
     user_id: int = Body(..., embed=True),
     playlist_name: str = Body(..., embed=True),  
     img_url: Optional[str] = Body(None, embed=True)  
 ):
-    return create_user_playlist_controller(user_id, playlist_name, img_url)
+    return await create_user_playlist_controller(user_id, playlist_name, img_url)
+
     
 @router.post("/add-song")
 def add_song_to_playlist(

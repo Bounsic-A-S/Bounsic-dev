@@ -1,9 +1,11 @@
 from datetime import datetime
 from http import client
+import logging
 from typing import Optional
 from bson import ObjectId
 from app.provider import db
 from pymongo.errors import PyMongoError
+
 
 
 def getPlaylistById(playlist_id: str):
@@ -57,27 +59,36 @@ def getAllPlaylists():
     except Exception as e:
         return {"error": "Unexpected error", "details": str(e)}
     
-
-def create_user_playlist(user_id: int, playlist_name: str, img_url: Optional[str] = None):
+async def create_user_playlist(user_id: int, playlist_name: str, img_url: Optional[str] = None):
     try:
-        DEFAULT_IMAGE_URL = "http://localhost:1801/static/Bounsic-Playlist.jpg"
-        playlists = db["playlists"]
-
+        from  app.services import MySQLSongService
+        playlist = db["playlists"]
+        DEFAULT_IMAGE_URL = "https://bounsicmetadata.blob.core.windows.net/imgs/Default_Playlist_img.jpg"
         img_url = img_url.strip() if isinstance(img_url, str) and img_url else DEFAULT_IMAGE_URL
 
         new_playlist = {
-            "user_id": user_id,
-            "playlist_name": playlist_name,  
-            "isPublic": True,  
+            "playlist_name": playlist_name,
+            "isPublic": True,
             "songs": [],
             "img_url": img_url,
             "updated_at": datetime.utcnow()
         }
 
-        result = playlists.insert_one(new_playlist)
-        print("Playlist creada con éxito.")
-        return str(result.inserted_id)
+        result = playlist.insert_one(new_playlist)
+        mongo_playlist_id = str(result.inserted_id)
+        print("Playlist creada en MongoDB con ID:", mongo_playlist_id)
+
+        data = {
+            "plist_name": playlist_name,
+            "playlist_desc": "",  
+            "playlist_mongo_id": mongo_playlist_id,
+            "user_id": user_id
+        }
+
+        await MySQLSongService.insert_playlist(data)
+
+        return mongo_playlist_id
 
     except Exception as e:
-        print("Error al crear la playlist:", str(e))
+        logging.error(f"Error al crear la playlist: {e}")
         return None

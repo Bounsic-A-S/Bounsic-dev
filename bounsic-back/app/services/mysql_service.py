@@ -364,23 +364,37 @@ class MySQLSongService:
     @staticmethod
     async def insert_playlist(data):
         try:
-            query = "INSERT INTO Bounsic_Playlist (plist_name, playlist_desc, playlist_mongo_id) VALUES (%s, %s, %s)"
-            values = (data["plist_name"], data.get("playlist_desc"), data["playlist_mongo_id"])
-            result = MySQLSongService._db.execute_query(query, values)
+            query = """
+            INSERT INTO Bounsic_Playlist (plist_name, playlist_desc, playlist_mongo_id)
+            VALUES (:p1, :p2, :p3)
+            """
+            values = {
+                "p1": data["plist_name"],
+                "p2": data.get("playlist_desc"),
+                "p3": data["playlist_mongo_id"]
+            }
+
+            result = await MySQLSongService._db.execute_query(query, values)
 
             if "user_id" in data and result:
-                # Obtener el ID directamente del resultado
-                playlist_id = result["lastrowid"]
-                
+                last_id_result = await MySQLSongService._db.execute_query("SELECT LAST_INSERT_ID() AS id")
+                playlist_id = last_id_result[0]["id"]
+
                 await MySQLSongService._db.execute_query(
-                    "INSERT INTO Bounsic_User_Playlists (user_id, playlist_id) VALUES (%s, %s)", 
-                    (data["user_id"], playlist_id)
+                    """
+                    INSERT INTO Bounsic_User_Playlists (user_id, playlist_id)
+                    VALUES (:user_id, :playlist_id)
+                    """,
+                    {"user_id": data["user_id"], "playlist_id": playlist_id}
                 )
 
             return result
         except Exception as e:
-            logging(f"insert_playlist error: {e}")
+            logging.error(f"insert_playlist error: {e}")
             return False
+
+           
+
 
     @staticmethod
     async def update_playlist( playlist_id, data):
