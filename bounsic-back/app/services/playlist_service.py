@@ -1,7 +1,8 @@
+from datetime import datetime
+from http import client
 from bson import ObjectId
 from app.provider import db
 from pymongo.errors import PyMongoError
-
 
 
 def getPlaylistById(playlist_id: str):
@@ -54,3 +55,24 @@ def getAllPlaylists():
         return {"error": "Database error", "details": str(e)}
     except Exception as e:
         return {"error": "Unexpected error", "details": str(e)}
+    
+
+def create_user_playlist(user_id: int, img_url: str, is_public: bool = True):
+    try:
+        playlists = db["playlists"]
+
+        new_playlist = {
+            "user_id": user_id,
+            "isPublic": is_public,
+            "songs": [],
+            "img_url": img_url,
+            "updated_at": datetime.utcnow()
+        }
+
+        result = playlists.insert_one(new_playlist)
+        print("Playlist creada con éxito.")
+        return str(result.inserted_id)
+
+    except Exception as e:
+        print("Error al crear la playlist:", str(e))
+        return None

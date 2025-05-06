@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Body, HTTPException, Request
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller
+from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller,create_user_playlist_controller
 
 router = APIRouter()
 
@@ -29,4 +29,18 @@ def get_playlist_by_id(playlist_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")
     
+@router.post("/create")
+def create_playlist(
+    user_id: int = Body(..., embed=True),
+    is_public: bool = Body(..., embed=True),
+    img_url: str = Body(..., embed=True)
+):
+    return create_user_playlist_controller(user_id, is_public, img_url)
+    
+@router.post("/add-song")
+def add_song_to_playlist(
+    user_id: int = Body(..., embed=True),
+    song_id: str = Body(..., embed=True)
+):
+    return create_user_playlist_controller(user_id, song_id)
 

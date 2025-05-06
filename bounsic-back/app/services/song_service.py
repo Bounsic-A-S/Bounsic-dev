@@ -279,3 +279,4 @@ async def get_complete_top_12():
         import traceback
         traceback.print_exc()
         return {"error": "Error procesando las canciones", "details": str(e)}
+    
