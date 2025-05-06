@@ -81,7 +81,6 @@ class MySQLSongService:
             logging.error(f"update_user_by_id error: {e}")
             return False
 
-
     @staticmethod
     async def delete_user( user_id):
         try:
@@ -98,22 +97,14 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"get_all_roles error: {e}")
             return None
-        
-    @staticmethod
-    async def get_role_by_email(email: str):
-        try:
-            query = """
-                SELECT Bounsic_Role.*
-                FROM Bounsic_Users
-                INNER JOIN Bounsic_Role ON Bounsic_Users.id_rol = Bounsic_Role.id_rol
-                WHERE Bounsic_Users.email = :email
-            """
-            # Ejecuta la consulta pasando el parámetro 'email' para filtrar
-            return await MySQLSongService._db.execute_query(query, {'email': email})
-        except Exception as e:
-            logging.error(f"get_role_by_email error: {e}")
-            return None
 
+    @staticmethod
+    async def get_role_by_id( role_id):
+        try:
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Role WHERE id_rol = %s", (role_id,))
+        except Exception as e:
+            logging.error(f"get_role_by_id error: {e}")
+            return None
 
     @staticmethod
     async def insert_role( data):
@@ -246,7 +237,7 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def get_preferences_by_user(user_id):
+    async def get_preferences_by_user( user_id):
         try:
             query = "SELECT * FROM Bounsic_Preferences WHERE user_id = :user_id"
             return await MySQLSongService._db.execute_query(query, {"user_id": user_id})
@@ -254,9 +245,8 @@ class MySQLSongService:
             logging.error(f"get_preferences_by_user error: {e}")
             return None
 
-
     @staticmethod
-    async def insert_preference(data):
+    async def insert_preference( data):
         try:
             query = """
                 INSERT INTO Bounsic_Preferences (user_id, background, typography, language)
@@ -279,11 +269,11 @@ class MySQLSongService:
         }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
-            logging.error(f"update_preference error: {e}")
+            logging.error(f"insert_preference error: {e}")
             return False
-        
+
     @staticmethod
-    async def update_font_size( user_id, fontSize):
+    async def update_preference( preference_id, data):
         try:
             query = "UPDATE Bounsic_Preferences SET typography= :fontSize WHERE user_id= :user_id"
             values = {
@@ -306,7 +296,6 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"update_preference error: {e}")
             return False
-
 
     @staticmethod
     async def delete_preference( preference_id):
@@ -347,7 +336,7 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def get_history_by_user(email):
+    async def get_history_by_user( user_id):
         try:
             query = """
                 SELECT h.*
@@ -363,7 +352,6 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"get_history_by_user error: {e}")
             return None
-
 
     @staticmethod
     async def insert_history( data):
@@ -516,17 +504,8 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"delete_like error: {e}")
             return False
-        
-    async def get_random_likes(user_id: int, number: int):
-        # Return (number) random song_id in likes of user (user_id)
-        try:
-            query = "SELECT song_mongo_id FROM Bounsic_Like WHERE user_id = :user_id ORDER BY RAND() LIMIT :number"
-            return await MySQLSongService._db.execute_query(query, ({"user_id": user_id, "number": number}))
-        except Exception as e:
-            logging.error(f"get_like error: {e}")
-            return False
 
-    # recomendations ------ METHODS ACTUALLY USEFUL
+    # recomendations
     @staticmethod
     async def get_safe_choices(email: str):
         try:
@@ -571,82 +550,4 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"Error in get_safe_choices_by_email: {e}")
             return []
-        
-    @staticmethod
-    async def get_likes_by_user_email( email):
-        try:
-            query = """
-            SELECT Bounsic_Like.*, Bounsic_Users.email, Bounsic_Users.username
-            FROM Bounsic_Like
-            JOIN Bounsic_Users ON Bounsic_Like.user_id = Bounsic_Users.id_user
-            WHERE Bounsic_Users.email = :email
-            """
-            return await MySQLSongService._db.execute_query(query, {"email": email})
-        except Exception as e:
-            logging.error(f"get_lsafe_choices error: {e}")
-            return None
-        
-    @staticmethod
-    async def get_history_month(email):
-        try:
-            query = """
-                SELECT 
-                    song_mongo_id,
-                    last_listened,
-                    cant_repro
-                FROM (
-                    SELECT h.song_mongo_id, h.last_listened, h.cant_repro
-                    FROM Bounsic_Users u
-                    JOIN Bounsic_History h ON u.id_user = h.user_id
-                    WHERE u.email = :email
-                    ORDER BY h.last_listened DESC
-                    LIMIT 12
-                ) AS ultimas
-                ORDER BY RAND();
-            """
-            return await MySQLSongService._db.execute_query(query, {"email": email})
-        except Exception as e:
-            logging.error(f"get_history_month error: {e}")
-            return None
 
-    @staticmethod
-    async def get_full_user_by_email( email):
-        try:
-            query = """ 
-                    SELECT 
-                        u.id_user,
-                        u.username,
-                        u.name,
-                        u.email,
-                        u.country,
-                        u.phone,
-                        u.creation_date AS membre_since,
-                        r.name_rol AS role,
-                        u.profile_img,
-                        p.background,
-                        p.typography,
-                        p.language,
-                        p.theme
-                    FROM 
-                        Bounsic_Users u
-                    INNER JOIN 
-                        Bounsic_Role r ON u.rol_user = r.id_rol
-                    LEFT JOIN 
-                        Bounsic_Preferences p ON u.id_user = p.user_id
-                    WHERE 
-                        u.email = :email;
-            """
-            return await MySQLSongService._db.execute_query(query, {"email": email})
-        except Exception as e:
-            print.error(f"get_full_user_by_email error: {e}")
-            return None
-        
-    async def get_most_played_songs(user_id, size):
-        try:
-            query = """SELECT bh.song_mongo_id, bh.cant_repro AS play_count 
-                    FROM Bounsic_History bh 
-                    WHERE bh.user_id = :id ORDER BY  bh.cant_repro DESC LIMIT :size"""
-            return await MySQLSongService._db.execute_query(query, ({"id": user_id, "size": size}))
-        except Exception as e:
-            logging.error(f"get_most_played_songs error: {e}")
-            return False
