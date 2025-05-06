@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit {
   private getData(email: string): void {
     this.artists$ = this.artistService.getArtistsByUser(email);
     this.songSafeChoices$ = this.songService.getSafeChoices(email);
-    this.songRelated$ = this.songService.getRelatedSongs(email);
+    // this.songRelated$ = this.songService.getRelatedSongs(email);
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }
