@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import HTTPException, Request
 from app.services import getPlaylistById,getAllPlaylists,create_user_playlist
 
@@ -14,8 +15,8 @@ async def get_all_playlists_controller(request: Request):
     return getAllPlaylists()
 
 
-def create_user_playlist_controller(user_id: int, img_url: str):
-    inserted_id = create_user_playlist(user_id, img_url)
+def create_user_playlist_controller(user_id: int, playlist_name: str, img_url: Optional[str]):
+    inserted_id = create_user_playlist(user_id, playlist_name, img_url)
 
     if not inserted_id:
         raise HTTPException(status_code=500, detail="Error al crear la playlist")

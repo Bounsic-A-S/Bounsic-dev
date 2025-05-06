@@ -1,5 +1,6 @@
 from datetime import datetime
 from http import client
+from typing import Optional
 from bson import ObjectId
 from app.provider import db
 from pymongo.errors import PyMongoError
@@ -57,17 +58,17 @@ def getAllPlaylists():
         return {"error": "Unexpected error", "details": str(e)}
     
 
-def create_user_playlist(user_id: int, img_url: str = None):
+def create_user_playlist(user_id: int, playlist_name: str, img_url: Optional[str] = None):
     try:
         DEFAULT_IMAGE_URL = "http://localhost:1801/static/Bounsic-Playlist.jpg"
         playlists = db["playlists"]
 
         img_url = img_url.strip() if isinstance(img_url, str) and img_url else DEFAULT_IMAGE_URL
-        
 
         new_playlist = {
             "user_id": user_id,
-            "isPublic": True,
+            "playlist_name": playlist_name,  
+            "isPublic": True,  
             "songs": [],
             "img_url": img_url,
             "updated_at": datetime.utcnow()
