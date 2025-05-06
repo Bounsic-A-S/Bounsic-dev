@@ -19,6 +19,7 @@ import Song from 'src/types/Song';
 import { AudioStreamService } from '@app/services/streaming.service';
 import { AuthService } from '@app/services/auth/auth.service';
 import { UserService } from '@app/services/auth/user.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'player-music',
@@ -97,30 +98,32 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     this.volume.set(audio.muted ? 0 : this.lastVolume);
   }
   toggleLike() {
-    this.authService.userProfile$.subscribe(user => {
+    this.authService.userProfile$.pipe(take(1)).subscribe(user => {
       if (!user || !this.song) {
         console.error('Usuario o canción no disponible');
         return;
       }
+      //vars
       const songId = this.song._id;
       const userId = user.id_user;
-      if (this.song.isLiked) {
-        this.userService.removeLike(userId, songId).subscribe({
-          next: () => {
-            console.log('Like removed');
-            this.song.isLiked = false;
-          },
-          error: err => console.error('err on removing like:', err)
-        });
-      } else {
-        this.userService.addLike(userId, songId).subscribe({
-          next: () => {
-            console.log('Like added');
-            this.song.isLiked = true;
-          },
-          error: err => console.error('err on adding like:', err)
-        });
+      if(!userId || !songId) return;
+      // ui vars
+      const previousState = this.song.isLiked;
+      this.song.isLiked = !this.song.isLiked;
+      //api call
+      const likeObservable = this.song.isLiked
+      ? this.userService.addLike(userId, songId)
+      : this.userService.removeLike(userId, songId);
+
+    likeObservable.subscribe({
+      next: () => {
+        console.log(this.song.isLiked ? 'Like added' : 'Like removed');
+      },
+      error: err => {
+        console.error('Error al actualizar like:', err);
+        this.song.isLiked = previousState;
       }
+    });
     });
   }
   

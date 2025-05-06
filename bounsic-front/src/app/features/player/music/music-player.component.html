@@ -29,7 +29,7 @@
         <p class="text-sm text-bounsic-gray-2 truncate not-dark:text-bounsic-dark-1">{{song.artist}}</p>
       </div>
       <div class="flex gap-2 sm:gap-4 ml-auto px-2 sm:px-4">
-        <button (click)="toggleLike()" class="text-bounsic-gray-2 hover:text-white transition-colors not-dark:text-bounsic-dark-1 not-dark:hover:text-black">
+        <button (click)="toggleLike()" class="text-bounsic-gray-2 hover:text-white transition-colors cursor-pointer not-dark:text-bounsic-dark-1 not-dark:hover:text-black">
           <ng-container *ngIf="song.isLiked; else notLiked">
             <lucide-angular 
               [img]="Heart" 
