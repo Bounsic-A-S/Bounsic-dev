@@ -7,6 +7,7 @@
   --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-bebas-neue: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
   /* colors */
   /* black & white levels , scale 1-4 , low -> strong */
   --color-bounsic-gray-1: #b8b7b7;
@@ -178,6 +179,16 @@
 }
 
 
+.bg-bounsic-gradient-404 {
+  background-image:
+    linear-gradient(to top, rgba(19, 19, 20, 0.8) 0%, rgba(19, 19, 20, 0.8) 50%, rgba(19, 19, 20, 0) 100%),
+    linear-gradient(to top, #131314 0%, #131314 100%);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-blend-mode: multiply;
+}
+
 /* FONTS */
 
 /* ROBOTO (MAIN) */
@@ -230,5 +241,15 @@
     url("assets/fonts/poppins/Poppins-Bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
+}
+
+/* BEBAS */
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("/assets/fonts/bebas-neue/BebasNeue-Regular.woff2") format("woff2"),
+       url("/assets/fonts/bebas-neue/BebasNeue-Regular.woff") format("woff");
+  font-weight: 900;
+  font-style: bold;
   font-display: swap;
 }
