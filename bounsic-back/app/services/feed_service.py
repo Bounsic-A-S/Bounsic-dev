@@ -84,14 +84,14 @@ class Feed_service:
     async def genre_recomendation(input_song, size, inserted_ids: Set[ObjectId]):
         songs = []
         if (len(input_song["genres"]) < 0):
-            return Song_service.get_random_songs(4)
+            return Db_service.get_random_songs(4)
         
-        songs = await Feed_service.get_songs_by_genre(input_song)
+        songs = await Feed_service.get_songs_by_genre(input_song, inserted_ids)
         if (len(songs) > size):
             songs = random.sample(songs, size)
         else:
             print(".fill in (Genre)")
-            songs += Song_service.get_random_songs(size - len(songs))
+            songs += Db_service.get_random_songs(size - len(songs))
         return songs
         
     @staticmethod
@@ -163,12 +163,19 @@ class Feed_service:
         return songs
 
     @staticmethod
-    async def get_songs_by_genre(input_song):
-        songs_collection = db["songs"]
+    async def get_songs_by_genre(input_song, inserted_ids: Set[ObjectId]):
+        songs_provider = Songs_db_provider()
+        input_genres = set(genre["genre"] for genre in input_song.get("genres", []))
         songs = []
-        target_genres = [genre_obj["genre"] for genre_obj in input_song.get("genres", [])]
-        songs = list(songs_collection.find({
-            "_id": { "$ne": input_song["_id"] },
-            "genres.genre": { "$in": target_genres }
-        }))
+        
+        for s in songs_provider.get_all():
+            if (s["_id"] in inserted_ids):
+                continue
+
+            s_genres = set(genre["genre"] for genre in s.get("genres", []))
+
+            if (input_genres & s_genres):
+                inserted_ids.add(s["_id"])
+                songs.append(s)
+                
         return songs
