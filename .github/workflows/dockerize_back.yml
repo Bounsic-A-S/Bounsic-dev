@@ -40,7 +40,7 @@ jobs:
           docker save bounsic-back | gzip > bounsic-back.tar.gz
 
       - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: bounsic-back
           path: bounsic-back.tar.gz
