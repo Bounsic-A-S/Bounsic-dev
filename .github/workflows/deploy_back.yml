@@ -1,22 +1,45 @@
-name: Deploy to Azure VM
+name: Dockerize and Deploy Bounsic Back
 
 on:
   workflow_run:
-    workflows: ["Dockerize Back"]
+    workflows: ["Run Tests"]
     types:
       - completed
 
 jobs:
-  deploy:
-    if: false  # Esta condición siempre será falsa, desactivando el workflow
+  dockerize_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Crear archivo .env.dev
+        run: |
+          mkdir -p ./bounsic-back/env
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+
+      - name: Verificar contenido del archivo .env.dev
+        run: cat ./bounsic-back/env/.env.dev
+
+      - name: Build Docker image
+        run: docker build -t bounsic-back ./bounsic-back
+
+      - name: Save Docker image
+        run: docker save bounsic-back | gzip > bounsic-back.tar.gz
+
+      - name: Transfer Docker image to Azure VM
+        uses: appleboy/scp-action@master
         with:
-          name: bounsic-back
-          path: ./artifact-download
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          source: "bounsic-back.tar.gz"
+          target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
 
       - name: SSH and deploy in Azure VM
         uses: appleboy/ssh-action@v0.1.8
@@ -25,20 +48,10 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
+          script_stop: true
           script: |
-            # Crear directorio de despliegue
-            mkdir -p /home/${{ secrets.AZURE_VM_USER }}/bounsic
-
-            # Copiar archivo al servidor
-            scp ./artifact-download/bounsic-back.tar.gz ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }}:/home/${{ secrets.AZURE_VM_USER }}/bounsic/
-
-            # Cargar imagen de Docker y ejecutar
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
             docker load -i bounsic-back.tar.gz
-
-            # Detener y eliminar contenedores anteriores
             docker stop bounsic-back || true
             docker rm bounsic-back || true
-
-            # Desplegar nuevo contenedor
             docker run -d --name bounsic-back -p 1801:8000 --env-file ./env/.env.dev bounsic-back:latest
