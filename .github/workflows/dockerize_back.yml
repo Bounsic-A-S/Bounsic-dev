@@ -22,10 +22,19 @@ jobs:
           mkdir -p ./bounsic-back/env
           echo "Contenido de ENV_BACK:"
           echo "${{ vars.ENV_BACK }}"
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+          
+          if [ -z "${{ vars.ENV_BACK }}" ]; then
+            echo "La variable ENV_BACK está vacía. Verifica la configuración."
+            exit 1
+          fi
       
-      - name: Verificar contenido del archivo .env.dev
-        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
+          echo "${{ vars.ENV_BACK }}" | tr ' ' '\n' > ./bounsic-back/env/.env.dev
+          
+          echo "Archivo .env.dev creado:"
+          ls -la ./bounsic-back/env
+      
+          echo "Contenido del archivo .env.dev:"
+          cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
 
 
       - name: Build Docker image
