@@ -1,22 +1,16 @@
-
-import asyncio
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import logging
 from functools import lru_cache
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import random
 import pickle
 import os
 from selenium.webdriver import ActionChains
-import undetected_chromedriver as uc
-import chromedriver_autoinstaller
 
 
 # Configuración de logging
@@ -35,52 +29,46 @@ class SeleniumFacade:
     
     @classmethod
     def _initialize_driver(cls):
-        """Inicializa el navegador optimizado para scraping con undetected_chromedriver"""
+        """Inicializa el navegador Chrome con configuración anti-detección"""
         try:
-            chromedriver_autoinstaller.install()  # Esto descargará automáticamente el ChromeDriver correcto
-            options = uc.ChromeOptions()
+            # Crear opciones de Chrome
+            options = webdriver.ChromeOptions()
             
             # ===== CONFIGURACIÓN ESENCIAL =====
             # Modo headless (descomentar para producción)
-            options.add_argument('--headless=new')  # Nueva sintaxis para Chrome >= 112
+            options.add_argument('--headless=new')  
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
             
             # ===== EVITAR DETECCIÓN =====
             options.add_argument('--disable-blink-features=AutomationControlled')
-            options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36')  # Actualizado a versión reciente
+            options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36')
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_experimental_option('useAutomationExtension', False)
             
-            # ===== OPTIMIZACIONES ===== (selección de las más efectivas)
+            # ===== OPTIMIZACIONES =====
             options.add_argument('--disable-extensions')
             options.add_argument('--disable-infobars')
-            options.add_argument('--disable-web-security') 
             options.add_argument('--log-level=3')
             
-            # ===== QUITAR CONFIGURACIONES REDUNDANTES/INNECESARIAS =====
-            # Removidas:
-            # - --disable-gpu (obsoleto en Chrome modernos)
-            # - --ignore-certificate-errors (peligroso)
-            # - --disable-software-rasterizer (no necesario)
-            # - --disable-3d-apis (redundante con --disable-webgl)
-            # - Configuraciones duplicadas de AutomationControlled
+            # ===== INICIALIZACIÓN ESTÁNDAR =====
+            # Si tienes un chromedriver descargado manualmente, especifica la ruta aquí
+            # chrome_path = "C:/ruta/a/tu/chromedriver.exe"  # Cambia esto a tu ruta
+            # service = Service(chrome_path)
             
-            # ===== INICIALIZACIÓN CON UNDETECTED_CHROMEDRIVER =====
-            cls._driver = uc.Chrome(
-                options=options,
-                use_subprocess=True
-            )
+            # Si prefieres que selenium busque el chromdriver automáticamente:
+            service = Service()
             
-            # ===== CONFIGURACIÓN ADICIONAL POST-INICIALIZACIÓN =====
+            cls._driver = webdriver.Chrome(service=service, options=options)
+            
+            # Stealth script
             cls._driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
                 "source": """
                     Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_JSON;
-                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
-                    delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
                 """
             })
             
-            logger.info("Navegador Chrome inicializado correctamente con undetected_chromedriver")
+            logger.info("Navegador Chrome inicializado correctamente")
             
         except Exception as e:
             logger.error(f"Error al inicializar el navegador: {str(e)}")
@@ -108,8 +96,9 @@ class SeleniumFacade:
         try:
             # Formar la URL de búsqueda
             search_url = f"https://www.letras.com/?q={song_name}-{artist}"
-            self.load_cookies()
             driver.get(search_url)
+            self.load_cookies(url=search_url)
+
 
             # Buscar si está el CAPTCHA
             captcha_present = self.is_captcha_present(driver)
@@ -123,7 +112,7 @@ class SeleniumFacade:
                 time.sleep(random.uniform(1, 3))
 
             # Esperar a que los resultados sean visibles
-            WebDriverWait(driver, 5).until(
+            WebDriverWait(driver, 3).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div.gsc-webResult"))
             )
 
@@ -133,7 +122,7 @@ class SeleniumFacade:
                 return results[0].get_attribute("href")
             else:
                 logger.warning("❌ No se encontraron resultados")
-                return "No se encontraron resultados visibles"
+                return "letra no disponible en el momento"
 
         except TimeoutException:
             logger.warning("⚠️ Timeout: No se encontraron resultados visibles")
@@ -189,22 +178,15 @@ class SeleniumFacade:
         with open(path, "wb") as f:
             pickle.dump(self._driver.get_cookies(), f)
 
-    def load_cookies(self, url="https://www.letras.com", path="cookies.pkl"):
+    def load_cookies(self, url, path="cookies.pkl"):
         try:
-            self._driver.get(url)  # Primero carga la página
-            time.sleep(2)  # Espera para asegurar carga
-            
             if os.path.exists(path):
-                with open(path, "rb") as f:
-                    cookies = pickle.load(f)
-                    for cookie in cookies:
-                        try:
-                            self._driver.add_cookie(cookie)
-                        except Exception as e:
-                            logger.warning(f"Error añadiendo cookie: {e}")
-                self._driver.refresh()  # Recarga para aplicar cookies
+                for cookie in pickle.load(open(path, "rb")):
+                    try:
+                        self._driver.add_cookie(cookie)
+                    except Exception:
+                        pass
+            self._driver.get(url)
+            self._driver.refresh()
         except Exception as e:
             logger.error(f"Error cargando cookies: {e}")
-
-
-

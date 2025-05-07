@@ -58,3 +58,7 @@ async def get_most_listenes(request : Request):
     data = await request.json()
     user_email = data.get("email")
     return await Song_controller.get_most_listened(user_email)
+
+@router.get("/top12")
+async def get_top_12_songs():
+    return await Song_controller.get_top_12_songs_controller()
