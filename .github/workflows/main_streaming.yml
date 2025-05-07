@@ -6,7 +6,7 @@ name: Build and deploy container app to Azure Web App - streaming
 on:
   push:
     branches:
-      - main
+      - feat/deploy-streaming
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: bounsic.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ec3a57fb8d5348c8a57516d4dd9de55a }}/streaming:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./streaming/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
