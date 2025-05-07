@@ -1,8 +1,8 @@
 from typing import Optional
-from fastapi import APIRouter, Body, HTTPException, Request
+from fastapi import APIRouter, Body, HTTPException, Query, Request
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller,create_user_playlist_controller
+from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller,create_user_playlist_controller,add_song_to_playlist_controller
 
 router = APIRouter()
 
@@ -40,9 +40,9 @@ async def create_playlist(
 
     
 @router.post("/add-song")
-def add_song_to_playlist(
-    user_id: int = Body(..., embed=True),
-    song_id: str = Body(..., embed=True)
+async def add_song_to_playlist(
+    playlist_id: str = Body(..., description="ID de la playlist"),
+    user_id: int = Body(..., description="ID del usuario"),
+    song_id: str = Body(..., description="ID de la canción")
 ):
-    return create_user_playlist_controller(user_id, song_id)
-
+    return await add_song_to_playlist_controller(playlist_id, user_id, song_id)

@@ -92,3 +92,36 @@ async def create_user_playlist(user_id: int, playlist_name: str, img_url: Option
     except Exception as e:
         logging.error(f"Error al crear la playlist: {e}")
         return None
+    
+@staticmethod
+async def add_song_to_playlist(playlist_id: str, user_id: int, song_id: str):
+        try:
+            playlists = db["playlists"]
+            songs = db["songs"]
+
+            # Verificar si la canción existe
+            song_exists = songs.find_one({"_id": ObjectId(song_id)})
+            if not song_exists:
+                return {"error": " La canción no existe"}
+
+            # Agregar la canción al array de la playlist
+            result = playlists.update_one(
+                {"_id": ObjectId(playlist_id)},
+                {"$addToSet": {"songs": ObjectId(song_id)}}
+            )
+
+            if result.modified_count == 0:
+                return {"message": "La canción ya estaba en la playlist o la playlist no existe"}
+
+            return {
+                "message": "Canción agregada exitosamente",
+                "playlist_id": playlist_id,
+                "song_id": song_id
+            }
+
+        except PyMongoError as e:
+            logging.error(f"MongoDB error al agregar canción: {e}")
+            return {"error": "Error al agregar la canción a la playlist"}
+        except Exception as e:
+            logging.error(f"Error inesperado: {e}")
+            return {"error": "Error inesperado"}
