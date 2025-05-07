@@ -1,7 +1,6 @@
-
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint,get_feed_recomendations
+from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint, Feed_service, Queue_service
 import logging
 import re
 import json
@@ -10,6 +9,7 @@ import logging
 import traceback
 import unicodedata
 from bson import ObjectId
+import time
 
 class Song_controller:
     @staticmethod
@@ -471,7 +471,7 @@ class Song_controller:
                 print(f"Error en {title}: {str(e)}")
 
         return JSONResponse(status_code=200, content={"data": song_in})
-    
+
     @staticmethod
     async def feed_related_recomendations(email: str):
         try:
@@ -482,7 +482,7 @@ class Song_controller:
             user_id = user[0]["id_user"]
             
             # get recommendations
-            res_songs = await get_feed_recomendations(user_id)
+            res_songs = await Feed_service.get_feed_recomendations(user_id)
             final_songs = []
             keys = ["_id", "artist", "title", "album", "img_url"]
 
@@ -500,3 +500,35 @@ class Song_controller:
         except Exception as e:
             logging.error(f"Error en feed_related_recommendations: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+        
+    @staticmethod
+    async def player_queue(song_id):
+        try:
+            ainicio = time.time()
+            seed_song = Song_service.get_song_by_id(song_id)
+            if not seed_song:
+                return JSONResponse(
+                    status_code=200,
+                    content=[]
+                )
+            afin = time.time()
+            print(f"get songById: {afin - ainicio:.6f} segundos")
+            # get recommendations
+            res_songs = await Queue_service.get_queue(seed_song)
+            final_songs = []
+            keys = ["_id", "artist", "title", "album", "img_url"]
+            
+            final_songs = [
+                {k: str(song.get(k, "")) for k in keys}
+                for song in res_songs
+            ]
+
+            return JSONResponse(
+                status_code=200,
+                content=final_songs
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"Error en player_queue: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno en la cola")

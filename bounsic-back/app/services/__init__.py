@@ -9,5 +9,6 @@ from .artist_service import Artist_service
 from .spotify_service import Spotify_service
 from .playlist_service import Playlist_service
 from .mysql_service  import MySQLSongService
-from .feed_service import get_feed_recomendations
+from .feed_service import Feed_service
 from .user_service import insert_usr_image
+from .queue_service import Queue_service
