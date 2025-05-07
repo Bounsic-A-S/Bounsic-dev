@@ -17,60 +17,35 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Verificar contenido del archivo .env.dev (debug temporal)
+        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
       - name: Crear archivo .env.dev
-  run: |
-    mkdir -p ./bounsic-back/env
-    
-    # Mostrar el contenido crudo de ENV_BACK
-    echo "Contenido crudo de ENV_BACK:"
-    echo "${{ vars.ENV_BACK }}"
-
-    # Verificar si la variable está vacía
-    if [ -z "${{ vars.ENV_BACK }}" ]; then
-      echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
-      exit 1
-    fi
-
-    # Mostrar el contenido procesado en los logs
-    echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-
-    # Escribirlo en el archivo .env.dev
-    echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-
-    # Verificar permisos y contenido del archivo
-    chmod 644 ./bounsic-back/env/.env.dev
-    echo "Archivo .env.dev creado:"
-    ls -la ./bounsic-back/env
-
-    - name: Verificar contenido del archivo .env.dev (debug temporal)
-      run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
-    - name: Crear archivo .env.dev
-      run: |
-        mkdir -p ./bounsic-back/env
-        
-        # Mostrar el contenido crudo de ENV_BACK
-        echo "Contenido crudo de ENV_BACK:"
-        echo "${{ vars.ENV_BACK }}"
-    
-        # Verificar si la variable está vacía
-        if [ -z "${{ vars.ENV_BACK }}" ]; then
-          echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
-          exit 1
-        fi
-    
-        # Mostrar el contenido procesado en los logs
-        echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-    
-        # Escribirlo en el archivo .env.dev
-        echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-    
-        # Verificar permisos y contenido del archivo
-        chmod 644 ./bounsic-back/env/.env.dev
-        echo "Archivo .env.dev creado:"
-        ls -la ./bounsic-back/env
-    
-    - name: Verificar contenido del archivo .env.dev (debug temporal)
-      run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
+        run: |
+          mkdir -p ./bounsic-back/env
+          
+          # Mostrar el contenido crudo de ENV_BACK
+          echo "Contenido crudo de ENV_BACK:"
+          echo "${{ vars.ENV_BACK }}"
+      
+          # Verificar si la variable está vacía
+          if [ -z "${{ vars.ENV_BACK }}" ]; then
+            echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
+            exit 1
+          fi
+      
+          # Mostrar el contenido procesado en los logs
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
+      
+          # Escribirlo en el archivo .env.dev
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+      
+          # Verificar permisos y contenido del archivo
+          chmod 644 ./bounsic-back/env/.env.dev
+          echo "Archivo .env.dev creado:"
+          ls -la ./bounsic-back/env
+      
+      - name: Verificar contenido del archivo .env.dev (debug temporal)
+        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
 
 
 
