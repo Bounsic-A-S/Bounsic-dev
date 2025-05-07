@@ -63,11 +63,11 @@ jobs:
             docker rm bounsic-back >/dev/null 2>&1 || true
             # Ejecutar nuevo contenedor con variables de entorno
             docker run -d \
-              --name bounsic-back \
-              -p 1801:8000 \
-              --restart always \
-              --env-file ./env/.env.dev \
-              bounsic-back:latest
+            --name bounsic-back \
+            -p 1801:8000 \
+            --restart always \
+            bounsic-back:latest
+
             # Verificar despliegue
             sleep 5
             docker ps | grep bounsic-back || exit 1
