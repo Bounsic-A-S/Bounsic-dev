@@ -1,7 +1,6 @@
-
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint,get_feed_recomendations
+from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint, Feed_service, Queue_service, LastfmService
 import logging
 import re
 import json
@@ -10,6 +9,7 @@ import logging
 import traceback
 import unicodedata
 from bson import ObjectId
+import time
 
 class Song_controller:
     @staticmethod
@@ -87,8 +87,6 @@ class Song_controller:
                     title = youtube_search['title']
                     artist = youtube_search['artist']
 
-                    video_url = youtube_search['url']
-
                     result = await Song_controller.process_song_and_album(title, artist)
                     # Ensure the result is JSON serializable
                     return Song_controller.serialize_for_json({
@@ -130,13 +128,16 @@ class Song_controller:
     @staticmethod
     def clean_artist_name(artist: str) -> str:
         """
-        Limpia el nombre del artista tomando solo el primer nombre antes de 'x', '&', 'feat.', etc.
+        Limpia el nombre del artista solo si detecta separadores comunes con espacios,
+        para evitar cortar nombres reales como 'Charli XCX'.
         """
-        separators = ['x', 'X', '&', 'feat.', 'Feat.', 'FEAT.', ',', ';']
+        # Separadores con espacios, indicando colaboración
+        separators = [' x ', ' X ', ' & ', ' feat. ', ' Feat. ', ' FEAT. ', ', ', '; ']
         for sep in separators:
             if sep in artist:
                 return artist.split(sep)[0].strip()
         return artist.strip()
+
 
 
     @staticmethod
@@ -185,13 +186,13 @@ class Song_controller:
         }
 
         try:
-            
+            ainicio = time.time()
+                        
             cleanTitle = Song_controller.clean_song_title(title)
             cleanArtist = Song_controller.clean_artist_name(artist)
 
             # 1. Obtener metadata de la canción desde Spotify
             spotify_data = Spotify_service.get_track_details(cleanTitle, cleanArtist)
-
             print(spotify_data)
             if not spotify_data:
                 result["status"] = "error"
@@ -275,13 +276,15 @@ class Song_controller:
 
                 # Agregar canción al álbum
                 Song_service.add_song_to_album(result["album_id"], song_id_obj)
+
                 
                 result["processed_songs"].append({
                     "title": track_title,
                     "status": "inserted" if not existing_song_id else "already_exists",
                     "song_id": str(song_id_obj)
                 })
-            
+            afin = time.time()
+            print(f"Time: {afin - ainicio:.6f} segundos")
             return Song_controller.serialize_for_json(result)
         except Exception as e:
             print(f"Error processing album: {str(e)}")
@@ -302,8 +305,6 @@ class Song_controller:
             youtube_data = Scrapping_service.buscar_en_youtube(f"{title} {artist}")
             if not youtube_data:
                 return {"status": "error", "error": "youtube_not_found"}
-            
-            print(artist,title )
 
             # Generar nombre seguro para el blob
             safe_name = f"{Song_controller.sanitize_filename(artist)}_{Song_controller.sanitize_filename(title)}.mp3"
@@ -311,7 +312,7 @@ class Song_controller:
             download_result = await Scrapping_service.descargar_audio(youtube_data["url"] , safe_name)
             if not download_result or not download_result.get("audio"):
                 return {"status": "error", "error": "download_failed"}
-            print('llega')
+            
             audio_path = download_result["audio"]
             print(audio_path)
             # Verificar que el archivo existe y tiene contenido
@@ -353,8 +354,6 @@ class Song_controller:
             return {"status": "error", "error": str(e)}
         
 
-
-        
 
     @staticmethod
     def sanitize_filename(name: str) -> str:
@@ -471,18 +470,18 @@ class Song_controller:
                 print(f"Error en {title}: {str(e)}")
 
         return JSONResponse(status_code=200, content={"data": song_in})
-    
+
     @staticmethod
     async def feed_related_recomendations(email: str):
         try:
             user = await MySQLSongService.get_user_by_email(email)
             if not user:
-                raise HTTPException(status_code=404, detail="User not found")
-            
-            user_id = user[0]["id_user"]
+                user_id = ""
+            else:
+                user_id = user[0]["id_user"]
             
             # get recommendations
-            res_songs = await get_feed_recomendations(user_id)
+            res_songs = await Feed_service.get_feed_recomendations(user_id)
             final_songs = []
             keys = ["_id", "artist", "title", "album", "img_url"]
 
@@ -500,3 +499,102 @@ class Song_controller:
         except Exception as e:
             logging.error(f"Error en feed_related_recommendations: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Error interno en la recomendación")
+        
+    @staticmethod
+    async def get_top_12_songs_controller():
+        try:
+            print("llega")
+            songs = await LastfmService.get_top_tracks_lastfm()
+            if not songs:
+                return JSONResponse(
+                    status_code=404,
+                    content={"message": "No se encontraron canciones desde Last.fm"}
+                )
+
+            result = []
+
+            for track in songs[:12]:  # solo las 12 primeras canciones
+                track_name = track.get("name")
+                artist_name = track.get("artist")
+
+                print(track_name, artist_name)
+
+                if not (track_name and artist_name):
+                    continue
+
+                # Buscar en Mongo
+                song =  Song_service.getSongByTitleAndArtist(track_name, artist_name)
+
+                # Si ya está en Mongo
+                if song and not song.get("message") == "Song not found":
+                    result.append({
+                        "_id": str(song.get("_id")),
+                        "artist": song.get("artist"),
+                        "title": song.get("title"),
+                        "album": song.get("album"),
+                        "img_url": song.get("img_url")
+                    })
+                    continue
+
+                # Si no está, intentar insertar
+                print("No está, se intenta insertar:", track_name, artist_name)
+                insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
+
+                for s in insert_result.get("processed_songs", []):
+                    song_id = s.get("song_id")
+                    if not song_id:
+                        continue
+                    mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
+                    if mongo_song:
+                        result.append({
+                            "_id": str(mongo_song.get("_id")),
+                            "artist": mongo_song.get("artist"),
+                            "title": mongo_song.get("title"),
+                            "album": mongo_song.get("album"),
+                            "img_url": mongo_song.get("img_url")
+                        })
+
+            return JSONResponse(
+                status_code=200,
+                content=result
+            )
+
+        except Exception as e:
+            logging.error(f"Error en get_top_12_songs_controller: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno al obtener las canciones")
+
+
+            
+
+        
+    @staticmethod
+    async def player_queue(song_id):
+        try:
+            ainicio = time.time()
+            seed_song = Song_service.get_song_by_id(song_id)
+            if not seed_song:
+                return JSONResponse(
+                    status_code=200,
+                    content=[]
+                )
+            afin = time.time()
+            print(f"get songById: {afin - ainicio:.6f} segundos")
+            # get recommendations
+            res_songs = await Queue_service.get_queue(seed_song)
+            final_songs = []
+            keys = ["_id", "artist", "title", "album", "img_url"]
+            
+            final_songs = [
+                {k: str(song.get(k, "")) for k in keys}
+                for song in res_songs
+            ]
+
+            return JSONResponse(
+                status_code=200,
+                content=final_songs
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"Error en player_queue: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno en la cola")

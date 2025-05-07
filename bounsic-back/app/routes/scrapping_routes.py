@@ -20,7 +20,7 @@ async def web_scrapping(url: str = Query(..., title="URL del video de YouTube"))
 @router.get("/download")
 async def descarga_yu(url: str = Query(..., description="URL del video de YouTube")):
     try:
-        result = Scrapping_controler.get_youtube_download_request(url)
+        result = await Scrapping_controler.get_youtube_download_request(url)
         return JSONResponse(status_code=200, content={"message": "Se descargó el audio", "data": result})
 
     except Exception as e:
@@ -29,7 +29,7 @@ async def descarga_yu(url: str = Query(..., description="URL del video de YouTub
 @router.get("/youtube/search")
 async def buscar_youtube(q: str = Query(..., title="Término de búsqueda", description="Nombre de la canción o artista")):
     try:
-        video_url = Scrapping_controler.search_youtube_request(q)
+        video_url = await Scrapping_controler.search_youtube_request(q)
         return {"query": q, "video_url": video_url}
 
     except Exception as e:
