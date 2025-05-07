@@ -115,6 +115,45 @@ class Song_service:
             return {"error": "Database error", "details": str(e)}
         except Exception as e:
             return {"error": "Unexpected error", "details": str(e)}
+        
+    @staticmethod
+    def getSongByTitleAndArtist(title: str, artist: str):
+        try:
+            songs_collection = db["songs"]
+            normalized_title = Song_service.normalize_string(title)
+            normalized_artist = Song_service.normalize_string(artist)
+
+
+            song = songs_collection.find_one({
+                "$expr": {
+                    "$and": [
+                        {
+                            "$eq": [
+                                {"$toLower": {"$replaceAll": {"input": "$title", "find": " ", "replacement": ""}}},
+                                normalized_title
+                            ]
+                        },
+                        {
+                            "$eq": [
+                                {"$toLower": {"$replaceAll": {"input": "$artist", "find": " ", "replacement": ""}}},
+                                normalized_artist
+                            ]
+                        }
+                    ]
+                }
+            })
+
+            if song:
+                song["_id"] = str(song["_id"])
+                return song
+
+            return {"message": "Song not found"}
+
+        except PyMongoError as e:
+            return {"error": "Database error", "details": str(e)}
+        except Exception as e:
+            return {"error": "Unexpected error", "details": str(e)}
+
 
     @staticmethod
     def getSongByGenre(genre: str):

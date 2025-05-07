@@ -11,4 +11,5 @@ from .playlist_service import Playlist_service
 from .mysql_service  import MySQLSongService
 from .feed_service import Feed_service
 from .user_service import insert_usr_image
+from .lastfm_service import LastfmService
 from .queue_service import Queue_service

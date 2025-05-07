@@ -1,4 +1,4 @@
-name: Dockerize Back
+name: Dockerize and Deploy Bounsic Back
 
 on:
   workflow_run:
@@ -7,41 +7,90 @@ on:
       - completed
 
 jobs:
-  dockerize:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  dockerize_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to registry
-        uses: docker/login-action@v2
-        with:
-          registry: https://bounsiccontainerregistery.azurecr.io/
-          username: ${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}
-          password: ${{ secrets.AzureAppService_ContainerPassword_8bddef9a4aa34be999717e96becf3a09 }}
+      - name: Verificar contenido del archivo .env.dev (debug temporal)
+        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
 
       - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
-        
+
+          # Mostrar el contenido crudo de ENV_BACK
+          echo "Contenido crudo de ENV_BACK:"
+          echo "${{ vars.ENV_BACK }}"
+
+          # Verificar si la variable está vacía
+          if [ -z "${{ vars.ENV_BACK }}" ]; then
+            echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
+            exit 1
+          fi
+
           # Mostrar el contenido procesado en los logs
           echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-        
+
           # Escribirlo en el archivo .env.dev
           echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
 
-      
-      - name: Verificar contenido del archivo .env.dev (debug temporal)
-        run: cat ./bounsic-back/env/.env.dev
+          # Verificar permisos y contenido del archivo
+          chmod 644 ./bounsic-back/env/.env.dev
+          echo "Archivo .env.dev creado:"
+          ls -la ./bounsic-back/env
 
-      # - name: Build and push backend Docker image
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     context: ./bounsic-back
-      #     file: ./bounsic-back/Dockerfile
-      #     push: true
-      #     tags: bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}
+      - name: Verificar contenido del archivo .env.dev (debug temporal)
+        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
+
+      - name: Build Docker image
+        run: docker build -t bounsic-back:latest ./bounsic-back
+
+      - name: Verify Docker image
+        run: |
+          docker inspect bounsic-back:latest || exit 1
+          docker run --rm bounsic-back:latest ls /app || exit 1
+
+      - name: Compress and save image
+        run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+
+      - name: Transfer files to Azure VM
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          source: "bounsic-back.tar.gz"
+          target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
+
+      - name: Deploy on Azure VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+            # Cargar imagen
+            docker load -i bounsic-back.tar.gz || exit 1
+            # Detener y eliminar contenedor anterior si existe
+            docker stop bounsic-back >/dev/null 2>&1 || true
+            docker rm bounsic-back >/dev/null 2>&1 || true
+            # Ejecutar nuevo contenedor con variables de entorno
+            docker run -d \
+            --name bounsic-back \
+            -p 1801:8000 \
+            --restart always \
+            $(echo "${{ vars.ENV_BACK }}" | sed 's/\([^=]*\)=\(.*\)/-e \1=\2 /g') \
+            bounsic-back:latest
+            # Verificar despliegue
+            sleep 5
+            docker ps | grep bounsic-back || exit 1

@@ -15,3 +15,4 @@ async def track_info(
     track_name: str = Query(..., description="Nombre de la canción a buscar")
 ):
     return await Spotify_controller.get_track_info_controller(track_name.strip())
+

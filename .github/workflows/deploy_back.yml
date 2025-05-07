@@ -1,4 +1,4 @@
-name: Deploy Backend to Azure (DISABLED)
+name: Deploy to Azure VM
 
 on:
   workflow_run:
@@ -8,18 +8,37 @@ on:
 
 jobs:
   deploy:
-    if: ${{ false }}
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: false  # Esta condición siempre será falsa, desactivando el workflow
     runs-on: ubuntu-latest
 
     steps:
-        - name: Deploy back to Azure Web App
-          id: deploy-to-webapp
-          uses: azure/webapps-deploy@v2
-          with:
-            app-name: 'bounsic-back-nginx'
-            slot-name: 'production'
-            publish-profile: ${{ secrets.AzureAppService_PublishProfile_5f601987ee0d4b4fa6eb894b6c1a34c8 }}
-            images: 'bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}'
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bounsic-back
+          path: ./artifact-download
 
-    
+      - name: SSH and deploy in Azure VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Crear directorio de despliegue
+            mkdir -p /home/${{ secrets.AZURE_VM_USER }}/bounsic
+
+            # Copiar archivo al servidor
+            scp ./artifact-download/bounsic-back.tar.gz ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }}:/home/${{ secrets.AZURE_VM_USER }}/bounsic/
+
+            # Cargar imagen de Docker y ejecutar
+            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+            docker load -i bounsic-back.tar.gz
+
+            # Detener y eliminar contenedores anteriores
+            docker stop bounsic-back || true
+            docker rm bounsic-back || true
+
+            # Desplegar nuevo contenedor
+            docker run -d --name bounsic-back -p 1801:8000 --env-file ./env/.env.dev bounsic-back:latest

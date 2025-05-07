@@ -4,17 +4,17 @@
   <main [ngClass]="bg$ | async" class="text-white flex-grow w-full pb-[10vh] not-dark:text-black">
     <div class="container mx-auto px-4 py-6 h-full">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[80vh] pt-20">
-        <section
-          class="flex flex-row md:flex-col justify-center items-center gap-x-6"
-        >
+        <section class="flex flex-row md:flex-col justify-center items-center gap-x-6">
           <ng-container *ngIf="song$ | async as song">
             <player-song [song]="song" />
           </ng-container>
           <player-song-list />
         </section>
 
-        <section class="flex h-52 place-self-center overflow-y-auto p-1 scroll-hidden scroll-smooth">
-          <player-lyrics />
+        <section class="flex h-52 md:h-72 place-self-center overflow-y-auto p-1 scroll-hidden scroll-smooth">
+          <ng-container *ngIf="song$ | async as song">
+            <player-lyrics [lyrics]="song.lyrics" />
+          </ng-container>
         </section>
       </div>
     </div>
