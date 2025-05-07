@@ -64,7 +64,7 @@ jobs:
 
             docker run --name bounsic-back-temp \
               -v $(pwd)/env/.env.dev:/app/env/.env.dev \
-              bounsic-back:latest ls /app/env/.env.dev || exit 1
+              bounsic-back:latest sh -c 'mkdir -p /app/env && ls /app/env/.env.dev' || exit 1
 
             docker run -d \
               --name bounsic-back \
