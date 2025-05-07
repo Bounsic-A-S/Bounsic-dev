@@ -13,6 +13,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Create .env file
+        run: |
+          mkdir -p ./bounsic-back/env
+          echo "${{ vars.ENV_BACK }}" > ./bounsic-back/env/.env.dev
+          echo "Verificando contenido de .env.dev:"
+          cat ./bounsic-back/env/.env.dev
+          [ -s ./bounsic-back/env/.env.dev ] || exit 1
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -22,7 +30,7 @@ jobs:
       - name: Verify Docker image
         run: |
           docker inspect bounsic-back:latest || exit 1
-          docker run --rm bounsic-back:latest ls /app || exit 1
+          docker run --rm -v $(pwd)/bounsic-back/env:/app/env bounsic-back:latest sh -c 'ls /app/env/.env.dev && python -c "from app.main import app; print(app)"' || exit 1
 
       - name: Compress and save image
         run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
@@ -34,8 +42,11 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
-          source: "bounsic-back.tar.gz"
+          source: |
+            bounsic-back.tar.gz
+            ./bounsic-back/env/.env.dev
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
+          strip_components: 1
 
       - name: Deploy on Azure VM
         uses: appleboy/ssh-action@v0.1.8
@@ -44,35 +55,35 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
-          script_stop: true
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-
-            mkdir -p env && chmod 777 env
-
-            echo -e "${{ vars.ENV_BACK }}" > env/.env.dev
+            
+            # Configura entorno
+            mkdir -p env
+            chmod 755 env
+            mv .env.dev env/
             chmod 644 env/.env.dev
-
-            echo "Contenido de ./env/.env.dev:"
-            cat env/.env.dev
-
+            
+            # Verifica archivo .env
+            echo "Contenido de .env.dev:"
+            cat env/.env.dev || exit 1
+            
+            # Carga imagen Docker
             docker load -i bounsic-back.tar.gz || exit 1
+            
+            # Detiene y elimina contenedor anterior
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
-
-            docker rm -f bounsic-back-temp >/dev/null 2>&1 || true
-
-            docker run --name bounsic-back-temp \
-              -v $(pwd)/env/.env.dev:/app/env/.env.dev \
-              bounsic-back:latest sh -c 'mkdir -p /app/env && ls /app/env/.env.dev' || exit 1
-
+            
+            # Ejecuta nuevo contenedor con montaje de volumen
             docker run -d \
               --name bounsic-back \
-              --env-file /app/env/.env.dev \
-              -v $(pwd)/env/.env.dev:/app/env/.env.dev \
+              -v $(pwd)/env/.env.dev:/app/env/.env.dev:ro \
               -p 1801:8000 \
               --restart always \
               bounsic-back:latest
-
-            sleep 5
+            
+            # Verifica despliegue
+            sleep 10
             docker ps | grep bounsic-back || exit 1
+            docker logs bounsic-back --tail 50
