@@ -90,6 +90,7 @@ jobs:
             --name bounsic-back \
             -p 1801:8000 \
             --restart always \
+            $(echo "${{ vars.ENV_BACK }}" | sed 's/\([^=]*\)=\(.*\)/-e \1=\2 /g') \
             bounsic-back:latest
 
             # Verificar despliegue
