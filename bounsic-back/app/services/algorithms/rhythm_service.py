@@ -1,12 +1,13 @@
-from typing import List
+from typing import List, Set
 import matplotlib.pyplot as plt
 import os
 import numpy as np
 import random
 from .fingerprint_service import FingerprintData, generate_fingerprint, readFingerprint
+from bson import ObjectId
 
 # Algorithm to get alike songs based on their sound
-def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, medio_w=0.8, alto_w=0.8, min_alike=0.7):
+def get_alikes(target_song, database_songs, size: int, inserted_ids: Set[ObjectId], bpm_w=0.8, bajo_w=0.8, medio_w=0.8, alto_w=0.8, min_alike=0.7):
     total_weight = bpm_w + bajo_w + medio_w + alto_w
     resSongs = []
 
@@ -17,6 +18,9 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
     target_fp = target_song["fingerprint"]
     # print(f"Searching recomendations for: {target_song['title']}")
     for song in database_songs:
+        if (song["_id"] in inserted_ids): 
+            # Pass if the recomendation is already in the list
+            continue
         bpm_score = 0
         bajos_score = 0
         medios_score = 0
@@ -62,6 +66,7 @@ def get_alikes(target_song, database_songs, size: int, bpm_w=0.8, bajo_w=0.8, me
 
         total_score = (bpm_score*bpm_w) + (bajos_score*bajo_w) + (medios_score*medio_w) + (altos_score*alto_w)
         if total_score > min_alike:
+            inserted_ids.add(song["_id"])
             resSongs.append(song)
 
     if (size < len(resSongs)):

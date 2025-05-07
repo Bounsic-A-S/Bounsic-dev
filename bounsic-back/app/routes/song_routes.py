@@ -62,3 +62,9 @@ async def get_most_listenes(request : Request):
 @router.get("/top12")
 async def get_top_12_songs():
     return await Song_controller.get_top_12_songs_controller()
+
+@router.post("/player-queue")
+async def get_player_queue(request : Request):
+    data = await request.json()
+    seed_song_id = data.get("song_id")
+    return await Song_controller.player_queue(seed_song_id)
