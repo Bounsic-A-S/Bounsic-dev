@@ -477,9 +477,9 @@ class Song_controller:
         try:
             user = await MySQLSongService.get_user_by_email(email)
             if not user:
-                raise HTTPException(status_code=404, detail="User not found")
-            
-            user_id = user[0]["id_user"]
+                user_id = ""
+            else:
+                user_id = user[0]["id_user"]
             
             # get recommendations
             res_songs = await Feed_service.get_feed_recomendations(user_id)

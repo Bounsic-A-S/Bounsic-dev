@@ -11,87 +11,73 @@ class Feed_service:
 
     @staticmethod
     async def get_feed_recomendations(user_id: str):
-        ginicio = time.time()
         binicio = time.time()
         songs_provider = Songs_db_provider()
         size = 16 # size of recomendation
-        ainicio = time.time()
-        liked_songs = await MySQLSongService.get_random_likes(user_id, 2)
-        latest_songs = await MySQLSongService.get_most_played_songs(user_id, 2)
-        afin = time.time()
-        print(f"get likes_&_lastest: {afin - ainicio:.6f} segundos")
+        liked_songs = []
+        lastest_songs = []
+        if (user_id):
+            liked_songs = await MySQLSongService.get_random_likes(user_id, 2)
+            lastest_songs = await MySQLSongService.get_most_played_songs(user_id, 2)
 
         database_songs = songs_provider.get_all()
         songs = [] # songs to evaluate
         res_songs = [] # final recomendations
 
         linicio = time.time()
-        for i in range(len(liked_songs)):
-            songs.append(Song_service.get_song_by_id(liked_songs[i]["song_mongo_id"]))
-        for i in range(len(latest_songs)):
-            songs.append(Song_service.get_song_by_id(latest_songs[i]["song_mongo_id"]))
+        for s in liked_songs:
+            songs.append(Song_service.get_song_by_id(s["song_mongo_id"]))
+        for s in lastest_songs:
+            songs.append(Song_service.get_song_by_id(s["song_mongo_id"]))
         lfin = time.time()
-        print(f"append songs: {lfin - linicio:.6f} segundos\n")
 
         bfin = time.time()
         print(f"Tiempo (Preparación): {bfin - binicio:.6f} segundos\n")
 
         inserted_ids = set()
+        alikes_size = 4
+        genres_size = 3
+        artists_size = 2
         for i in range(len(songs)):
             s = songs[i]
             if (i % 2 == 0): # Fingerprint based
-                inicio = time.time()
-                alikes = get_alikes(target_song=s, database_songs=database_songs, size=4, inserted_ids=inserted_ids)
-                if (len(alikes) < 4):
-                    print(".fill in (Alikes)")
-                    alikes += Db_service.get_random_songs(4 - len(alikes))
-                
+                alikes = get_alikes(target_song=s, database_songs=database_songs, size=alikes_size, inserted_ids=inserted_ids)
+                if (len(alikes) < alikes_size):
+                    alikes += random.sample(songs_provider.get_all(), alikes_size - len(alikes))
                 res_songs += alikes
-                fin = time.time()
-                print(f"Tiempo (Fingerprint): {fin - inicio:.6f} segundos")
                 
             else: # Genre based
-                inicio = time.time()
-                recom = await Feed_service.genre_recomendation(s, 3, inserted_ids)
+                recom = await Feed_service.genre_recomendation(s, genres_size, inserted_ids)
                 res_songs += recom
-                
-                fin = time.time()
-                print(f"Tiempo (Genre): {fin - inicio:.6f} segundos")
-            
+           
         if liked_songs:
             inicio = time.time()
-            s = Song_service.get_song_by_id(liked_songs[0]["song_mongo_id"])
-            recom = Feed_service.artist_recomendation(s, 2, inserted_ids)
+            s = songs[0]
+            recom = Feed_service.artist_recomendation(s, artists_size, inserted_ids)
             res_songs += recom
-            
             fin = time.time()
             print(f"Tiempo (Artist): {fin - inicio:.6f} segundos")
-        
+            print("aritst: ", len(recom))
+        """ 
+        Fill recomendations in case
+        """
         if (len(res_songs) < size):
-            res_songs += Db_service.get_random_songs(size - len(res_songs))
+            print(f"Fill recomendation({size - len(res_songs)}) to user: '{user_id}'")
+            res_songs += random.sample(songs_provider.get_all(), size - len(res_songs))
         
-        # Size recomendation = 16 :
-        # ArtistRecom:  2
-        # FingerRecom:  8
-        # GenreRecom:  6
-        gfin = time.time()
-        print(f"Tiempo (feed_service): {gfin - ginicio:.6f} segundos")
-
-        print("Recomendaciones: ", len(res_songs))
         return res_songs
 
     @staticmethod
-    async def genre_recomendation(input_song, size, inserted_ids: Set[ObjectId]):
+    async def genre_recomendation(input_song, size, inserted_ids: Set[ObjectId], fill=True):
+        songs_provider = Songs_db_provider()
         songs = []
-        if (len(input_song["genres"]) < 0):
-            return Db_service.get_random_songs(4)
+        if (len(input_song["genres"]) > 0):
+            songs = await Feed_service.get_songs_by_genre(input_song, inserted_ids, songs_provider.get_all())
         
-        songs = await Feed_service.get_songs_by_genre(input_song, inserted_ids)
         if (len(songs) > size):
             songs = random.sample(songs, size)
-        else:
-            print(".fill in (Genre)")
-            songs += Db_service.get_random_songs(size - len(songs))
+        elif fill:
+            songs += random.sample(songs_provider.get_all(), size - len(songs))
         return songs
         
     @staticmethod
@@ -99,7 +85,7 @@ class Feed_service:
         songs = []
 
         # input_song = Song_service.get_song_by_id(input_song["song_mongo_id"])
-
+        
         song_id, album_id = Db_service.get_random_song_by_album(input_song["album"])
         if song_id: 
             songs.append(Song_service.get_song_by_id(song_id["song_id"]))
@@ -163,12 +149,11 @@ class Feed_service:
         return songs
 
     @staticmethod
-    async def get_songs_by_genre(input_song, inserted_ids: Set[ObjectId]):
-        songs_provider = Songs_db_provider()
+    async def get_songs_by_genre(input_song, inserted_ids: Set[ObjectId], songs_data):
         input_genres = set(genre["genre"] for genre in input_song.get("genres", []))
         songs = []
         
-        for s in songs_provider.get_all():
+        for s in songs_data:
             if (s["_id"] in inserted_ids):
                 continue
 
@@ -177,5 +162,5 @@ class Feed_service:
             if (input_genres & s_genres):
                 inserted_ids.add(s["_id"])
                 songs.append(s)
-                
+
         return songs
