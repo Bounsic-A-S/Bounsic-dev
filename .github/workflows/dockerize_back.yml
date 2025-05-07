@@ -1,10 +1,9 @@
 name: Dockerize and Deploy Bounsic Back
 
 on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    types:
-      - completed
+  push:
+    branches:
+      - feat/deploy-backend  # Cambia "main" por la rama que prefieras
 
 jobs:
   dockerize_and_deploy:
@@ -17,36 +16,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Verificar contenido del archivo .env.dev (debug temporal)
-        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
-
-      - name: Crear archivo .env.dev
-        run: |
-          mkdir -p ./bounsic-back/env
-
-          # Mostrar el contenido crudo de ENV_BACK
-          echo "Contenido crudo de ENV_BACK:"
-          echo "${{ vars.ENV_BACK }}"
-
-          # Verificar si la variable está vacía
-          if [ -z "${{ vars.ENV_BACK }}" ]; then
-            echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
-            exit 1
-          fi
-
-          # Mostrar el contenido procesado en los logs
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-
-          # Escribirlo en el archivo .env.dev
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-
-          # Verificar permisos y contenido del archivo
-          chmod 644 ./bounsic-back/env/.env.dev
-          echo "Archivo .env.dev creado:"
-          ls -la ./bounsic-back/env
-
-      - name: Verificar contenido del archivo .env.dev (debug temporal)
-        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
 
       - name: Build Docker image
         run: docker build -t bounsic-back:latest ./bounsic-back
@@ -79,18 +48,22 @@ jobs:
           script_stop: true
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-            # Cargar imagen
             docker load -i bounsic-back.tar.gz || exit 1
-            # Detener y eliminar contenedor anterior si existe
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
-            # Ejecutar nuevo contenedor con variables de entorno
+
+            # Convertir las variables de entorno en formato adecuado para Docker
+            ENV_VARS=$(echo "${{ vars.ENV_BACK }}" | awk '{gsub(/"/, ""); print "-e " $0}' | tr '\n' ' ')
+
+            # Ejecutar el contenedor con las variables correctamente formateadas
             docker run -d \
             --name bounsic-back \
             -p 1801:8000 \
             --restart always \
-            $(echo "${{ vars.ENV_BACK }}" | sed 's/\([^=]*\)=\(.*\)/-e \1=\2 /g') \
+            $ENV_VARS \
             bounsic-back:latest
+            
             # Verificar despliegue
             sleep 5
             docker ps | grep bounsic-back || exit 1
+
