@@ -1,24 +1,43 @@
-<div class="mb-6">
+<div class="mb-6 relative w-full max-w-2xl mx-auto" (clickOutside)="setResultsUi(false)">
+  <!-- Input de búsqueda -->
   <input
     type="text"
-    placeholder="{{'BOUNSIC.DASHBOARD.SEARCH'  | translate}}"
-    class="w-full max-w-2xl px-8 py-2 md:py-4 bg-bounsic-gray-4 rounded-4xl shadow-bounsic-searchbar text-white placeholder-white/80 focus:outline-none focus:border-white not-dark:text-black not-dark:placeholder-black/80 not-dark:bg-bounsic-light-1"
+    placeholder="{{ 'BOUNSIC.DASHBOARD.SEARCH' | translate }}"
+    class="w-full px-8 py-2 md:py-4 bg-bounsic-gray-4 rounded-4xl shadow-bounsic-searchbar text-white placeholder-white/80
+           focus:outline-none focus:border-white
+           not-dark:text-black not-dark:placeholder-black/80 not-dark:bg-bounsic-light-1"
+    (keydown.enter)="search()"
+    [(ngModel)]="songToSearch"
+    (focus)="setResultsUi(true)"
   />
+
+  <div
+    *ngIf="(searchResults?.length && isSearchBarOnFocus)"
+    class="absolute top-full mt-2 w-full bg-bounsic-gray-4 rounded-lg shadow-bounsic-searchbar text-white
+           not-dark:text-black not-dark:bg-bounsic-light-1 z-10"
+  >
+    <ul class="p-2">
+      <li
+        *ngFor="let result of searchResults"
+        class="hover:bg-white/10 px-4 py-2 cursor-pointer not-dark:hover:bg-black/10 rounded"
+      >
+        {{ result }}
+      </li>
+    </ul>
+  </div>
 </div>
+
 
 <!-- Filter Tags -->
 <section class="flex flex-col sm:flex-row gap-3 justify-center mb-12">
-  <p class="px-4 py-1">{{'BOUNSIC.DASHBOARD.FILTER'  | translate}}</p>
+  <p class="px-4 py-1">{{'BOUNSIC.DASHBOARD.FILTER' | translate}}</p>
   <div class="flex items-center justify-center flex-wrap gap-2 xl:gap-4">
     <ng-container *ngFor="let tag of filterTags">
-      <span
-        (click)="toggleTag(tag)"
-        [ngClass]="{
+      <span (click)="toggleTag(tag)" [ngClass]="{
           'border-white bg-white text-black not-dark:text-white not-dark:border-black not-dark:bg-black': isTagSelected(tag),
           'border-white/20 hover:bg-white/10 not-dark:border-black/20 not-dark:hover:border-black/10': !isTagSelected(tag)
         }"
-        class="text-sm sm:text-base px-4 py-1 rounded-full border cursor-pointer transition-all ease-in-out duration-300"
-      >
+        class="text-sm sm:text-base px-4 py-1 rounded-full border cursor-pointer transition-all ease-in-out duration-300">
         {{ tag }}
       </span>
     </ng-container>

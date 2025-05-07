@@ -15,7 +15,7 @@ export class SongService {
   private songSafeChoices$ = this.songSafeChoicesSubject.asObservable();
   //related songs
   private songRelatedSubject = new BehaviorSubject<DashboardSong[]>([]);
-  private songRelated$ = this.songSafeChoicesSubject.asObservable();
+  private songRelated$ = this.songRelatedSubject.asObservable();
   //last month
   private songLastMonthSubject = new BehaviorSubject<DashboardSong[]>([]);
   private songLastMonth$ = this.songLastMonthSubject.asObservable();
