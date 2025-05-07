@@ -17,12 +17,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Create .env.dev file
+      - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
-          echo "${{ vars.ENV_BACK }}" > ./bounsic-back/env/.env.dev
-          # Validación básica del archivo
-          [ -s ./bounsic-back/env/.env.dev ] || exit 1
+          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+
+      - name: Verificar contenido del archivo .env.dev
+        run: cat ./bounsic-back/env/.env.dev
 
       - name: Build Docker image
         run: docker build -t bounsic-back:latest ./bounsic-back
@@ -44,7 +45,6 @@ jobs:
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
-          strip_components: 1
 
       - name: Deploy on Azure VM
         uses: appleboy/ssh-action@v0.1.8
@@ -53,6 +53,7 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
+          script_stop: true
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
             # Cargar imagen
