@@ -36,8 +36,7 @@ jobs:
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
-          passphrase: ${{ secrets.AZURE_VM_PASSPHRASE }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}  # Clave sin passphrase
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
@@ -47,8 +46,7 @@ jobs:
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
-          passphrase: ${{ secrets.AZURE_VM_PASSPHRASE }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}  # Clave sin passphrase
           port: 22
           script_stop: true
           script: |
