@@ -323,14 +323,32 @@ class MySQLSongService:
             return None
     
     @staticmethod
-    async def update_cant_history( id_user: int, id_mongo_song: str):
+    async def update_cant_history(id_user: int, id_mongo_song: str):
         try:
-            query = """
+            # Intentar actualizar
+            query_update = """
                 UPDATE Bounsic_History
                 SET cant_repro = cant_repro + 1
                 WHERE user_id = :id_user AND song_mongo_id = :id_mongo_song
             """
-            return await MySQLSongService._db.execute_query(query, {"id_user":id_user, "id_mongo_song":id_mongo_song})
+            result = await MySQLSongService._db.execute_query(query_update, {
+                "id_user": id_user,
+                "id_mongo_song": id_mongo_song
+            })
+
+            # Verificar si se actualizó alguna fila
+            if result.rowcount == 0:
+                # Si no, insertar nueva entrada
+                query_insert = """
+                    INSERT INTO Bounsic_History (user_id, song_mongo_id, cant_repro)
+                    VALUES (:id_user, :id_mongo_song, 1)
+                """
+                await MySQLSongService._db.execute_query(query_insert, {
+                    "id_user": id_user,
+                    "id_mongo_song": id_mongo_song
+                })
+
+            return True
         except Exception as e:
             logging.error(f"update_cant_history error: {e}")
             return False
@@ -478,11 +496,24 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def insert_like(data):
+    async def check_like_by_user( user_id , song_id):
         try:
-            query = "INSERT INTO Bounsic_Like (user_id, song_mongo_id) VALUES (%s, %s)"
-            values = (data["user_id"], data["song_mongo_id"])
-            return await MySQLSongService._db.execute_query(query, values)
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            return None
+
+    @staticmethod
+    async def insert_like(user_id , song_id):
+        try:
+            query = """
+                INSERT INTO Bounsic_Like (user_id, song_mongo_id)
+                VALUES (:user_id, :song_mongo_id)
+            """
+            return await MySQLSongService._db.execute_query(query, {
+                "user_id": user_id,
+                "song_mongo_id": song_id
+            })
         except Exception as e:
             logging.error(f"insert_like error: {e}")
             return False
@@ -498,9 +529,9 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def delete_like( like_id):
+    async def delete_like( user_id,song_id):
         try:
-            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE like_id = %s", (like_id,))
+            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
         except Exception as e:
             logging.error(f"delete_like error: {e}")
             return False

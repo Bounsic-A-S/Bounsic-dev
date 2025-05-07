@@ -447,11 +447,23 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching likes by user")
+    @staticmethod
+    async def check_like_by_user( user_id , song_id):
+        try:
+            likes = await MySQLSongService.check_like_by_user(user_id,song_id)
+            if not likes:
+                return JSONResponse(status_code=200, content=False)
+            return JSONResponse(status_code=200, content=True)
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            raise HTTPException(status_code=500, detail="Error fetching likes by user")
 
     @staticmethod
-    async def create_like( data):
+    async def create_like( user_id,song_id):
         try:
-            like = await MySQLSongService.create_like(data)
+            like = await MySQLSongService.insert_like(user_id,song_id)
             return JSONResponse(status_code=201, content={"like": like})
         except Exception as e:
             logging.error(f"create_like error: {e}")
@@ -471,9 +483,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error updating like")
 
     @staticmethod
-    async def delete_like( like_id):
+    async def delete_like( user_id,song_id):
         try:
-            result = await MySQLSongService.delete_like(like_id)
+            result = await MySQLSongService.delete_like(user_id,song_id)
             if not result:
                 raise HTTPException(status_code=404, detail="Like not found")
             return JSONResponse(status_code=200, content={"message": "Like deleted successfully"})

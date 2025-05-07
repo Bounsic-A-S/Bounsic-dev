@@ -134,16 +134,22 @@ async def delete_playlist(playlist_id: int):
 async def get_likes_by_user(user_email: str):
     return await MySQLController.get_likes_by_user(user_email)
 
-@router.post("/likes")
+@router.get("/hasLike/{user_id}/{song_id}")
+async def check_like_by_user(user_id: int , song_id :str):
+    return await MySQLController.check_like_by_user(user_id,song_id)
+
+@router.post("/likes/add")
 async def create_like(request: Request):
     data = await request.json()
-    return MySQLController.create_like(data)
+    user_id = data.get("user_id")
+    song_mongo_id = data.get("song_mongo_id")
+    return await MySQLController.create_like(user_id,song_mongo_id)
 
 @router.put("/likes/{like_id}")
 async def update_like(like_id: int, request: Request):
     data = await request.json()
     return MySQLController.update_like(like_id, data)
 
-@router.delete("/likes/{like_id}")
-async def delete_like(like_id: int):
-    return await MySQLController.delete_like(like_id)
+@router.delete("/likes/delete/{user_id}/{song_id}")
+async def delete_like(user_id: int,song_id:str):
+    return await MySQLController.delete_like(user_id,song_id)

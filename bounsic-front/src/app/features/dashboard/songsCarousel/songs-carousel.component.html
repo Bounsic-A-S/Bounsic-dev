@@ -14,7 +14,8 @@
       #scrollContainer
       class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
     >
-      <div *ngFor="let song of songs" class="flex-none w-32 sm:w-36 lg:w-44">
+    <div *ngFor="let song of songs" class="flex-none w-32 sm:w-36 lg:w-44">
+      <a [routerLink]="['/player', song._id]" class="block">
         <img
           [src]="song.img_url"
           [alt]="song.title"
@@ -26,7 +27,9 @@
         >
           {{ song.artist }}
         </p>
-      </div>
+      </a>
+    </div>
+    
     </div>
   </ng-container>
   <ng-template #skeletonLoader>
