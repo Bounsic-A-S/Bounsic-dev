@@ -26,18 +26,8 @@ jobs:
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "🚀 Moviéndonos al proyecto"
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-
-            echo "📥 Recibiendo imagen Docker"
-            scp -o StrictHostKeyChecking=no ./bounsic-back/bounsic-back.tar.gz ${AZURE_VM_USER}@${AZURE_VM_IP}:/home/${AZURE_VM_USER}/bounsic/bounsic-back.tar.gz
-
-            echo "🐳 Cargando imagen Docker"
             docker load -i bounsic-back.tar.gz
-
-            echo "🛑 Deteniendo contenedor anterior"
             docker stop bounsic-back || true
             docker rm bounsic-back || true
-
-            echo "🚀 Iniciando nuevo contenedor"
             docker run -d --name bounsic-back -p 1801:8000 --env-file ./bounsic-back/env/.env.dev bounsic-back:latest
