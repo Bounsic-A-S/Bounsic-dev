@@ -1,4 +1,4 @@
-name: Deploy Backend to Azure (DISABLED)
+name: Deploy to Azure VM
 
 on:
   workflow_run:
@@ -8,18 +8,36 @@ on:
 
 jobs:
   deploy:
-    if: ${{ false }}
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-        - name: Deploy back to Azure Web App
-          id: deploy-to-webapp
-          uses: azure/webapps-deploy@v2
-          with:
-            app-name: 'bounsic-back-nginx'
-            slot-name: 'production'
-            publish-profile: ${{ secrets.AzureAppService_PublishProfile_5f601987ee0d4b4fa6eb894b6c1a34c8 }}
-            images: 'bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}'
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: bounsic-back
+          path: ./bounsic-back
 
-    
+      - name: SSH and deploy in Azure VM
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Moviéndonos al proyecto"
+            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+
+            echo "📥 Recibiendo imagen Docker"
+            scp -o StrictHostKeyChecking=no ./bounsic-back/bounsic-back.tar.gz ${AZURE_VM_USER}@${AZURE_VM_IP}:/home/${AZURE_VM_USER}/bounsic/bounsic-back.tar.gz
+
+            echo "🐳 Cargando imagen Docker"
+            docker load -i bounsic-back.tar.gz
+
+            echo "🛑 Deteniendo contenedor anterior"
+            docker stop bounsic-back || true
+            docker rm bounsic-back || true
+
+            echo "🚀 Iniciando nuevo contenedor"
+            docker run -d --name bounsic-back -p 1801:8000 --env-file ./bounsic-back/env/.env.dev bounsic-back:latest
