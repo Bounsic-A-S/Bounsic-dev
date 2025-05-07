@@ -16,6 +16,30 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Crear carpeta env y archivo .env.dev (en GitHub Actions)
+        run: |
+          # Crear la carpeta env con permisos adecuados
+          mkdir -p ./bounsic-back/env
+          chmod 777 ./bounsic-back/env
+
+          # Verificar permisos de la carpeta
+          echo "Permisos de la carpeta env:"
+          ls -ld ./bounsic-back/env
+
+          # Crear y escribir el archivo .env.dev
+          touch ./bounsic-back/env/.env.dev
+          chmod 666 ./bounsic-back/env/.env.dev
+          
+          # Verificar permisos del archivo
+          echo "Permisos del archivo .env.dev antes de escribir:"
+          ls -l ./bounsic-back/env/.env.dev
+
+          # Escribir las variables de entorno en el archivo
+          echo "${{ secrets.ENV_BACK }}" | tr ' ' '\n' > ./bounsic-back/env/.env.dev
+          
+          # Verificar contenido del archivo
+          echo "Contenido del archivo .env.dev:"
+          cat ./bounsic-back/env/.env.dev
 
       - name: Build Docker image
         run: docker build -t bounsic-back:latest ./bounsic-back
@@ -51,19 +75,10 @@ jobs:
             docker load -i bounsic-back.tar.gz || exit 1
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
-
-            # Convertir las variables de entorno en formato adecuado para Docker
-            ENV_VARS=$(echo "${{ vars.ENV_BACK }}" | awk '{gsub(/"/, ""); print "-e " $0}' | tr '\n' ' ')
-
-            # Ejecutar el contenedor con las variables correctamente formateadas
             docker run -d \
             --name bounsic-back \
             -p 1801:8000 \
             --restart always \
-            $ENV_VARS \
             bounsic-back:latest
-            
-            # Verificar despliegue
             sleep 5
             docker ps | grep bounsic-back || exit 1
-
