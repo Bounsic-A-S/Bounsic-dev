@@ -93,7 +93,7 @@ async def create_user_playlist(user_id: int, playlist_name: str, img_url: Option
         logging.error(f"Error al crear la playlist: {e}")
         return None
     
-@staticmethod
+
 async def add_song_to_playlist(playlist_id: str, user_id: int, song_id: str):
         try:
             playlists = db["playlists"]
@@ -125,3 +125,34 @@ async def add_song_to_playlist(playlist_id: str, user_id: int, song_id: str):
         except Exception as e:
             logging.error(f"Error inesperado: {e}")
             return {"error": "Error inesperado"}
+        
+async def delete_playlist(playlist_id: int):
+    try:
+        from app.services import MySQLSongService
+
+        # Paso 1: Obtener la playlist en MySQL
+        result = await MySQLSongService.get_playlist_by_id(playlist_id)
+        if not result:
+            return {"error": "Playlist not found or not owned by user."}
+
+        # Asegurar que sea un diccionario
+        if isinstance(result, list):
+            result = result[0]
+
+        playlist_mongo_id = result["playlist_mongo_id"]
+        print(playlist_mongo_id)
+        mongo_coll = db["playlists"]
+        mongo_result = mongo_coll.delete_one({"_id": ObjectId(playlist_mongo_id)})
+        if mongo_result.deleted_count <= 0:
+            logging.warning(f"Playlist {playlist_mongo_id} not found in MongoDB (deleted_count=0).")
+
+        # Paso 3: Eliminar en MySQL (primero en tabla relacional si es necesario)
+        mysql_delete_result = await MySQLSongService.delete_playlist(playlist_id)
+        if not mysql_delete_result:
+            return {"error": "Error deleting playlist from MySQL."}
+
+        return {"message": "Playlist deleted successfully from both databases."}
+
+    except Exception as e:
+        logging.error(f"delete_playlist error: {e}")
+        return {"error": str(e)}

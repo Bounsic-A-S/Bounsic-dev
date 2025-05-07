@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Body, HTTPException, Query, Request
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller,create_user_playlist_controller,add_song_to_playlist_controller
+from app.controllers import get_playlist_by_id_controller,get_all_playlists_controller,create_user_playlist_controller,add_song_to_playlist_controller,delete_playlist_controller
 
 router = APIRouter()
 
@@ -46,3 +46,9 @@ async def add_song_to_playlist(
     song_id: str = Body(..., description="ID de la canción")
 ):
     return await add_song_to_playlist_controller(playlist_id, user_id, song_id)
+
+@router.delete("/delete")
+async def delete_playlist(
+     playlist_id: int = Body(..., embed=True),
+):
+    return await delete_playlist_controller(playlist_id)

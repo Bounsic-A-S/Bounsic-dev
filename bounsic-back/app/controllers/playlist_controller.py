@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import HTTPException, Request
-from app.services import getPlaylistById,getAllPlaylists,create_user_playlist,add_song_to_playlist
+from app.services import getPlaylistById,getAllPlaylists,create_user_playlist,add_song_to_playlist,delete_playlist
 
 def get_playlist_by_id_controller(playlist_id: str):
     result = getPlaylistById(playlist_id)
@@ -37,3 +37,11 @@ async def add_song_to_playlist_controller(playlist_id: str, user_id: int, song_i
             raise HTTPException(status_code=400, detail=result["error"])
 
         return result
+
+async def delete_playlist_controller(playlist_id: int ):
+    result = await delete_playlist(playlist_id)
+
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+
+    return result

@@ -341,12 +341,15 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def get_playlist_by_id( playlist_id):
+    async def get_playlist_by_id(playlist_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
+            query = "SELECT * FROM Bounsic_Playlist WHERE playlist_id = :playlist_id"
+            params = {"playlist_id": playlist_id}
+            return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
             logging.error(f"get_playlist_by_id error: {e}")
             return None
+
 
     @staticmethod
     async def get_playlists_by_user( user_id):
@@ -406,9 +409,12 @@ class MySQLSongService:
             logging.error(f"update_playlist error: {e}")
             return False
 
-    async def delete_playlist( playlist_id):
+    @staticmethod
+    async def delete_playlist(playlist_id):
         try:
-            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
+            query = "DELETE FROM Bounsic_Playlist WHERE playlist_id = :playlist_id"
+            params = {"playlist_id": playlist_id}
+            return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
             logging.error(f"delete_playlist error: {e}")
             return False
