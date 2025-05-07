@@ -63,12 +63,13 @@ jobs:
             docker rm -f bounsic-back-temp >/dev/null 2>&1 || true
 
             docker run --name bounsic-back-temp \
-              --env-file env/.env.dev \
+              -v $(pwd)/env/.env.dev:/app/env/.env.dev \
               bounsic-back:latest ls /app/env/.env.dev || exit 1
 
             docker run -d \
               --name bounsic-back \
-              --env-file env/.env.dev \
+              --env-file /app/env/.env.dev \
+              -v $(pwd)/env/.env.dev:/app/env/.env.dev \
               -p 1801:8000 \
               --restart always \
               bounsic-back:latest
