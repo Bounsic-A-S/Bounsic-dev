@@ -19,35 +19,34 @@ jobs:
 
       - name: Verificar contenido del archivo .env.dev (debug temporal)
         run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
+
       - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
-          
+
           # Mostrar el contenido crudo de ENV_BACK
           echo "Contenido crudo de ENV_BACK:"
           echo "${{ vars.ENV_BACK }}"
-      
+
           # Verificar si la variable está vacía
           if [ -z "${{ vars.ENV_BACK }}" ]; then
             echo "La variable ENV_BACK está vacía. Verifica la configuración en GitHub."
             exit 1
           fi
-      
+
           # Mostrar el contenido procesado en los logs
           echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-      
+
           # Escribirlo en el archivo .env.dev
           echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-      
+
           # Verificar permisos y contenido del archivo
           chmod 644 ./bounsic-back/env/.env.dev
           echo "Archivo .env.dev creado:"
           ls -la ./bounsic-back/env
-      
+
       - name: Verificar contenido del archivo .env.dev (debug temporal)
         run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
-
-
 
       - name: Build Docker image
         run: docker build -t bounsic-back:latest ./bounsic-back
@@ -92,7 +91,6 @@ jobs:
             --restart always \
             $(echo "${{ vars.ENV_BACK }}" | sed 's/\([^=]*\)=\(.*\)/-e \1=\2 /g') \
             bounsic-back:latest
-
             # Verificar despliegue
             sleep 5
             docker ps | grep bounsic-back || exit 1
