@@ -26,17 +26,26 @@ jobs:
         run: cat ./bounsic-back/env/.env.dev
 
       - name: Build Docker image
-        run: docker build -t bounsic-back ./bounsic-back
+        run: docker build -t bounsic-back:latest ./bounsic-back
 
       - name: Save Docker image
-        run: docker save bounsic-back | gzip > bounsic-back.tar.gz
+        run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+
+      - name: Verificar conexión SSH
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script: echo "Conexión SSH exitosa"
 
       - name: Transfer Docker image to Azure VM
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}  # Clave sin passphrase
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
@@ -46,7 +55,7 @@ jobs:
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}  # Clave sin passphrase
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
           script_stop: true
           script: |
@@ -54,4 +63,8 @@ jobs:
             docker load -i bounsic-back.tar.gz
             docker stop bounsic-back || true
             docker rm bounsic-back || true
-            docker run -d --name bounsic-back -p 1801:8000 --env-file ./env/.env.dev bounsic-back:latest
+            docker run -d --name bounsic-back \
+              -p 1801:8000 \
+              --env-file ./env/.env.dev \
+              --restart always \
+              bounsic-back:latest
