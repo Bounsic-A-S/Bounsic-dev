@@ -3,7 +3,7 @@ name: Dockerize and Deploy Bounsic Back
 on:
   push:
     branches:
-      - feat/deploy-backend  # Cambia "main" por la rama que prefieras
+      - feat/deploy-backend
 
 jobs:
   dockerize_and_deploy:

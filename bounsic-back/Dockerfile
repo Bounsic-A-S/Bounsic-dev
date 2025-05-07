@@ -63,8 +63,10 @@ COPY --from=builder /install /usr/local
 COPY . .
 COPY cookies/ ./cookies/
 
+# Crea el directorio para el archivo .env\RUN mkdir -p /app/env
+
 # Puerto expuesto
 EXPOSE 8000
 
-# Comando de inicio del servidor FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log", "--log-level", "debug"]
+# Comando de inicio del servidor FastAPI cargando variables de entorno
+CMD ["/bin/sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --access-log --log-level debug"]
