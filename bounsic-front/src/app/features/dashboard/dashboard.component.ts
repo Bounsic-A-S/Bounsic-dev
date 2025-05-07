@@ -51,6 +51,7 @@ export class DashboardComponent implements OnInit {
   songSafeChoices$!: Observable<DashboardSong[]>;
   songRelated$!: Observable<DashboardSong[]>;
   songLastMonth$!: Observable<DashboardSong[]>;
+  songTrending$!: Observable<DashboardSong[]>;
   // bg
   bg$ : Observable<string> = this.backgroundService.background$;
   
@@ -70,6 +71,7 @@ export class DashboardComponent implements OnInit {
     this.songRelated$ = this.songService.getRelatedSongs(email).pipe(
       take(1)
     );
+    this.songTrending$ = this.songService.getTrendingSongs()
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }

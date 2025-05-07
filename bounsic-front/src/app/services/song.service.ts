@@ -19,8 +19,9 @@ export class SongService {
   //last month
   private songLastMonthSubject = new BehaviorSubject<DashboardSong[]>([]);
   private songLastMonth$ = this.songLastMonthSubject.asObservable();
-
-
+  // trending
+  private songTrendingSubject = new BehaviorSubject<DashboardSong[]>([]);
+  private songTrending$ = this.songTrendingSubject.asObservable();
 
   constructor(private http: HttpClient) {}
   getData(title:string): Observable<any> {
@@ -72,6 +73,20 @@ export class SongService {
     return this.http.post<any>(`${this.apiUrl}/song/lastMonth`, { email: email }).pipe(
       tap((songsLastMonth) => {
         this.songLastMonthSubject.next(songsLastMonth);
+      }),
+      catchError((err) => {
+        console.error('Error al obtener last month songs:', err);
+        return of([]);
+      })  
+    );
+  }
+  getTrendingSongs (): Observable<DashboardSong[]> {
+    if(this.songTrendingSubject.value.length > 0) {
+      return this.songTrending$;
+    }
+    return this.http.get<any>(`${this.apiUrl}/song/top12`).pipe(
+      tap((songTrending) => {
+        this.songTrendingSubject.next(songTrending);
       }),
       catchError((err) => {
         console.error('Error al obtener last month songs:', err);

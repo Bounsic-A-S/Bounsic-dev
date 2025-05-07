@@ -21,9 +21,9 @@
       #scrollContainer
       class="flex gap-x-12 overflow-x-auto pb-4 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
     >
-      <div *ngFor="let trendingSong of trendingSongs" class="flex-none w-24 sm:w-28 lg:w-32">
+      <div *ngFor="let trendingSong of songs" class="flex-none w-24 sm:w-28 lg:w-32">
         <img
-          [src]="trendingSong.cover"
+          [src]="trendingSong.img_url"
           [alt]="trendingSong.title"
           class="w-full aspect-square object-cover rounded-md mb-2"
           />

@@ -503,7 +503,6 @@ class Song_controller:
     @staticmethod
     async def get_top_12_songs_controller():
         try:
-            print("llega")
             songs = await LastfmService.get_top_tracks_lastfm()
             if not songs:
                 return JSONResponse(
