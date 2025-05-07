@@ -65,10 +65,13 @@ jobs:
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
             
+            # Verificar y eliminar el contenedor temporal si ya existe
+            docker rm -f ***-back-temp >/dev/null 2>&1 || true
+
             # Verificar que el archivo .env.dev está en el contenedor
-            docker run --name bounsic-back-temp \
-              -v /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev:/app/env/.env.dev \
-              bounsic-back:latest ls /app/env/.env.dev || exit 1
+            docker run --name ***-back-temp \
+              -v /home/***/***/env/.env.dev:/app/env/.env.dev \
+              ***-back:latest ls /app/env/.env.dev || exit 1
 
             # Iniciar el contenedor con las variables de entorno
             docker run -d \
