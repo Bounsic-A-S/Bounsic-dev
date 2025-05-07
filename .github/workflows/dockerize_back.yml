@@ -17,21 +17,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Crear archivo .env.dev
+      - name: Create .env.dev file
         run: |
           mkdir -p ./bounsic-back/env
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-
-      - name: Verificar contenido del archivo .env.dev
-        run: cat ./bounsic-back/env/.env.dev
+          echo "${{ vars.ENV_BACK }}" > ./bounsic-back/env/.env.dev
+          # Validación básica del archivo
+          [ -s ./bounsic-back/env/.env.dev ] || exit 1
 
       - name: Build Docker image
-        run: docker build -t bounsic-back ./bounsic-back
+        run: docker build -t bounsic-back:latest ./bounsic-back
 
-      - name: Save Docker image
-        run: docker save bounsic-back | gzip > bounsic-back.tar.gz
+      - name: Verify Docker image
+        run: |
+          docker inspect bounsic-back:latest || exit 1
+          docker run --rm bounsic-back:latest ls /app || exit 1
 
-      - name: Transfer Docker image to Azure VM
+      - name: Compress and save image
+        run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+
+      - name: Transfer files to Azure VM
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.AZURE_VM_IP }}
@@ -40,18 +44,29 @@ jobs:
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
+          strip_components: 1
 
-      - name: SSH and deploy in Azure VM
+      - name: Deploy on Azure VM
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
-          script_stop: true
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-            docker load -i bounsic-back.tar.gz
-            docker stop bounsic-back || true
-            docker rm bounsic-back || true
-            docker run -d --name bounsic-back -p 1801:8000 --env-file ./env/.env.dev bounsic-back:latest
+            # Cargar imagen
+            docker load -i bounsic-back.tar.gz || exit 1
+            # Detener y eliminar contenedor anterior si existe
+            docker stop bounsic-back >/dev/null 2>&1 || true
+            docker rm bounsic-back >/dev/null 2>&1 || true
+            # Ejecutar nuevo contenedor con variables de entorno
+            docker run -d \
+              --name bounsic-back \
+              -p 1801:8000 \
+              --restart always \
+              --env-file ./env/.env.dev \
+              bounsic-back:latest
+            # Verificar despliegue
+            sleep 5
+            docker ps | grep bounsic-back || exit 1

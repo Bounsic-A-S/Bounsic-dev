@@ -67,4 +67,4 @@ COPY cookies/ ./cookies/
 EXPOSE 8000
 
 # Comando de inicio del servidor FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log", "--log-level", "debug"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log", "--log-level", "debug"]
