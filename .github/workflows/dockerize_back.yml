@@ -20,10 +20,13 @@ jobs:
       - name: Crear archivo .env.dev
         run: |
           mkdir -p ./bounsic-back/env
+          echo "Contenido de ENV_BACK:"
+          echo "${{ vars.ENV_BACK }}"
           echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
-
+      
       - name: Verificar contenido del archivo .env.dev
-        run: cat ./bounsic-back/env/.env.dev
+        run: cat ./bounsic-back/env/.env.dev || echo "El archivo está vacío o no se creó correctamente"
+
 
       - name: Build Docker image
         run: docker build -t bounsic-back:latest ./bounsic-back
