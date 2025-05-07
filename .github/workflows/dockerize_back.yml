@@ -67,14 +67,14 @@ jobs:
             
             # Verificar que el archivo .env.dev está en el contenedor
             docker run --name bounsic-back-temp \
-              -v /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev:/env/.env.dev \
-              bounsic-back:latest ls /env/.env.dev || exit 1
+              -v /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev:/app/env/.env.dev \
+              bounsic-back:latest ls /app/env/.env.dev || exit 1
 
             # Iniciar el contenedor con las variables de entorno
             docker run -d \
               --name bounsic-back \
               --env-file /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev \
-              -v /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev:/env/.env.dev \
+              -v /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev:/app/env/.env.dev \
               -p 1801:8000 \
               --restart always \
               bounsic-back:latest
