@@ -49,39 +49,23 @@ jobs:
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
 
             # Crear carpeta env si no existe
-            mkdir -p env
+            mkdir -p /home/${{ secrets.AZURE_VM_USER }}/bounsic/env
 
             # Crear archivo .env.dev desde la variable y colocarlo en la carpeta correcta
-            echo -e "${{ vars.ENV_BACK }}" > ./env/.env.dev
+            echo -e "${{ vars.ENV_BACK }}" > /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev
 
             # Verificar que el archivo se creó correctamente
             echo "Contenido de ./env/.env.dev:"
-            cat ./env/.env.dev
+            cat /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev
 
             # Cargar y ejecutar el contenedor
             docker load -i bounsic-back.tar.gz || exit 1
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
-            
-            # Ejecutar el contenedor y copiar el .env.dev al contenedor
             docker run -d \
               --name bounsic-back \
+              --env-file /home/${{ secrets.AZURE_VM_USER }}/bounsic/env/.env.dev \
               -p 1801:8000 \
               --restart always \
               bounsic-back:latest
-            
-            # Esperar a que el contenedor se inicie
-            sleep 5
-            
-            # Copiar el .env.dev dentro del contenedor en /app/env/
-            docker cp ./env/.env.dev bounsic-back:/app/env/.env.dev
-            
-            # Verificar que el archivo está dentro del contenedor
-            docker exec bounsic-back ls /app/env/
-            docker exec bounsic-back cat /app/env/.env.dev
 
-            # Reiniciar el contenedor para aplicar las variables
-            docker restart bounsic-back
-
-            sleep 5
-            docker ps | grep bounsic-back || exit 1
