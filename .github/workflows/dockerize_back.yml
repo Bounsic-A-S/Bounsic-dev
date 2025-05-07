@@ -63,8 +63,4 @@ jobs:
             docker load -i bounsic-back.tar.gz
             docker stop bounsic-back || true
             docker rm bounsic-back || true
-            docker run -d --name bounsic-back \
-              -p 1801:8000 \
-              --env-file ./env/.env.dev \
-              --restart always \
-              bounsic-back:latest
+            docker run -d --name bounsic-back -p 1801:8000 --restart always bounsic-back:latest
