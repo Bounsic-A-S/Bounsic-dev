@@ -171,8 +171,9 @@ export class AuthService implements OnDestroy {
           } else {
             const data = {
               "email": activeAccount.username,
+              "username": activeAccount.name,
               "name": activeAccount.name,
-              "last_name": activeAccount.name,
+              "phone":""
             }
             this.userService.registerUser(data).subscribe({
               next: (res) => {
