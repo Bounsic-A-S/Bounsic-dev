@@ -43,7 +43,7 @@ class MySQLSongService:
         try:
             query = """
                 INSERT INTO Bounsic_Users (name, username, email, profile_img, rol_user, phone, country )
-                VALUES (:name, :username, :email, null, 2, :phone, colombia  )
+                VALUES (:name, :username, :email, null, 2, :phone, 'colombia'  )
             """
             return await MySQLSongService._db.execute_query(query, data)
         except Exception as e:
@@ -640,7 +640,6 @@ class MySQLSongService:
                         u.email,
                         u.country,
                         u.phone,
-                        u.creation_date AS membre_since,
                         r.name_rol AS role,
                         u.profile_img,
                         p.background,
