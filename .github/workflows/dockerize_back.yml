@@ -12,18 +12,30 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        run: echo "🔍 Descargando código del repositorio..."
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+        run: echo "🚀 Configurando Docker Buildx..."
 
       - name: Build Docker image
-        run: docker build -t bounsic-back:latest ./bounsic-back
+        run: |
+          echo "🏗️ Construyendo imagen Docker..."
+          docker build -t bounsic-back:latest ./bounsic-back
+          echo "✅ Imagen construida correctamente"
 
       - name: Verify Docker image
-        run: docker inspect bounsic-back:latest || exit 1
+        run: |
+          echo "🔎 Verificando imagen Docker..."
+          docker inspect bounsic-back:latest || (echo "❌ Falló la verificación de imagen"; exit 1)
+          docker run --rm bounsic-back:latest ls /app || (echo "❌ No se pudo ejecutar contenedor temporal"; exit 1)
+          echo "✅ Imagen verificada con éxito"
 
       - name: Compress and save image
-        run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+        run: |
+          echo "📦 Comprimiendo imagen Docker..."
+          docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+          echo "✅ Imagen comprimida (tamaño: $(du -h bounsic-back.tar.gz | cut -f1))"
 
       - name: Transfer files to Azure VM
         uses: appleboy/scp-action@master
@@ -34,22 +46,49 @@ jobs:
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
+        run: echo "📤 Enviando imagen a la VM Azure..."
 
-      - name: Deploy Docker Container
-        run: |
-          set -x # Para depurar, muestra los comandos que se ejecutan
-
-          # Divide la variable vars.ENV_BACK en líneas y pasa cada una como -e
-          while IFS= read -r line; do
-            if [[ -n "$line" ]]; then # Asegurarse de que la línea no esté vacía
-              docker run -d \
-                --name bounsic-back \
-                -e "$line" \
-                -p 1801:8000 \
-                --restart always \
-                bounsic-back:latest
-              break # Ejecutamos el run una vez con todas las variables
-            fi
-          done <<< "${{ vars.ENV_BACK }}"
-
-          set +x # Desactivar la depuración
+      - name: Deploy on Azure VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+            echo "🛠️ Iniciando despliegue en Azure VM..."
+            
+            # Cargar imagen Docker
+            echo "📥 Cargando imagen Docker..."
+            docker load -i bounsic-back.tar.gz || (echo "❌ Falló al cargar la imagen"; exit 1)
+            
+            # Detener y eliminar contenedor anterior si existe
+            echo "♻️ Limpiando versión anterior..."
+            docker stop bounsic-back >/dev/null 2>&1 || true
+            docker rm bounsic-back >/dev/null 2>&1 || true
+            
+            # Ejecutar nuevo contenedor
+            echo "🚀 Iniciando nuevo contenedor..."
+            docker run -d \
+              --name bounsic-back \
+              -p 1801:8000 \
+              --restart always \
+              bounsic-back:latest || (echo "❌ Falló al iniciar el contenedor"; exit 1)
+            
+            # Verificación detallada
+            echo "🔍 Verificando estado del contenedor..."
+            sleep 5
+            docker ps | grep bounsic-back || (echo "❌ El contenedor no está corriendo"; exit 1)
+            
+            # Mostrar información del contenedor
+            echo "📊 Estado del contenedor:"
+            docker inspect --format='' bounsic-back
+            
+            echo "🌐 Servicio disponible en:"
+            echo "   - Local: http://localhost:1801"
+            echo "   - Red: http://${{ secrets.AZURE_VM_IP }}:1801"
+            
+            echo "✅ Despliegue completado correctamente 🎉"
+            echo "📝 Últimos logs:"
+            docker logs bounsic-back --tail 5

@@ -7,14 +7,11 @@ __pycache__/
 
 # Entornos virtuales
 venv/
-.env/
 *.venv/
 pip-log.txt
 pip-delete-this-directory.txt
 
 # Configuración de entorno y credenciales
-.env
-*.env
 config.json
 settings.py
 *.sqlite3

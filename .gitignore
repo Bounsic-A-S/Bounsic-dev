@@ -43,12 +43,8 @@ Thumbs.db
 bun.lock
 
 # Environment files
-.env
-.env.local
-.env.development
-.env.production
-.env.test
-*.env.*
+
+
 
 # lock-json
 package-lock.json
@@ -58,7 +54,6 @@ package-lock.json
 
 # Entornos virtuales
 venv/
-.env/
 *.venv/
 pip-log.txt
 pip-delete-this-directory.txt
