@@ -63,10 +63,12 @@ COPY --from=builder /install /usr/local
 COPY . .
 COPY cookies/ ./cookies/
 
-# Crea el directorio para el archivo .env\RUN mkdir -p /app/env
+# Copia los certificados SSL
+COPY ./bounsic-back/cert/key.pem /app/cert/key.pem
+COPY ./bounsic-back/cert/cert.pem /app/cert/cert.pem
 
 # Puerto expuesto
-EXPOSE 8000
+EXPOSE 443
 
-# Comando de inicio del servidor FastAPI cargando variables de entorno
-CMD ["/bin/sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port 8000 --access-log --log-level debug"]
+# Comando de inicio del servidor FastAPI en HTTPS
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/cert/key.pem", "--ssl-certfile", "/app/cert/cert.pem", "--access-log", "--log-level", "debug"]
