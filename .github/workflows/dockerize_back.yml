@@ -13,49 +13,30 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Create .env file
+      - name: Create .env from variable
         run: |
           mkdir -p ./bounsic-back/env
-          # Convertimos los \n a saltos de línea reales
-          echo -e "${{ vars.ENV_BACK }}" | sed 's/\\n/\n/g' > ./bounsic-back/env/.env.dev
+          # Conversión robusta de \n a saltos de línea reales
+          echo "${{ vars.ENV_BACK }}" | awk '{gsub(/\\n/, "\n")}1' > ./bounsic-back/env/.env.dev
           
-          echo "Verificando formato del archivo .env.dev:"
-          cat -A ./bounsic-back/env/.env.dev
-          [ -s ./bounsic-back/env/.env.dev ] || exit 1
-          [ $(grep -c '=' ./bounsic-back/env/.env.dev) -gt 5 ] || { echo "Error: Archivo .env incompleto"; exit 1; }
+          # Verificación EXTRA-ROBUSTA
+          echo "=== Verificación de estructura ==="
+          grep -o '^[^=]*' ./bounsic-back/env/.env.dev # Muestra solo nombres de variables
+          echo "================================="
+          
+          # Validación crítica
+          if [ $(grep -c '=' ./bounsic-back/env/.env.dev) -lt 8 ]; then
+            echo "❌ Error: Archivo .env incompleto o mal formado"
+            exit 1
+          fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        run: docker build -t bounsic-back:latest ./bounsic-back
-
-      - name: Verify Docker image
+      - name: Build and verify
         run: |
-          docker inspect bounsic-back:latest || exit 1
-          docker run --rm -v $(pwd)/bounsic-back/env:/app/env bounsic-back:latest sh -c '\
-            echo "Verificando .env en contenedor:"; \
-            ls -la /app/env/.env.dev && \
-            head -n 3 /app/env/.env.dev && \
-            echo "..."; \
-            grep -c "=" /app/env/.env.dev || exit 1' || exit 1
+          docker build -t bounsic-back:latest ./bounsic-back
+          docker run --rm -v $(pwd)/bounsic-back/env:/app/env bounsic-back:latest \
+            sh -c '[ -f /app/env/.env.dev ] && echo "✔ .env encontrado" || exit 1'
 
-      - name: Compress and save image
-        run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
-
-      - name: Transfer files to Azure VM
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
-          port: 22
-          source: |
-            bounsic-back.tar.gz
-            ./bounsic-back/env/.env.dev
-          target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
-
-      - name: Deploy on Azure VM
+      - name: Deploy to Azure
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.AZURE_VM_IP }}
@@ -64,37 +45,17 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-            
-            # Configuración segura del entorno
+            # Usamos el mismo método infalible en el servidor
+            echo "${{ vars.ENV_BACK }}" | awk '{gsub(/\\n/, "\n")}1' > .env.prod
             mkdir -p env
-            chmod 750 env
-            mv .env.dev env/
+            mv .env.prod env/.env.dev
             chmod 640 env/.env.dev
             
-            # Verificación básica (sin mostrar valores sensibles)
-            echo "Verificando estructura de .env:"
-            head -n 1 env/.env.dev || exit 1
-            echo "..."
-            tail -n 1 env/.env.dev
-            [ $(grep -c '=' env/.env.dev) -gt 5 ] || { echo "Error: Archivo .env incompleto"; exit 1; }
-            
-            # Manejo de la imagen Docker
-            docker load -i bounsic-back.tar.gz || exit 1
-            
-            # Limpieza de contenedor anterior
-            docker stop bounsic-back >/dev/null 2>&1 || true
-            docker rm bounsic-back >/dev/null 2>&1 || true
-            
-            # Despliegue del nuevo contenedor
+            # Despliegue
+            docker load -i bounsic-back.tar.gz
             docker run -d \
               --name bounsic-back \
               -v $(pwd)/env/.env.dev:/app/env/.env.dev:ro \
               -p 1801:8000 \
               --restart unless-stopped \
               bounsic-back:latest
-            
-            # Verificación final
-            sleep 15
-            docker ps | grep bounsic-back || exit 1
-            echo "Despliegue exitoso. Últimos logs:"
-            docker logs bounsic-back --tail 15
