@@ -21,13 +21,13 @@ jobs:
         run: |
           echo "🔓 Desencriptando archivo .env..."
           mkdir -p ./bounsic-back/env 
-          openssl enc -d -aes-256-cbc \
-            -in ./bounsic-back/env/.env.dev.enc \ # Ruta corregida
+          openssl enc -d -aes-256-cbc -salt \
+            -in ./bounsic-back/env/.env.dev.enc \
             -out ./bounsic-back/env/.env.dev \
             -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "❌ Falló la desencriptación"; exit 1)
-
           chmod 600 ./bounsic-back/env/.env.dev
           echo "✅ Archivo .env desencriptado correctamente"
+
 
       - name: Build Docker image
         run: |
