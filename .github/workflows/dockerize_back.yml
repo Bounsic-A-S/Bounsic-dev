@@ -12,11 +12,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        run: echo "🔍 Descargando código del repositorio..."
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        run: echo "🚀 Configurando Docker Buildx..."
 
       - name: Decrypt .env file
         run: |
@@ -29,11 +27,10 @@ jobs:
           
           chmod 600 ./bounsic-back/env/.env.dev
           echo "✅ Archivo .env desencriptado correctamente"
-          echo "🔒 Permisos configurados (600)"
 
       - name: Build Docker image
         run: |
-          echo "🏗️ Construyendo imagen Docker con .env..."
+          echo "🏗️ Construyendo imagen Docker..."
           docker build -t bounsic-back:latest ./bounsic-back
           echo "✅ Imagen construida correctamente"
 
@@ -41,9 +38,7 @@ jobs:
         run: |
           echo "🔎 Verificando imagen Docker..."
           docker inspect bounsic-back:latest || (echo "❌ Falló la verificación de imagen"; exit 1)
-          docker run --rm -v $(pwd)/bounsic-back/env:/app/env bounsic-back:latest \
-            sh -c '[ -f /app/env/.env.dev ] && echo "✔ .env encontrado en contenedor" || exit 1'
-          echo "✅ Imagen verificada con éxito (incluyendo .env)"
+          echo "✅ Imagen verificada correctamente"
 
       - name: Compress and save image
         run: |
@@ -60,7 +55,6 @@ jobs:
           port: 22
           source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
-        run: echo "📤 Enviando imagen a la VM Azure..."
 
       - name: Deploy on Azure VM
         uses: appleboy/ssh-action@v0.1.8
@@ -86,24 +80,13 @@ jobs:
             echo "🚀 Iniciando nuevo contenedor..."
             docker run -d \
               --name bounsic-back \
-              -v $(pwd)/env/.env.dev:/app/env/.env.dev:ro \
               -p 1801:8000 \
               --restart always \
-              bounsic-back:latest || (echo "❌ Falló al iniciar el contenedor"; exit 1)
+              bounsic-back:latest
             
             # Verificación detallada
             echo "🔍 Verificando estado del contenedor..."
             sleep 5
             docker ps | grep bounsic-back || (echo "❌ El contenedor no está corriendo"; exit 1)
             
-            # Mostrar información del contenedor
-            echo "📊 Estado del contenedor:"
-            docker inspect --format='' bounsic-back
-            
-            echo "🌐 Servicio disponible en:"
-            echo "   - Local: http://localhost:1801"
-            echo "   - Red: http://${{ secrets.AZURE_VM_IP }}:1801"
-            
             echo "✅ Despliegue completado correctamente 🎉"
-            echo "📝 Últimos logs:"
-            docker logs bounsic-back --tail 5
