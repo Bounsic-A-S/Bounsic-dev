@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import logging
 from app.services import MySQLSongService , insert_usr_image
+from app.controllers import Playlist_controller
 
 
 class MySQLController:
@@ -366,7 +367,21 @@ class MySQLController:
             playlists = await MySQLSongService.get_playlists_by_user(user_id)
             if not playlists:
                 raise HTTPException(status_code=404, detail="No playlists found for this user")
-            return JSONResponse(status_code=200, content={"playlists": playlists})
+                        
+            # Lista para almacenar resultados detallados de cada playlist
+            detailed_playlists = []
+
+            for playlist in playlists:
+                playlist_id = playlist.get("playlist_mongo_id")
+                if playlist_id is None:
+                    continue  # Previene errores si algún registro no tiene ID
+
+                # Obtiene el detalle de la playlist por su ID
+                detailed = await Playlist_controller.get_playlist_by_id_controller(playlist_id)
+                if detailed:
+                    detailed_playlists.append(detailed)
+
+            return JSONResponse(status_code=200, content=detailed_playlists)
         except HTTPException:
             raise
         except Exception as e:

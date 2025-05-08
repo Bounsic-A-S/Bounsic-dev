@@ -31,7 +31,7 @@ class Playlist_service:
                 "songs": songs,
                 "isPublic": playlist.get("isPublic", False),
                 "img_url": playlist.get("img_url", ""),
-                "updated_at": playlist.get("updated_at")
+                # "updated_at": playlist.get("updated_at")
             }
 
         except PyMongoError as e:
