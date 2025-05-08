@@ -19,7 +19,7 @@ export class PlaylistService {
       return this.playlists$;
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/playlist/all`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/user/playlists/user/1`).pipe(
       tap((playlists) => {
         this.playlistsSubject.next(playlists);
       }),

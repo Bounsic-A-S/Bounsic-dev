@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 interface Playlist {
-    id: number;
+    playlist_id: string;
     title: string;
     songCount: number;
-    coverUrl: string;
+    img_url: string;
 }
 
 @Component({
@@ -23,6 +23,7 @@ export class LibraryItemComponent {
     constructor(private router: Router) {}
 
     goToPlaylist() {
-        this.router.navigate(['/playlist', this.playlist.id]);
+        console.log(this.playlist)
+        this.router.navigate(['/playlist', this.playlist.playlist_id]);
     }
 }
