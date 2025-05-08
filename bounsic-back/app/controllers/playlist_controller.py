@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import HTTPException, Request
+from fastapi import HTTPException
 from app.services import Playlist_service
 
 class Playlist_controller:

@@ -353,7 +353,7 @@ class MySQLController:
             playlist = await MySQLSongService.get_playlist_by_id(playlist_id)
             if not playlist:
                 raise HTTPException(status_code=404, detail="Playlist not found")
-            return JSONResponse(status_code=200, content={"playlist": playlist})
+            return JSONResponse(status_code=200, content=playlist)
         except HTTPException:
             raise
         except Exception as e:

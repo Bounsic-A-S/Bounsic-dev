@@ -425,11 +425,12 @@ class MySQLSongService:
     async def get_playlists_by_user( user_id):
         try:
             query = """
-                SELECT p.* FROM Bounsic_Playlist p
-                JOIN Bounsic_User_Playlists up ON p.playlist_id = up.playlist_id
-                WHERE up.user_id = %s
+                    SELECT p.*
+                    FROM Bounsic_Playlist p
+                    JOIN Bounsic_User_Playlists up ON p.playlist_id = up.playlist_id
+                    WHERE up.user_id = :user_id;
             """
-            return await MySQLSongService._db.execute_query(query, (user_id,))
+            return await MySQLSongService._db.execute_query(query, {"user_id":user_id})
         except Exception as e:
             logging.error(f"get_playlists_by_user error: {e}")
             return None

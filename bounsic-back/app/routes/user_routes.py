@@ -110,9 +110,9 @@ async def get_all_playlists():
 async def get_playlist_by_id(playlist_id: int):
     return await MySQLController.get_playlist(playlist_id)
 
-@router.get("/playlists/user/{user_email}")
-async def get_playlists_by_user(user_email: str):
-    return await MySQLController.get_playlists_by_user(user_email)
+@router.get("/playlists/user/{user_id}")
+async def get_playlists_by_user(user_id: int):
+    return await MySQLController.get_playlists_by_user(user_id)
 
 @router.post("/playlists/create")
 async def create_playlist(request: Request):
