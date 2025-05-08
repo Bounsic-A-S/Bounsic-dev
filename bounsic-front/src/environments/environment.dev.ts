@@ -3,7 +3,7 @@ export const environment = {
     // apiUrl: 'http://localhost:1801', //back
     // api_S_Url: 'http://localhost:4000', //stream
 
-    apiUrl: 'http://20.81.217.99:1801', //back // http://20.81.217.99:1801
+    apiUrl: 'https://bounsic.site', //back // http://20.81.217.99:1801
     api_S_Url: 'https://streaming-cchyanf7gdhch9az.eastus2-01.azurewebsites.net', //streaming // https://streaming-cchyanf7gdhch9az.eastus2-01.azurewebsites.net
 
     msalConfig: {

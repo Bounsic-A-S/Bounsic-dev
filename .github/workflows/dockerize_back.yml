@@ -1,12 +1,18 @@
 name: Dockerize and Deploy Bounsic Back
 
 on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
+
   push:
     branches:
       - main
 
 jobs:
   dockerize_and_deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -19,33 +25,34 @@ jobs:
 
       - name: Decrypt .env file
         run: |
-          echo "Desencriptando archivo .env..."
+          echo "🔓 Desencriptando archivo .env..."
           mkdir -p ./bounsic-back/env 
           openssl enc -d -aes-256-cbc -salt \
             -in ./bounsic-back/env/.env.dev.enc \
             -out ./bounsic-back/env/.env.dev \
-            -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "Falló la desencriptación"; exit 1)
+            -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "❌ Falló la desencriptación"; exit 1)
           chmod 600 ./bounsic-back/env/.env.dev
-          echo " Archivo .env desencriptado correctamente"
+          echo "✅ Archivo .env desencriptado correctamente"
 
 
       - name: Build Docker image
         run: |
-          echo "🏗 Construyendo imagen Docker..."
+          echo "🏗️ Construyendo imagen Docker..."
           docker build -t bounsic-back:latest ./bounsic-back
-          echo "Imagen construida correctamente"
+          echo "✅ Imagen construida correctamente"
+
 
       - name: Verify Docker image
         run: |
-          echo "Verificando imagen Docker..."
-          docker inspect bounsic-back:latest || (echo " Falló la verificación de imagen"; exit 1)
-          echo "Imagen verificada correctamente"
+          echo "🔎 Verificando imagen Docker..."
+          docker inspect bounsic-back:latest || (echo "❌ Falló la verificación de imagen"; exit 1)
+          echo "✅ Imagen verificada correctamente"
 
       - name: Compress and save image
         run: |
-          echo " Comprimiendo imagen Docker..."
+          echo "📦 Comprimiendo imagen Docker..."
           docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
-          echo " Imagen comprimida (tamaño: $(du -h bounsic-back.tar.gz | cut -f1))"
+          echo "✅ Imagen comprimida (tamaño: $(du -h bounsic-back.tar.gz | cut -f1))"
 
       - name: Transfer files to Azure VM
         uses: appleboy/scp-action@master
@@ -66,28 +73,28 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
-            echo "🛠 Iniciando despliegue en Azure VM..."
+            echo "🛠️ Iniciando despliegue en Azure VM..."
             
             # Cargar imagen Docker
-            echo " Cargando imagen Docker..."
-            docker load -i bounsic-back.tar.gz || (echo " Falló al cargar la imagen"; exit 1)
+            echo "📥 Cargando imagen Docker..."
+            docker load -i bounsic-back.tar.gz || (echo "❌ Falló al cargar la imagen"; exit 1)
             
             # Detener y eliminar contenedor anterior si existe
-            echo " Limpiando versión anterior..."
+            echo "♻️ Limpiando versión anterior..."
             docker stop bounsic-back >/dev/null 2>&1 || true
             docker rm bounsic-back >/dev/null 2>&1 || true
             
             # Ejecutar nuevo contenedor
-            echo " Iniciando nuevo contenedor..."
+            echo "🚀 Iniciando nuevo contenedor..."
             docker run -d \
               --name bounsic-back \
-              -p 1801:8000 \
+              -p 443:443 \
               --restart always \
               bounsic-back:latest
             
             # Verificación detallada
-            echo " Verificando estado del contenedor..."
+            echo "🔍 Verificando estado del contenedor..."
             sleep 5
-            docker ps | grep bounsic-back || (echo " El contenedor no está corriendo"; exit 1)
+            docker ps | grep bounsic-back || (echo "❌ El contenedor no está corriendo"; exit 1)
             
-            echo " Despliegue completado correctamente "
+            echo "✅ Despliegue completado correctamente 🎉"
