@@ -16,11 +16,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+
       - name: Decrypt .env file
         run: |
           echo "🔓 Desencriptando archivo .env..."
-          mkdir -p ./bounsic-back/env
-          openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 \
+          mkdir -p ./bounsic-back/env 
+          openssl enc -d -aes-256-cbc \
             -in ./bounsic-back/env/.env.dev.enc \ # Ruta corregida
             -out ./bounsic-back/env/.env.dev \
             -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "❌ Falló la desencriptación"; exit 1)
