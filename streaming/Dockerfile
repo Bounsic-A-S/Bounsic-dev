@@ -10,9 +10,6 @@ COPY . .
 # Instala las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Verifica que Hypercorn esté instalado correctamente
-RUN pip show hypercorn
-
 # Exponer el puerto por defecto de Hypercorn
 EXPOSE 4000
 
