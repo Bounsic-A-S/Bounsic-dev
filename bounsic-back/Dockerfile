@@ -64,11 +64,11 @@ COPY . .
 COPY cookies/ ./cookies/
 
 # Copia los certificados SSL
-COPY cert/key.pem /app/cert/key.pem
-COPY cert/cert.pem /app/cert/cert.pem
+COPY cert/privkey.pem /app/cert/key.pem
+COPY cert/fullchain.pem /app/cert/cert.pem
 
 # Puerto expuesto
-EXPOSE 443
+EXPOSE 1801
 
 # Comando de inicio del servidor FastAPI en HTTPS
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/cert/key.pem", "--ssl-certfile", "/app/cert/cert.pem", "--access-log", "--log-level", "debug"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "1801", "--ssl-keyfile", "/app/cert/key.pem", "--ssl-certfile", "/app/cert/cert.pem", "--access-log", "--log-level", "debug"]
