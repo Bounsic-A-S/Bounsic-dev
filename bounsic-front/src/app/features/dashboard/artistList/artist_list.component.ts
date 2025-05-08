@@ -2,16 +2,29 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ArtistListItemComponent } from './artist_item/artist_item.component';
 import DashboardArtist from 'src/types/dashboard/DashboardArtist';
+import { SkeletonArtistComponent } from '@app/shared/ui/skeletons/artist/skeleton-artist.component';
 @Component({
     selector: 'dashboard-artist-list',
     standalone: true,
-    imports: [CommonModule,ArtistListItemComponent],
+    imports: [CommonModule,ArtistListItemComponent,SkeletonArtistComponent],
     templateUrl: './artist_list.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtistListComponent {
 
-    @Input() artists!: DashboardArtist[] | null;
+    private _artists!: DashboardArtist[] | null;
+    public loading: boolean = true;
+
+    @Input() 
+    set artists(value: DashboardArtist[] | null) {
+        this._artists = value;
+        this.loading = !value || value.length === 0;
+    }
+    get artists(): DashboardArtist[] | null {
+        return this._artists;
+    }
+
+
     public featuredArtists : DashboardArtist[] = [
         {
             artist_name: 'Coldplay',

@@ -1,12 +1,11 @@
 <div class="flex overflow-hidden gap-x-8 md:gap-x-12 snap-x snap-mandatory touch-pan-x md:touch-auto scroll-smooth scroll-hidden py-2">
     
-    <ng-container *ngIf="artists !== undefined; else featuredArtist">
+    <ng-container *ngIf="!loading; else skeletonArtist">
         <dashboard-artist-list-card *ngFor="let artist of artists" [artist]="artist">
         </dashboard-artist-list-card>
     </ng-container>
-    <ng-template #featuredArtist>
-        <dashboard-artist-list-card *ngFor="let artist of featuredArtists" [artist]="artist">
-        </dashboard-artist-list-card>
+    <ng-template #skeletonArtist>
+        <app-skeleton-artist *ngFor="let _ of [].constructor(7)"></app-skeleton-artist>
     </ng-template>
 
 </div>

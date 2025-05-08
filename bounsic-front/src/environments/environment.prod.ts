@@ -3,8 +3,8 @@ export const environment = {
     apiUrl: 'http://bounsic-back-nginx-gbh0hce0c7ada6gk.eastus2-01.azurewebsites.net', //back
     msalConfig: {
         auth: {
-            clientId: '69070e99-af46-49f0-a4f4-228ac2f8b61f',
-            authority: 'https://login.microsoftonline.com/af2aa024-2160-4e82-a754-865b614d0ff9'
+            clientId: '358ef62a-08c7-4755-9a61-78f1ebd0cd49',
+            authority: 'https://login.microsoftonline.com/618bab0f-20a4-4de3-a10c-e20cee96bb35'
         }
     },
     apiConfig: {

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from app.controllers import bert_request
+from app.controllers import Bert_controller
 
 router = APIRouter()
 
@@ -10,7 +10,7 @@ async def ask(request: Request):
         data = await request.json()
         question = data.get("question","")
             
-        response = bert_request(question)
+        response = Bert_controller.bert_request(question)
         return JSONResponse(content={"response": response})
     
     except Exception as e:

@@ -10,11 +10,16 @@ import {
   ViewChild,
   AfterViewInit,
   signal,
+  inject,
 } from '@angular/core';
 import { Heart, LucideAngularModule, MoreVertical } from 'lucide-angular';
 import { PlayerBarComponent } from './playbar/playbar.component';
 import { PlayerBarControllersComponent } from './controllers/playbar-controllers.component';
 import Song from 'src/types/Song';
+import { AudioStreamService } from '@app/services/streaming.service';
+import { AuthService } from '@app/services/auth/auth.service';
+import { UserService } from '@app/services/auth/user.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'player-music',
@@ -43,7 +48,11 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
   lastVolume = 0; 
 
   @ViewChild('audio') audioRef?: ElementRef<HTMLAudioElement>;
+  private audioStreamService = inject(AudioStreamService);
+  private authService = inject(AuthService)
+  private userService = inject(UserService)
 
+  
   ngAfterViewInit() {
     if (!this.audioRef) return;
     const audio = this.audioRef.nativeElement;
@@ -61,12 +70,17 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['song']) {
-      console.log('[player-music] Song input received:', this.song);
-      if (this.audioRef && this.song) {
-        const audio = this.audioRef.nativeElement;
-        audio.src = this.song.mp3_url;
-        audio.load();
-      }
+      setTimeout(() => {
+        if (this.audioRef && this.song) {
+          const audio = this.audioRef.nativeElement;
+          console.log(this.song);
+          const regex = /mp3\/(.*)/;
+          const match = this.song.mp3_url.match(regex);
+          audio.src = this.audioStreamService.getAudioUrl(match ? match[1] : '')
+          console.log('Audio source set to:', audio.src);
+          audio.load();
+        }
+      });
     }
   }
 
@@ -83,6 +97,36 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     audio.muted = !audio.muted;
     this.volume.set(audio.muted ? 0 : this.lastVolume);
   }
+  toggleLike() {
+    this.authService.userProfile$.pipe(take(1)).subscribe(user => {
+      if (!user || !this.song) {
+        console.error('Usuario o canción no disponible');
+        return;
+      }
+      //vars
+      const songId = this.song._id;
+      const userId = user.id_user;
+      if(!userId || !songId) return;
+      // ui vars
+      const previousState = this.song.isLiked;
+      this.song.isLiked = !this.song.isLiked;
+      //api call
+      const likeObservable = this.song.isLiked
+      ? this.userService.addLike(userId, songId)
+      : this.userService.removeLike(userId, songId);
+
+    likeObservable.subscribe({
+      next: () => {
+        console.log(this.song.isLiked ? 'Like added' : 'Like removed');
+      },
+      error: err => {
+        console.error('Error al actualizar like:', err);
+        this.song.isLiked = previousState;
+      }
+    });
+    });
+  }
+  
 
   onVolumeChange(vol: number) {
     const audio = this.audioRef?.nativeElement;
@@ -101,11 +145,15 @@ export class PlayerMusicComponent implements OnChanges, AfterViewInit {
     const audio = this.audioRef?.nativeElement;
     if (!audio) return;
     audio.currentTime += seconds;
+    this.currentTime.set(audio.currentTime);
+
   }
 
   onSeek(value: number) {
     const audio = this.audioRef?.nativeElement;
     if (!audio) return;
     audio.currentTime = value;
+    this.currentTime.set(value);
+
   }
 }

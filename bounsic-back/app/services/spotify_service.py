@@ -1,28 +1,28 @@
 from app.provider import sp
 
-def get_album_images(album_name, artist_name=None):
-    query = f"{album_name} {artist_name or ''}".strip()
-
-    try:
+class Spotify_service:
+    
+    @staticmethod
+    def get_album_images(album_name, artist_name=None):
+        query = f"{album_name} {artist_name or ''}".strip()
+        
         result = sp.search(q=query, type="album", limit=1)
-
-        if not result.get('albums', {}).get('items'):
-            print(f"No se encontró el álbum: {album_name}")
+        
+        if not result['albums']['items']:
+            print(" No se encontró el álbum.")
             return None
 
         album = result['albums']['items'][0]
-        return album.get('images', [])
     
-    except Exception as e:
-        print(f"Error al obtener imágenes del álbum: {e}")
-        return None
+        
+        return album['images']
 
-def get_artist_and_genre_by_track(track_name):
-    try:
+    @staticmethod
+    def get_artist_and_genre_by_track(track_name):
         result = sp.search(q=track_name, type="track", limit=1)
 
-        if not result.get('tracks', {}).get('items'):
-            print(f"No se encontró la canción: {track_name}")
+        if not result['tracks']['items']:
+            print("No se encontró la canción.")
             return None
 
         track = result['tracks']['items'][0]
@@ -41,80 +41,195 @@ def get_artist_and_genre_by_track(track_name):
             'album': album_name
         }
     
-    except Exception as e:
-        print(f"Error al obtener información del track: {e}")
-        return None
-
-def get_artists_by_genre(genre, limit=2):
-    try:
+    @staticmethod   
+    def get_artists_by_genre(genre, limit=2):
+        # Buscar artistas por género
         result = sp.search(q=f'genre:"{genre}"', type="artist", limit=limit)
 
-        if not result.get('artists', {}).get('items'):
-            print(f"No se encontraron artistas para el género: {genre}")
+        if not result['artists']['items']:
+            print("No se encontraron artistas para ese género.")
             return None
 
         tracks_info = []
+
         for artist in result['artists']['items']:
             tracks_info.append({
                 'artist_name': artist['name'],
-                'img': artist['images'][0]['url'] if artist['images'] else None
+                'img': artist['images'][0]['url']
             })
 
         return tracks_info
-    
-    except Exception as e:
-        print(f"Error al obtener artistas del género: {e}")
-        return None
 
-def get_playlist_id_by_name(playlist_name):
-    try:
-        result = sp.search(playlist_name, type="playlist")  # Asegúrate de que esta función devuelva un diccionario válido
+    @staticmethod
+    def get_track_details(track_name, artist_name=None):
+        """
+        Obtiene detalles de una canción: imagen del álbum, año de lanzamiento y géneros.
         
-        if not result.get('playlists', {}).get('items'):
-            print(f"Error: No se encontraron listas de reproducción con el nombre: {playlist_name}")
+        Args:
+            track_name (str): Nombre de la canción.
+            artist_name (str, optional): Nombre del artista (opcional para mayor precisión).
+        
+        Returns:
+            dict: Diccionario con:
+                - 'image_url' (str): URL de la imagen del álbum.
+                - 'release_year' (str): Año de lanzamiento (ej: "1982").
+                - 'genres' (list): Lista de géneros asociados al artista.
+                - 'artist' (str): Nombre del artista principal.
+                - 'album' (str): Nombre del álbum.
+            None: Si no se encuentra la canción.
+        """
+        query = f"track:{track_name}"
+        if artist_name:
+            query += f" artist:{artist_name}"
+        
+        result = sp.search(q=query, type="track", limit=1)
+        
+        if not result['tracks']['items']:
+            print(f"No se encontró la canción: {track_name}")
             return None
+        
+        track = result['tracks']['items'][0]
+        album = track['album']
+        
+        # Obtener géneros del artista principal
+        artist_id = track['artists'][0]['id']
+        artist_info = sp.artist(artist_id)
+        genres = artist_info.get('genres', [])
+        
+        # Obtener año de lanzamiento (formato: "YYYY-MM-DD" -> extraer solo el año)
+        release_year = album['release_date'].split('-')[0] if album.get('release_date') else "Desconocido"
+        
+        return {
+            'image_url': album['images'][0]['url'] if album.get('images') else None,
+            'release_year': release_year,
+            'genres': genres,
+            'artist': track['artists'][0]['name'],
+            'album': album['name'],
+            'track_name': track['name']
+        }
 
-        playlist_id = result['playlists']['items'][0]['id']
-        return playlist_id
-    
-    except Exception as e:
-        print(f"Error al obtener el ID de la playlist: {e}")
-        return None
-
-def get_top_tracks_global(limit=12):
-    playlist_name = "Top 50 Global"
-    
-    # Obtener el ID de la playlist
-    playlist_id =  "37i9dQZEVXbMDoHDwVN2tF"#get_playlist_id_by_name(playlist_name)
-    print(f"Playlist ID: {playlist_id}")
-
-    
-    if playlist_id:
+    @staticmethod
+    def get_artist_info(artist_name: str):
+        """
+        Obtiene información completa de un artista desde Spotify y la formatea
+        para coincidir con tu esquema de MongoDB.
+        
+        Args:
+            artist_name (str): Nombre del artista a buscar
+        
+        Returns:
+            dict: {
+                "name": str,               # Nombre real
+                "artist_name": str,        # Nombre artístico (puede ser igual)
+                "country": str,            # País (del primer mercado disponible)
+                "desc": str,              # Géneros como descripción
+                "albums": list,           # Lista vacía (se llena después)
+                "spotify_data": {         # Datos adicionales de Spotify
+                    "genres": list,
+                    "popularity": int,
+                    "image_url": str
+                }
+            }
+            None: Si no se encuentra el artista
+        """
         try:
-            # Obtener los primeros 50 tracks de la playlist
-            result = sp.playlist_tracks(playlist_id, limit=limit)
-            
-            if not result.get('items'):
-                print("No se encontraron tracks en el top global.")
+            # Buscar artista en Spotify
+            result = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
+            if not result['artists']['items']:
+                print(f"No se encontró el artista: {artist_name}")
                 return None
 
-            top_tracks = []
-
-            # Extraer la información relevante de las canciones
-            for item in result['items']:
-                track = item['track']
-                top_tracks.append({
-                    'track_name': track['name'],
-                    'artist_name': track['artists'][0]['name'],
-                    'album_name': track['album']['name'],
-                    'album_images': track['album']['images']
-                })
+            artist = result['artists']['items'][0]
+            artist_id = artist['id']
             
-            return top_tracks
-        
+            # Obtener detalles completos del artista
+            artist_details = sp.artist(artist_id)
+
+            # Formatear según tu esquema
+            artist_data = {
+                "name": artist_details.get('name', artist_name),
+                "artist_name": artist_details.get('name', artist_name),
+                "country": artist_details.get('country', 
+                        artist_details.get('markets', [''])[0] if artist_details.get('markets') else ''),
+                "desc": ", ".join(artist_details.get('genres', ['Sin descripción'])),
+                "albums": []  # Se poblará después con album_ids
+            }
+
+            return artist_data
+
         except Exception as e:
-            print(f"Error al obtener los tracks: {e}")
+            print(f"Error al obtener artista de Spotify: {str(e)}")
             return None
-    else:
-        print("No se pudo obtener el ID de la playlist.")
-        return None
+        
+    @staticmethod
+    def get_album_info(album_name: str, artist_name: str = None):
+        """
+        Obtiene información de un álbum desde Spotify y la formatea para tu esquema MongoDB
+        
+        Args:
+            album_name (str): Nombre del álbum
+            artist_name (str, optional): Nombre del artista para búsqueda más precisa
+        
+        Returns:
+            dict: {
+                "name": str,               # Nombre del álbum
+                "release_year": int,       # Año de lanzamiento
+                "img_url": str,            # URL de la imagen principal
+                "artist": {                # Información básica del artista
+                    "spotify_id": str,     # ID en Spotify (para referencia)
+                    "name": str            # Nombre del artista
+                },
+                "spotify_data": {          # Datos adicionales
+                    "tracks": list,        # Lista de canciones
+                    "genres": list,        # Géneros asociados
+                    "album_id": str        # ID en Spotify
+                }
+            }
+            None: Si no se encuentra el álbum
+        """
+        try:
+            # Construir query de búsqueda
+            query = f"album:{album_name}"
+            if artist_name:
+                query += f" artist:{artist_name}"
+            
+            # Buscar en Spotify
+            result = sp.search(q=query, type='album', limit=1)
+            if not result['albums']['items']:
+                print(f"No se encontró el álbum: {album_name}")
+                return None
+
+            album = result['albums']['items'][0]
+            album_id = album['id']
+            
+            # Obtener detalles completos del álbum
+            album_details = sp.album(album_id)
+            
+            # Obtener todas las canciones del álbum
+            tracks = []
+            for track in album_details['tracks']['items']:
+                tracks.append({
+                    "name": track['name'],
+                    "duration_ms": track['duration_ms'],
+                    "spotify_id": track['id']
+                })
+
+            # Extraer año de lanzamiento (solo el año)
+            release_date = album_details.get('release_date', '')
+            release_year = int(release_date.split('-')[0]) if release_date else 0
+
+            # Formatear según tu esquema
+            album_data = {
+                "name": album_details['name'],
+                "release_year": release_year,
+                "img_url": album_details['images'][0]['url'] if album_details['images'] else None,
+                "artist": album_details['artists'][0]['name'],
+                "songs": tracks,
+                "total_songs": album_details['total_tracks']
+            }
+
+            return album_data
+
+        except Exception as e:
+            print(f"Error al obtener álbum de Spotify: {str(e)}")
+            return None

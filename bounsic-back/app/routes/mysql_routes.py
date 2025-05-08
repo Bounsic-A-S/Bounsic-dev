@@ -21,10 +21,6 @@ async def get_user_by_email(user_email: str):
 async def get_user_by_username(username: str):
     return await MySQLController.get_users_by_username(username)
 
-@router.post("/users")
-async def create_user(request: Request):
-    data = await request.json()
-    return MySQLController.create_user(data)
 
 @router.put("/users/{user_id}")
 async def update_user(user_id: int, request: Request):
@@ -36,19 +32,14 @@ async def delete_user(user_id: int):
     return await MySQLController.delete_user(user_id)
 
 # ROLES
-@router.get("/roles")
-async def get_all_roles():
-    return await MySQLController.get_all_roles()
+
 
 @router.post("/roles")
 async def create_role(request: Request):
     data = await request.json()
     return MySQLController.create_role(data)
 
-# PERMISSIONS
-@router.get("/permissions")
-async def get_all_permissions():
-    return await MySQLController.get_all_permissions()
+
 
 @router.post("/permissions")
 async def create_permission(request: Request):
@@ -98,9 +89,6 @@ async def sum_count_history(request: Request):
     id_mongo_song = data.get("song_mongo_id")
     return  await MySQLController.sum_count_history_song(email, id_mongo_song)
 
-@router.get("/history/user/{user_id}")
-async def get_history_by_user(user_id: int):
-    return await MySQLController.get_history_by_user(user_id)
 
 @router.post("/history")
 async def create_history(request: Request):

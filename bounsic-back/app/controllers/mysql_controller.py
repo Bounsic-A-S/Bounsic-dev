@@ -1,10 +1,17 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import logging
-from app.services import MySQLSongService
+from app.services import MySQLSongService , insert_usr_image
 
 
 class MySQLController:
+
+    dataPreference = {
+        "background":"bg-bounsic-gradient",
+        "typography":"",
+        "language":"es",
+        "theme": "dark"
+    }
     # USERS
     @staticmethod
     async def get_all_users():
@@ -57,19 +64,33 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_users_by_username error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching user")
+        
     @staticmethod
-    async def create_user(data):
+    async def register_user(data):
         try:
             user = await MySQLSongService.insert_user(data)
-            return JSONResponse(status_code=201, content={"user": user})
+            if not user:
+                return JSONResponse(status_code=400, content={"message": "Err creating the user"})
+            
+            new_user = await MySQLSongService.get_user_by_email(data["email"])
+            MySQLController.dataPreference["user_id"] = new_user[0]["id_user"]
+            preferences = await MySQLSongService.insert_preference(MySQLController.dataPreference)
+            if not preferences:
+                return JSONResponse(status_code=400, content={"message": "Err creating the preferences"})
+            full_user = await MySQLSongService.get_full_user_by_email(data["email"])
+            return JSONResponse(status_code=201, content={"user":full_user})
         except Exception as e:
             logging.error(f"create_user error: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")
         
     @staticmethod
-    async def update_user(user_id, data):
+    async def update_user(id, data):
         try:
-            user = await MySQLSongService.update_user(user_id, data)
+            img = "same"
+            if data["profile_img"] != None:
+                img = await insert_usr_image(data["profile_img"])
+            
+            user = await MySQLSongService.update_user_by_email(id, data,img)
             if not user:
                 raise HTTPException(status_code=404, detail="User not found")
             return JSONResponse(status_code=200, content={"user": user})
@@ -78,6 +99,7 @@ class MySQLController:
         except Exception as e:
             logging.error(f"update_user error: {e}")
             raise HTTPException(status_code=500, detail="Error updating user")
+        
     @staticmethod
     async def delete_user( user_id):
         try:
@@ -93,9 +115,9 @@ class MySQLController:
 
     # ROLES
     @staticmethod
-    async def get_all_roles():
+    async def get_rol_by_email(email):
         try:
-            roles = await MySQLSongService.get_all_roles()
+            roles = await MySQLSongService.get_role_by_email(email)
             if not roles:
                 raise HTTPException(status_code=404, detail="No roles found")
             return JSONResponse(status_code=200, content={"roles": roles})
@@ -116,7 +138,7 @@ class MySQLController:
 
     # PERMISSIONS
     @staticmethod
-    async def get_all_permissions():
+    async def get_permissions_by_email(email):
         try:
             permissions = await MySQLSongService.get_all_permissions()
             if not permissions:
@@ -187,9 +209,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error creating preference")
 
     @staticmethod
-    async def update_preference( preference_id, data):
+    async def update_preference( email, data):
         try:
-            preference = await MySQLSongService.update_preference(preference_id, data)
+            preference = await MySQLSongService.update_preference(email, data)
             if not preference:
                 raise HTTPException(status_code=404, detail="Preference not found")
             return JSONResponse(status_code=200, content={"preference": preference})
@@ -264,9 +286,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error with  history")
 
     @staticmethod
-    async def get_history_by_user( user_id):
+    async def get_history_by_email( email):
         try:
-            history = await MySQLSongService.get_history_by_user(user_id)
+            history = await MySQLSongService.get_history_by_user(email)
             if not history:
                 raise HTTPException(status_code=404, detail="No history found for this user")
             return JSONResponse(status_code=200, content={"history": history})
@@ -425,11 +447,23 @@ class MySQLController:
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
             raise HTTPException(status_code=500, detail="Error fetching likes by user")
+    @staticmethod
+    async def check_like_by_user( user_id , song_id):
+        try:
+            likes = await MySQLSongService.check_like_by_user(user_id,song_id)
+            if not likes:
+                return JSONResponse(status_code=200, content=False)
+            return JSONResponse(status_code=200, content=True)
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            raise HTTPException(status_code=500, detail="Error fetching likes by user")
 
     @staticmethod
-    async def create_like( data):
+    async def create_like( user_id,song_id):
         try:
-            like = await MySQLSongService.create_like(data)
+            like = await MySQLSongService.insert_like(user_id,song_id)
             return JSONResponse(status_code=201, content={"like": like})
         except Exception as e:
             logging.error(f"create_like error: {e}")
@@ -449,9 +483,9 @@ class MySQLController:
             raise HTTPException(status_code=500, detail="Error updating like")
 
     @staticmethod
-    async def delete_like( like_id):
+    async def delete_like( user_id,song_id):
         try:
-            result = await MySQLSongService.delete_like(like_id)
+            result = await MySQLSongService.delete_like(user_id,song_id)
             if not result:
                 raise HTTPException(status_code=404, detail="Like not found")
             return JSONResponse(status_code=200, content={"message": "Like deleted successfully"})

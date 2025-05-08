@@ -42,34 +42,43 @@ class MySQLSongService:
     async def insert_user(data):
         try:
             query = """
-                INSERT INTO Bounsic_Users (name, last_name, email, pwd, profile_img, rol_user, username)
-                VALUES (%s, %s, %s, %s, %s, %s,%s)
+                INSERT INTO Bounsic_Users (name, username, email, profile_img, rol_user, phone, country )
+                VALUES (:name, :username, :email, null, 2, :phone, colombia  )
             """
-            values = (
-                data["name"], data["last_name"], data["email"],
-                data["pwd"], data.get("profile_img"), data["rol_user"], data["username"]
-            )
-            return await MySQLSongService._db.execute_query(query, values)
+            return await MySQLSongService._db.execute_query(query, data)
         except Exception as e:
             logging.error(f"insert_user error: {e}")
             return False
 
+
     @staticmethod
-    async def update_user(user_id, data):
+    async def update_user_by_email(id, data, img):
         try:
-            query = """
+            fields = []
+            params = {
+                "username": data["username"],
+                "phone": data["phone"],
+                "country": data["country"],
+                "id": id
+            }
+            if img != "same" and img is not None:
+                fields.append("profile_img = :profile_img")
+                params["profile_img"] = img
+
+            fields.append("username = :username")
+            fields.append("phone = :phone")
+            fields.append("country = :country")
+
+            query = f"""
                 UPDATE Bounsic_Users
-                SET name=%s, last_name=%s, email=%s, pwd=%s, profile_img=%s, rol_user=%s, username=%s
-                WHERE id_user=%s
+                SET {', '.join(fields)}
+                WHERE id_user = :id
             """
-            values = (
-                data["name"], data["last_name"], data["email"],
-                data["pwd"], data.get("profile_img"), data["rol_user"],data["username"],
-                user_id
-            )
-            return await MySQLSongService._db.execute_query(query, values)
+
+            return await MySQLSongService._db.execute_query(query, params)
+
         except Exception as e:
-            logging.error(f"update_user error: {e}")
+            logging.error(f"update_user_by_id error: {e}")
             return False
 
     @staticmethod
@@ -230,7 +239,8 @@ class MySQLSongService:
     @staticmethod
     async def get_preferences_by_user( user_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Preferences WHERE user_id = %s", (user_id,))
+            query = "SELECT * FROM Bounsic_Preferences WHERE user_id = :user_id"
+            return await MySQLSongService._db.execute_query(query, {"user_id": user_id})
         except Exception as e:
             logging.error(f"get_preferences_by_user error: {e}")
             return None
@@ -238,8 +248,25 @@ class MySQLSongService:
     @staticmethod
     async def insert_preference( data):
         try:
-            query = "INSERT INTO Bounsic_Preferences (user_id, background, typography, language) VALUES (%s, %s, %s, %s)"
-            values = (data["user_id"], data.get("background"), data.get("typography"), data.get("language"))
+            query = """
+                INSERT INTO Bounsic_Preferences (user_id, background, typography, language)
+                VALUES (:user_id, :background, :typography, :language)
+            """
+            return await MySQLSongService._db.execute_query(query, data)
+        except Exception as e:
+            logging.error(f"insert_preference error: {e}")
+            return False
+
+
+    @staticmethod
+    async def update_background( user_id, background, theme):
+        try:
+            query = "UPDATE Bounsic_Preferences SET background= :background, theme= :theme WHERE user_id= :user_id"
+            values = {
+            "user_id": user_id,
+            "background": background,
+            "theme": theme
+        }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"insert_preference error: {e}")
@@ -248,8 +275,23 @@ class MySQLSongService:
     @staticmethod
     async def update_preference( preference_id, data):
         try:
-            query = "UPDATE Bounsic_Preferences SET background=%s, typography=%s, language=%s WHERE id_preferences=%s"
-            values = (data.get("background"), data.get("typography"), data.get("language"), preference_id)
+            query = "UPDATE Bounsic_Preferences SET typography= :fontSize WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "fontSize": fontSize
+            }
+            return await MySQLSongService._db.execute_query(query, values)
+        except Exception as e:
+            logging.error(f"update_preference error: {e}")
+            return False
+    @staticmethod
+    async def update_language( user_id, language):
+        try:
+            query = "UPDATE Bounsic_Preferences SET language= :language WHERE user_id= :user_id"
+            values = {
+                "user_id": user_id,
+                "language": language
+            }
             return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"update_preference error: {e}")
@@ -281,14 +323,32 @@ class MySQLSongService:
             return None
     
     @staticmethod
-    async def update_cant_history( id_user: int, id_mongo_song: str):
+    async def update_cant_history(id_user: int, id_mongo_song: str):
         try:
-            query = """
+            # Intentar actualizar
+            query_update = """
                 UPDATE Bounsic_History
                 SET cant_repro = cant_repro + 1
                 WHERE user_id = :id_user AND song_mongo_id = :id_mongo_song
             """
-            return await MySQLSongService._db.execute_query(query, {"id_user":id_user, "id_mongo_song":id_mongo_song})
+            result = await MySQLSongService._db.execute_query(query_update, {
+                "id_user": id_user,
+                "id_mongo_song": id_mongo_song
+            })
+
+            # Verificar si se actualizó alguna fila
+            if result.rowcount == 0:
+                # Si no, insertar nueva entrada
+                query_insert = """
+                    INSERT INTO Bounsic_History (user_id, song_mongo_id, cant_repro)
+                    VALUES (:id_user, :id_mongo_song, 1)
+                """
+                await MySQLSongService._db.execute_query(query_insert, {
+                    "id_user": id_user,
+                    "id_mongo_song": id_mongo_song
+                })
+
+            return True
         except Exception as e:
             logging.error(f"update_cant_history error: {e}")
             return False
@@ -296,7 +356,17 @@ class MySQLSongService:
     @staticmethod
     async def get_history_by_user( user_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_History WHERE user_id = %s", (user_id,))
+            query = """
+                SELECT h.*
+                FROM Bounsic_History h
+                INNER JOIN Bounsic_Users u ON h.user_id = u.id_user
+                WHERE u.email = :email
+            """
+            # Pasamos el email como parámetro
+            values = {'email': email}
+
+            # Ejecutamos la consulta
+            return await MySQLSongService._db.execute_query(query, values)
         except Exception as e:
             logging.error(f"get_history_by_user error: {e}")
             return None
@@ -445,11 +515,24 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def insert_like(data):
+    async def check_like_by_user( user_id , song_id):
         try:
-            query = "INSERT INTO Bounsic_Like (user_id, song_mongo_id) VALUES (%s, %s)"
-            values = (data["user_id"], data["song_mongo_id"])
-            return await MySQLSongService._db.execute_query(query, values)
+            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            return None
+
+    @staticmethod
+    async def insert_like(user_id , song_id):
+        try:
+            query = """
+                INSERT INTO Bounsic_Like (user_id, song_mongo_id)
+                VALUES (:user_id, :song_mongo_id)
+            """
+            return await MySQLSongService._db.execute_query(query, {
+                "user_id": user_id,
+                "song_mongo_id": song_id
+            })
         except Exception as e:
             logging.error(f"insert_like error: {e}")
             return False
@@ -465,14 +548,24 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def delete_like( like_id):
+    async def delete_like( user_id,song_id):
         try:
-            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE like_id = %s", (like_id,))
+            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Like WHERE user_id = :user_id AND song_mongo_id = :song_mongo_id", {"user_id":user_id ,"song_mongo_id":song_id })
         except Exception as e:
             logging.error(f"delete_like error: {e}")
             return False
 
     # recomendations
+    @staticmethod
+    async def get_random_likes(user_id: int, number: int):
+        # Return (number) random song_id in likes of user (user_id)
+        try:
+            query = "SELECT song_mongo_id FROM Bounsic_Like WHERE user_id = :user_id ORDER BY RAND() LIMIT :number"
+            return await MySQLSongService._db.execute_query(query, ({"user_id": user_id, "number": number}))
+        except Exception as e:
+            logging.error(f"get_like error: {e}")
+            return False
+        
     @staticmethod
     async def get_safe_choices(email: str):
         try:
@@ -517,7 +610,8 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"Error in get_safe_choices_by_email: {e}")
             return []
-
+        
+    @staticmethod
     async def get_likes_by_user_email( email):
         try:
             query = """
@@ -528,5 +622,71 @@ class MySQLSongService:
             """
             return await MySQLSongService._db.execute_query(query, {"email": email})
         except Exception as e:
-            print.error(f"get_likes_by_user error: {e}")
+            logging.error(f"get_lsafe_choices error: {e}")
             return None
+        
+    @staticmethod
+    async def get_history_month(email):
+        try:
+            query = """
+                SELECT 
+                    song_mongo_id,
+                    last_listened,
+                    cant_repro
+                FROM (
+                    SELECT h.song_mongo_id, h.last_listened, h.cant_repro
+                    FROM Bounsic_Users u
+                    JOIN Bounsic_History h ON u.id_user = h.user_id
+                    WHERE u.email = :email
+                    ORDER BY h.last_listened DESC
+                    LIMIT 12
+                ) AS ultimas
+                ORDER BY RAND();
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            logging.error(f"get_history_month error: {e}")
+            return None
+
+    @staticmethod
+    async def get_full_user_by_email( email):
+        try:
+            query = """ 
+                    SELECT 
+                        u.id_user,
+                        u.username,
+                        u.name,
+                        u.email,
+                        u.country,
+                        u.phone,
+                        u.creation_date AS membre_since,
+                        r.name_rol AS role,
+                        u.profile_img,
+                        p.background,
+                        p.typography,
+                        p.language,
+                        p.theme
+                    FROM 
+                        Bounsic_Users u
+                    INNER JOIN 
+                        Bounsic_Role r ON u.rol_user = r.id_rol
+                    LEFT JOIN 
+                        Bounsic_Preferences p ON u.id_user = p.user_id
+                    WHERE 
+                        u.email = :email;
+            """
+            return await MySQLSongService._db.execute_query(query, {"email": email})
+        except Exception as e:
+            print.error(f"get_full_user_by_email error: {e}")
+            return None
+        
+    async def get_most_played_songs(user_id, size):
+        try:
+            query = """SELECT bh.song_mongo_id, bh.cant_repro AS play_count 
+                    FROM Bounsic_History bh 
+                    WHERE bh.user_id = :id ORDER BY  bh.cant_repro DESC LIMIT :size"""
+            return await MySQLSongService._db.execute_query(query, ({"id": user_id, "size": size}))
+        except Exception as e:
+            logging.error(f"get_most_played_songs error: {e}")
+            return False
+

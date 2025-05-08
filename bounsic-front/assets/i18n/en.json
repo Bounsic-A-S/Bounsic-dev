@@ -1,5 +1,6 @@
 {
   "BOUNSIC": {
+    "LOADING": "Loading...",
     "LANDING": {
       "TITLE1": "YOUR MUSIC. YOUR VIBES.",
       "TITLE2": "TUNE IN.",
@@ -60,12 +61,16 @@
     "PLAYLIST": {
       "PLAYLIST": "Playlists",
       "LIKES": "Likes",
-      "SONGS":"Songs",
-      "ID":{
-        "UPDATED":"Updated on",
-        "PLAYMIX":"Play mix",
-        "LENGTH":"Length"
+      "SONGS": "Songs",
+      "ID": {
+        "UPDATED": "Updated on",
+        "PLAYMIX": "Play mix",
+        "LENGTH": "Length"
       }
+    },
+    "PLAYER": {
+      "ALBUM": "Album",
+      "LYRIC_NOT_FOUND": "By the time we don't know\n the lyrics of this song"
     },
     "LOGIN": {
       "TITLE1": "Sign In",
@@ -80,21 +85,21 @@
       "TEXT1_ERR": "You need a username",
       "TEXT2": "Email",
       "TEXT2_ERR": "You need an Email",
-      "TEXT2_ERR_2":"Email not valid",
+      "TEXT2_ERR_2": "Email not valid",
       "TEXT3": "Password",
       "BUTTON": "Create Account",
       "TEXT4": "Already have an account?"
     },
     "SETTINGS": {
-      "SIDEBAR":{
-        "ACCOUNT":"Account",
-        "PRIVACY":"Privacy",
-        "CONNECTIONS":"Connections",
-        "NOTIFICATIONS":"Notifications",
-        "PLAN":"Plan",
-        "PLAYER":"Player",
-        "PREFERENCES":"Appareance",
-        "LANGUAGE":"Language"
+      "SIDEBAR": {
+        "ACCOUNT": "Account",
+        "PRIVACY": "Privacy",
+        "CONNECTIONS": "Connections",
+        "NOTIFICATIONS": "Notifications",
+        "PLAN": "Plan",
+        "PLAYER": "Player",
+        "PREFERENCES": "Appareance",
+        "LANGUAGE": "Language"
       },
       "ACCOUNT": {
         "TITLE1": "Account Information",
@@ -115,9 +120,12 @@
         "TITLE": "Themes",
         "GRADIENTS": "Gradients",
         "SOLID_COLORS": "Solid Colors",
-        "BASIC": "Basic",
-        "FONT_SIZE": "Font Size"
+        "BASE": "Base Theme",
+        "FONT_SIZE": "Font Size",
+        "LIGHT": "Light",
+        "DARK": "Dark"
       },
+      "SAVE": "Save",
       "LANGUAGE": {
         "TITLE": "Language",
         "WELCOME": "Welcome to"

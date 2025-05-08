@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from app.controllers.algorithms_controller import fingerprint
+from app.controllers import Algoritms_controller
 
 router = APIRouter()
 
@@ -10,7 +10,7 @@ async def generate_fingerprint(request: Request):
         data = await request.json()
         songName = data.get("songName","")
         
-        response = fingerprint(songName)
+        response = Algoritms_controller.fingerprint(songName)
         return JSONResponse(content={"response": response})
     
     except Exception as e:
@@ -18,4 +18,3 @@ async def generate_fingerprint(request: Request):
             status_code=500,
             content={"error": "Internal Server Error", "detail": str(e)}
         )
-    

@@ -8,5 +8,7 @@ interface Song {
     release_year: number;
     genres: { genre: string }[];
     fingerprint: any[];
+    lyrics?:string;
+    isLiked?:boolean;
 }
 export default Song;

@@ -1,26 +1,29 @@
 <div class="flex flex-col min-h-screen">
   <main-navbar />
 
-  <main class="bg-bounsic-gradient text-white flex-grow w-full pb-[10vh]">
+  <main [ngClass]="bg$ | async" class="text-white flex-grow w-full pb-[10vh] not-dark:text-black">
     <div class="container mx-auto px-4 py-6 h-full">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[80vh] pt-20">
-        <section
-          class="flex flex-row md:flex-col justify-center items-center gap-x-6"
-        >
+        <section class="flex flex-row md:flex-col justify-center items-center gap-x-6">
           <ng-container *ngIf="song$ | async as song">
             <player-song [song]="song" />
           </ng-container>
           <player-song-list />
         </section>
 
-        <section class="flex h-52 place-self-center overflow-y-auto p-1 scroll-hidden scroll-smooth">
-          <player-lyrics />
+        <section class="flex flex-col place-self-center gap-y-2 max-h-[70vh]">
+          <ng-container *ngIf="song$ | async as song">
+            <div class="flex h-auto overflow-y-auto p-1 scroll-hidden scroll-smooth">
+              <player-lyrics [lyrics]="song.lyrics" />
+            </div>
+            <div class="text-end mt-6 text-bounsic-gray-3 not-dark:text-bounsic-dark-1/50" *ngIf="song.lyrics !==null">-Tomado de Letras.com</div>
+          </ng-container>
         </section>
       </div>
     </div>
   </main>
 
-  <footer class="bg-white w-full h-[10vh] fixed bottom-0">
+  <footer class="w-full h-[10vh] fixed bottom-0">
     <ng-container *ngIf="song$ | async as song">
       <player-music [song]="song" />
     </ng-container>

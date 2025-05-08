@@ -1,8 +1,8 @@
-<media-control-bar class="flex flex-col justify-center items-center gap-2 w-full h-20 px-4 shadow-xl">
+<media-control-bar class="flex flex-col justify-center items-center gap-2 w-full h-20 px-4">
   <section class="flex items-center gap-x-0 sm:gap-x-8 lg:gap-x-12">
     <!-- Seek Backward -->
     <button (click)="skip.emit(-10)" class="hidden sm:block">
-      <lucide-icon [name]="SkipBack" class="w-6 h-6 text-white fill-white" />
+      <lucide-icon [name]="SkipBack" class="w-6 h-6 text-white fill-white not-dark:text-black not-dark:fill-black" />
     </button>
 
     <!-- Play/Pause -->
@@ -10,18 +10,18 @@
       (click)="playPause.emit()"
       class="rounded-full flex items-center justify-center sm:block"
     >
-      <lucide-icon [name]="isPlaying ? Pause : Play" class="w-7 h-7 text-white fill-white" />
+      <lucide-icon [name]="isPlaying ? Pause : Play" class="w-7 h-7 text-white fill-white not-dark:text-black not-dark:fill-black" />
     </button>
 
     <!-- Seek Forward -->
     <button (click)="skip.emit(10)" class="hidden sm:block">
-      <lucide-icon [name]="SkipForward" class="w-6 h-6 text-white fill-white" />
+      <lucide-icon [name]="SkipForward" class="w-6 h-6 text-white fill-white not-dark:text-black not-dark:fill-black" />
     </button>
   </section>
 
   <!-- Time Display -->
   <section class="hidden items-center gap-2 w-96 md:flex">
-    <span class="text-xs text-bounsic-gray-2">{{ formatTime(currentTime) }}</span>
+    <span class="text-xs text-bounsic-gray-2 not-dark:text-bounsic-dark-1">{{ formatTime(currentTime) }}</span>
 
     <input
       type="range"
@@ -29,8 +29,8 @@
       [max]="duration"
       [value]="currentTime"
       (input)="onSeek($event)"
-      class="w-full accent-white h-0.5 transition-all duration-200"
+      class="w-full accent-white h-0.5 transition-all duration-200 not-dark:accent-black"
     />
-    <span class="text-xs text-white">{{ formatTime(duration) }}</span>
+    <span class="text-xs text-white not-dark:text-black">{{ formatTime(duration) }}</span>
   </section>
 </media-control-bar>

@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { Subject, filter, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, filter, takeUntil } from 'rxjs';
 import {
   MsalService,
   MsalBroadcastService
@@ -13,6 +13,8 @@ import {
   PopupRequest,
   RedirectRequest
 } from '@azure/msal-browser';
+import { UserService } from './user.service'; 
+import User from 'src/types/user/User';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +23,15 @@ export class AuthService implements OnDestroy {
   private readonly _destroying$ = new Subject<void>();
   isIframe = false;
   loginDisplay = false;
-  userProfile: any = null;
+  private userProfileSubject = new BehaviorSubject<any | null>(null);
+  userProfile$ = this.userProfileSubject.asObservable(); 
 
   constructor(
     private msalService: MsalService,
     private msalBroadcastService: MsalBroadcastService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    private userService: UserService
   ) {}
 
   initialize(): void {
@@ -40,6 +44,7 @@ export class AuthService implements OnDestroy {
             if (result && result.account) {
               this.msalService.instance.setActiveAccount(result.account);
               this.setLoginDisplay();
+              this.getUserProfileFromApi();
             }
           },
           error: (error) => {
@@ -52,7 +57,6 @@ export class AuthService implements OnDestroy {
 
     this.msalService.instance.enableAccountStorageEvents();
 
-    // Actualiza cuando se agregan o eliminan cuentas
     this.msalBroadcastService.msalSubject$
       .pipe(
         filter((msg: EventMessage) =>
@@ -67,10 +71,10 @@ export class AuthService implements OnDestroy {
         } else {
           this.checkAndSetActiveAccount();
           this.setLoginDisplay();
+          this.getUserProfileFromApi(); 
         }
       });
 
-    // Detecta cuando ya no hay interacción para actualizar el estado
     this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None),
@@ -79,6 +83,7 @@ export class AuthService implements OnDestroy {
       .subscribe(() => {
         this.checkAndSetActiveAccount();
         this.setLoginDisplay();
+        this.getUserProfileFromApi();
       });
   }
 
@@ -93,6 +98,7 @@ export class AuthService implements OnDestroy {
         if (response && response.account) {
           this.msalService.instance.setActiveAccount(response.account);
           this.setLoginDisplay();
+          this.getUserProfileFromApi();
         }
         return response;
       });
@@ -115,11 +121,11 @@ export class AuthService implements OnDestroy {
       this.msalService.logoutRedirect();
     }
     this.msalService.instance.logout();
-    localStorage.clear(); 
+    localStorage.clear();
     sessionStorage.clear();
     document.cookie = 'msalAppState=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
     document.cookie = 'msal.msalConfig=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    this.userProfile = null;
+    this.userProfileSubject.next(null);
   }
 
   /**
@@ -131,7 +137,9 @@ export class AuthService implements OnDestroy {
 
     if (this.loginDisplay) {
       const activeAccount = this.msalService.instance.getActiveAccount();
-      this.userProfile = activeAccount;
+      if (activeAccount) {
+        this.userProfileSubject.next(activeAccount);
+      }
     }
   }
 
@@ -149,11 +157,52 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Obtener el perfil del usuario autenticado
+   * gets the user profile from API ,
+   * if it doesn't exist, it creates it
    */
-  getUserProfile(): any {
-    return this.userProfile;
+  private getUserProfileFromApi(): void {
+    const activeAccount = this.msalService.instance.getActiveAccount();
+  
+    if (activeAccount && activeAccount.username) {
+      this.userService.getUserByEmail(activeAccount.username).subscribe({
+        next: (user) => {
+          if (user) {
+            this.userProfileSubject.next(user);
+          } else {
+            const data = {
+              "email": activeAccount.username,
+              "name": activeAccount.name,
+              "last_name": activeAccount.name,
+            }
+            this.userService.registerUser(data).subscribe({
+              next: (res) => {
+                if (res) {
+                  this.userProfileSubject.next(res);
+                } else {
+                  console.error("Error al crear el usuario");
+                }
+              }
+            });
+          }
+        },
+        error: (error) => {
+          console.error("Error al obtener el perfil del usuario:", error);
+        }
+      });
+    }
   }
+  
+
+  /**
+   * Obtener el perfil del usuario
+   */
+  getUserProfile(): User | null {
+    return this.userProfileSubject.value;
+  }
+  setUserProfile(user: User) {
+    this.userProfileSubject.next(user);
+  }
+
 
   /**
    * Limpia el observable al destruir el servicio

@@ -15,7 +15,7 @@ app = FastAPI()
 # CORS setup
 origins = [
     "http://localhost:4200", #dev
-    "https://bounsic-front-nginx.azurewebsites.net", #prod
+    "https://bounsic-front.azurewebsites.net", #prod
 ]
 
 app.add_middleware(
@@ -40,8 +40,7 @@ app.mount("/static", StaticFiles(directory="app/services/images"), name="static"
 
 
 # Opcional: Importar y registrar routers aquí
-from app.routes import algorithms_router, crawl_router, scrapping_router, song_router, db_router, health_router, artist_router, spotify_router, playlist_router, mysql_router,lastfm_router
-
+from app.routes import algorithms_router, bert_router, crawl_router, scrapping_router, song_router, db_router, health_router, artist_router, spotify_router, playlist_router, mysql_router,user_router
 
 # app.include_router(bert_router, prefix="/bert", tags=["BERT NLP"])
 app.include_router(crawl_router, prefix="/crawl", tags=["Crawling"])
@@ -53,8 +52,8 @@ app.include_router(artist_router, prefix="/artist", tags=["Artist"])
 app.include_router(spotify_router, prefix="/spotify", tags=["Spotify"])
 app.include_router(playlist_router, prefix="/playlist", tags=["Playlist"])
 app.include_router(algorithms_router, prefix="/algorithms", tags=["Algorithms"])
+app.include_router(user_router, prefix="/user", tags=["User"])
 app.include_router(mysql_router, prefix="/mysql", tags=["Mysql"])
-app.include_router(lastfm_router, prefix="/music", tags=["top-tracks"])
-
+app.include_router(user_router, prefix="/user", tags=["User"])
 
 

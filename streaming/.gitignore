@@ -1,0 +1,44 @@
+# Archivos y carpetas de Python
+.pycache_global/
+__pycache__/
+*.py[cod]
+*.so
+*.pyc
+
+# Entornos virtuales
+venv/
+.env/
+*.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Configuración de entorno y credenciales
+.env
+*.env
+config.json
+settings.py
+*.sqlite3
+
+# Dependencias y paquetes
+site-packages/
+Pipfile.lock
+poetry.lock
+
+# Archivos de logs
+*.log
+logs/
+*.out
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints/
+
+# Docker y compilaciones
+dist/
+build/
+*.egg-info/
+
+# Archivos de IDEs y editores
+.vscode/
+.idea/
+*.iml
+

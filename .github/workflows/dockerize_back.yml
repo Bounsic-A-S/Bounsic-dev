@@ -1,47 +1,93 @@
-name: Dockerize Back
+name: Dockerize and Deploy Bounsic Back
 
 on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
-  dockerize:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  dockerize_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to registry
-        uses: docker/login-action@v2
-        with:
-          registry: https://bounsiccontainerregistery.azurecr.io/
-          username: ${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}
-          password: ${{ secrets.AzureAppService_ContainerPassword_8bddef9a4aa34be999717e96becf3a09 }}
 
-      - name: Crear archivo .env.dev
+      - name: Decrypt .env file
         run: |
-          mkdir -p ./bounsic-back/env
-        
-          # Mostrar el contenido procesado en los logs
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g'
-        
-          # Escribirlo en el archivo .env.dev
-          echo "${{ vars.ENV_BACK }}" | sed 's/ /\n/g' > ./bounsic-back/env/.env.dev
+          echo "Desencriptando archivo .env..."
+          mkdir -p ./bounsic-back/env 
+          openssl enc -d -aes-256-cbc -salt \
+            -in ./bounsic-back/env/.env.dev.enc \
+            -out ./bounsic-back/env/.env.dev \
+            -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "Falló la desencriptación"; exit 1)
+          chmod 600 ./bounsic-back/env/.env.dev
+          echo " Archivo .env desencriptado correctamente"
 
-      
-      - name: Verificar contenido del archivo .env.dev (debug temporal)
-        run: cat ./bounsic-back/env/.env.dev
 
-      # - name: Build and push backend Docker image
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     context: ./bounsic-back
-      #     file: ./bounsic-back/Dockerfile
-      #     push: true
-      #     tags: bounsiccontainerregistery.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_f1b960b9142146379c93cd26461fc9ec }}/bounsic-back:${{ github.sha }}
+      - name: Build Docker image
+        run: |
+          echo "🏗 Construyendo imagen Docker..."
+          docker build -t bounsic-back:latest ./bounsic-back
+          echo "Imagen construida correctamente"
+
+      - name: Verify Docker image
+        run: |
+          echo "Verificando imagen Docker..."
+          docker inspect bounsic-back:latest || (echo " Falló la verificación de imagen"; exit 1)
+          echo "Imagen verificada correctamente"
+
+      - name: Compress and save image
+        run: |
+          echo " Comprimiendo imagen Docker..."
+          docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
+          echo " Imagen comprimida (tamaño: $(du -h bounsic-back.tar.gz | cut -f1))"
+
+      - name: Transfer files to Azure VM
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          source: "bounsic-back.tar.gz"
+          target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
+
+      - name: Deploy on Azure VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.AZURE_VM_USER }}
+          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+            echo "🛠 Iniciando despliegue en Azure VM..."
+            
+            # Cargar imagen Docker
+            echo " Cargando imagen Docker..."
+            docker load -i bounsic-back.tar.gz || (echo " Falló al cargar la imagen"; exit 1)
+            
+            # Detener y eliminar contenedor anterior si existe
+            echo " Limpiando versión anterior..."
+            docker stop bounsic-back >/dev/null 2>&1 || true
+            docker rm bounsic-back >/dev/null 2>&1 || true
+            
+            # Ejecutar nuevo contenedor
+            echo " Iniciando nuevo contenedor..."
+            docker run -d \
+              --name bounsic-back \
+              -p 1801:8000 \
+              --restart always \
+              bounsic-back:latest
+            
+            # Verificación detallada
+            echo " Verificando estado del contenedor..."
+            sleep 5
+            docker ps | grep bounsic-back || (echo " El contenedor no está corriendo"; exit 1)
+            
+            echo " Despliegue completado correctamente "

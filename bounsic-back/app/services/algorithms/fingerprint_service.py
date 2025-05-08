@@ -26,10 +26,9 @@ class FingerprintData(TypedDict):
     data: FrequencyData
     distribution: DistributionData
 
-def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_freqs: int = 1):
+async def generate_fingerprint(audioPath:str ,segment_duration: float = 0.5, top_n_freqs: int = 1):
     try:
-        songName = songName.lower()
-        song_path = os.path.join("app", "services", "songs", f"{songName}.mp3")
+        song_path = audioPath
         if not os.path.exists(song_path):
             raise FileNotFoundError(f"Audio file not found: {song_path}")
 
@@ -70,8 +69,8 @@ def generate_fingerprint(songName: str, segment_duration: float = 0.5, top_n_fre
             "distribution": distribution
         }
 
-        save_json(fingerprint=fingerprint, songName=songName)
-        return True
+        # save_json(fingerprint=fingerprint, songName=songName)
+        return fingerprint
         
     except FileNotFoundError as e:
         print(f"File error: {str(e)}")
