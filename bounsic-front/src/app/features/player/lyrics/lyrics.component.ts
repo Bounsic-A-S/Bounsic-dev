@@ -18,7 +18,7 @@ export class PlayerLyricsComponent {
   getLyrics(): string[] {
     const fallback = this.translateService.instant('BOUNSIC.PLAYER.LYRIC_NOT_FOUND');
     const text = this.lyrics ?? fallback;
-    this.lines = text.split('\n');
+    this.lines = text.split('\n\n');
     return this.lines;
   }
 

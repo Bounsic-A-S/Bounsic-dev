@@ -11,9 +11,12 @@
           <player-song-list />
         </section>
 
-        <section class="flex h-52 md:h-72 place-self-center overflow-y-auto p-1 scroll-hidden scroll-smooth">
+        <section class="flex flex-col place-self-center gap-y-2 max-h-[70vh]">
           <ng-container *ngIf="song$ | async as song">
-            <player-lyrics [lyrics]="song.lyrics" />
+            <div class="flex h-auto overflow-y-auto p-1 scroll-hidden scroll-smooth">
+              <player-lyrics [lyrics]="song.lyrics" />
+            </div>
+            <div class="text-end mt-6 text-bounsic-gray-3 not-dark:text-bounsic-dark-1/50" *ngIf="song.lyrics !==null">-Tomado de Letras.com</div>
           </ng-container>
         </section>
       </div>

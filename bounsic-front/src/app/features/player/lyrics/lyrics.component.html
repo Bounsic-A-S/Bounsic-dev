@@ -1,7 +1,7 @@
 <span class="text-center font-light text-base sm:text-lg md:text-xl lg:text-2xl px-8 not-dark:text-bounsic-dark-1 not-dark:font-normal">
-  <p
-  *ngFor="let line of getLyrics()"
->
-  {{ line }}
-</p>
+  <p *ngFor="let paragraph of getLyrics()" class="mb-4">
+    <ng-container *ngFor="let line of paragraph.split('\n'); let isLast = last">
+      {{ line }}<br *ngIf="!isLast" />
+    </ng-container>
+  </p>
 </span>

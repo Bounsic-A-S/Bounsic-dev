@@ -45,7 +45,21 @@ class Song_controller:
         if not res:
             raise HTTPException(status_code=404, detail="No se encontró canción con este título")
         return JSONResponse(status_code=200, content={"data": res})
-
+    
+    @staticmethod
+    async def search_songs_controller(title: str):
+        if not title:
+            raise HTTPException(status_code=400, detail="Título inválido")
+        res = Song_service.getSongs_ByTitle(title)
+        res = [Song_controller.serialize_for_json(song) for song in res]
+        final_songs = []
+        keys = ["_id", "artist", "title", "album", "img_url"]
+        final_songs = [
+                {k: str(song.get(k, "")) for k in keys}
+                for song in res]
+        if not res:
+            raise HTTPException(status_code=404, detail="No se encontró canción con este título")
+        return JSONResponse(status_code=200, content=final_songs)
     @staticmethod
     async def get_songs_by_genre_controller(genre: str):
         if not genre:
@@ -503,7 +517,6 @@ class Song_controller:
     @staticmethod
     async def get_top_12_songs_controller():
         try:
-            print("llega")
             songs = await LastfmService.get_top_tracks_lastfm()
             if not songs:
                 return JSONResponse(

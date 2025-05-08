@@ -15,12 +15,13 @@ export class SongService {
   private songSafeChoices$ = this.songSafeChoicesSubject.asObservable();
   //related songs
   private songRelatedSubject = new BehaviorSubject<DashboardSong[]>([]);
-  private songRelated$ = this.songSafeChoicesSubject.asObservable();
+  private songRelated$ = this.songRelatedSubject.asObservable();
   //last month
   private songLastMonthSubject = new BehaviorSubject<DashboardSong[]>([]);
   private songLastMonth$ = this.songLastMonthSubject.asObservable();
-
-
+  // trending
+  private songTrendingSubject = new BehaviorSubject<DashboardSong[]>([]);
+  private songTrending$ = this.songTrendingSubject.asObservable();
 
   constructor(private http: HttpClient) {}
   getData(title:string): Observable<any> {
@@ -75,6 +76,29 @@ export class SongService {
       }),
       catchError((err) => {
         console.error('Error al obtener last month songs:', err);
+        return of([]);
+      })  
+    );
+  }
+  getTrendingSongs (): Observable<DashboardSong[]> {
+    if(this.songTrendingSubject.value.length > 0) {
+      return this.songTrending$;
+    }
+    return this.http.get<any>(`${this.apiUrl}/song/top12`).pipe(
+      tap((songTrending) => {
+        this.songTrendingSubject.next(songTrending);
+      }),
+      catchError((err) => {
+        console.error('Error al obtener last month songs:', err);
+        return of([]);
+      })  
+    );
+  }
+  //search
+  searchSongByTitle (title : string): Observable<DashboardSong[]> {
+    return this.http.get<any>(`${this.apiUrl}/song/search/${title}`).pipe(
+      catchError((err) => {
+        console.error('Error en la busqeuda:', err);
         return of([]);
       })  
     );

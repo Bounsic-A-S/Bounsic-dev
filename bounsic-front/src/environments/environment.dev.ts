@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:1801', //back
+    apiUrl: 'http://localhost:1801', //back //http://20.81.217.99:1801
     api_S_Url: 'http://localhost:4000',
     msalConfig: {
         auth: {
