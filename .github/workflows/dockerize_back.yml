@@ -13,20 +13,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Paso para crear la carpeta env/ y el archivo .env.dev dentro de bounsic-back
-      - name: Create environment file and verify inside bounsic-back
-        run: |
-          echo "Valor de vars.ENV_BACK:"
-          echo "${{ vars.ENV_BACK }}"
-
-          cd bounsic-back
-
-          mkdir -p env
-          echo -e "${{ vars.ENV_BACK }}" > env/.env.dev
-
-          echo "Contenido de bounsic-back/env/.env.dev después de escritura:"
-          cat env/.env.dev
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -34,9 +20,7 @@ jobs:
         run: docker build -t bounsic-back:latest ./bounsic-back
 
       - name: Verify Docker image
-        run: |
-          docker inspect bounsic-back:latest || exit 1
-          docker run --rm --env-file ./bounsic-back/env/.env.dev bounsic-back:latest ls /app/env/.env.dev || exit 1 # Ajusta la ruta al archivo
+        run: docker inspect bounsic-back:latest || exit 1
 
       - name: Compress and save image
         run: docker save bounsic-back:latest | gzip > bounsic-back.tar.gz
@@ -48,42 +32,24 @@ jobs:
           username: ${{ secrets.AZURE_VM_USER }}
           key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
           port: 22
-          source: "bounsic-back.tar.gz,./bounsic-back/env/.env.dev" # Ajusta la ruta
+          source: "bounsic-back.tar.gz"
           target: "/home/${{ secrets.AZURE_VM_USER }}/bounsic/"
 
-      - name: Deploy on Azure VM
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.AZURE_VM_USER }}
-          key: ${{ secrets.AZURE_VM_PRIVATE_KEY }}
-          port: 22
-          script_stop: true
-          script: |
-            cd /home/${{ secrets.AZURE_VM_USER }}/bounsic
+      - name: Deploy Docker Container
+        run: |
+          set -x # Para depurar, muestra los comandos que se ejecutan
 
-            mkdir -p env
-            mv ./env/.env.dev ./env/ # Debería funcionar si se copia en la raíz
+          # Divide la variable vars.ENV_BACK en líneas y pasa cada una como -e
+          while IFS= read -r line; do
+            if [[ -n "$line" ]]; then # Asegurarse de que la línea no esté vacía
+              docker run -d \
+                --name bounsic-back \
+                -e "$line" \
+                -p 1801:8000 \
+                --restart always \
+                bounsic-back:latest
+              break # Ejecutamos el run una vez con todas las variables
+            fi
+          done <<< "${{ vars.ENV_BACK }}"
 
-            echo "Contenido de ./env/.env.dev en la VM:"
-            cat env/.env.dev
-
-            docker load -i bounsic-back.tar.gz || exit 1
-            docker stop bounsic-back >/dev/null 2>&1 || true
-            docker rm bounsic-back >/dev/null 2>&1 || true
-
-            docker rm -f bounsic-back-temp >/dev/null 2>&1 || true
-
-            docker run --name bounsic-back-temp \
-              --env-file env/.env.dev \
-              bounsic-back:latest ls /app/env/.env.dev || exit 1
-
-            docker run -d \
-              --name bounsic-back \
-              --env-file env/.env.dev \
-              -p 1801:8000 \
-              --restart always \
-              bounsic-back:latest
-
-            sleep 5
-            docker ps | grep bounsic-back || exit 1
+          set +x # Desactivar la depuración
