@@ -94,4 +94,13 @@ export class SongService {
       })  
     );
   }
+  //search
+  searchSongByTitle (title : string): Observable<DashboardSong[]> {
+    return this.http.get<any>(`${this.apiUrl}/song/search/${title}`).pipe(
+      catchError((err) => {
+        console.error('Error en la busqeuda:', err);
+        return of([]);
+      })  
+    );
+  }
 }

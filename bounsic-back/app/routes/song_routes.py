@@ -21,6 +21,10 @@ async def get_song_by_artist(artist: str):
 async def get_song_by_title(title: str):
     return await Song_controller.get_song_by_title_controller(title)
 
+@router.get("/search/{title}")
+async def get_song_by_title(title: str):
+    return await Song_controller.search_songs_controller(title)
+
 @router.get("/genre/{genre}")
 async def get_songs_by_genre(genre: str):
     return await Song_controller.get_songs_by_genre_controller(genre)

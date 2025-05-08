@@ -36,18 +36,7 @@ class Song_service:
     def normalize_string(s: str) -> str:
         """Quita espacios y convierte a minúsculas para normalizar un string."""
         return re.sub(r"\s+", "", s).lower()
-    
-    @staticmethod
-    def getSongByTitle(song_title:str):
-        songs_collection = db["songs"]
-        song = songs_collection.find_one({"title": song_title})
-        if song:
-            if "_id" in song:
-                song["_id"] = str(song["_id"])
-            return song
-        else:
-            return {"message": "Song not found"}
-        
+            
     @staticmethod 
     def get_songs_by_ids(ids: list[str]):
         try:
@@ -110,6 +99,38 @@ class Song_service:
                 return song
 
             return {"message": "Song not found"}
+
+        except PyMongoError as e:
+            return {"error": "Database error", "details": str(e)}
+        except Exception as e:
+            return {"error": "Unexpected error", "details": str(e)}
+    @staticmethod
+    def getSongs_ByTitle(title:str):
+        try:
+            songs_collection = db["songs"]
+            normalized_title = Song_service.normalize_string(title)
+            regex = re.compile(title, re.IGNORECASE)
+            resultados = songs_collection.find({
+                "$or": [
+                    {"title": {"$regex": regex}},
+                    {
+                        "$expr": {
+                            "$eq": [
+                                {"$toLower": {
+                                    "$replaceAll": {
+                                        "input": "$title",
+                                        "find": " ",
+                                        "replacement": ""
+                                    }
+                                }},
+                                normalized_title
+                            ]
+                        }
+                    }
+                ]
+            }).limit(3)
+            print(resultados)
+            return list(resultados)
 
         except PyMongoError as e:
             return {"error": "Database error", "details": str(e)}
