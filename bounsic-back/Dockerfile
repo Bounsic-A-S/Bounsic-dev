@@ -64,8 +64,8 @@ COPY . .
 COPY cookies/ ./cookies/
 
 # Copia los certificados SSL
-COPY ./bounsic-back/cert/key.pem /app/cert/key.pem
-COPY ./bounsic-back/cert/cert.pem /app/cert/cert.pem
+COPY cert/key.pem /app/cert/key.pem
+COPY cert/cert.pem /app/cert/cert.pem
 
 # Puerto expuesto
 EXPOSE 443
