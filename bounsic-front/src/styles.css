@@ -91,7 +91,7 @@
   .bg-bounsic-custom-gradient-pink-based {
     background-image:
       linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.15)),
-      url('/background/custom/pink-based.jpg');
+      url('/background/custom/pink-based.webp');
     background-size: cover, cover, auto;
     background-repeat: no-repeat, no-repeat, repeat;
     background-position: center, center, center;
@@ -101,7 +101,7 @@
   .bg-bounsic-custom-gradient-blue-based {
     background-image:
       linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-      url('/background/custom/blue-based.jpg');
+      url('/background/custom/blue-based.webp');
     background-size: cover, cover, auto;
     background-repeat: no-repeat, no-repeat, repeat;
     background-position: center, center, center;
@@ -110,7 +110,7 @@
   .bg-bounsic-custom-gradient-orange-purple-based {
     background-image:
       linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url('/background/custom/orange-purple-based.jpg');
+      url('/background/custom/orange-purple-based.webp');
     background-size: cover, cover, auto;
     background-repeat: no-repeat, no-repeat, repeat;
     background-position: center, center, center;
@@ -119,7 +119,7 @@
   .bg-bounsic-custom-gradient-red-based {
     background-image:
       linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-      url('/background/custom/red-based.jpg');
+      url('/background/custom/red-based.webp');
     background-size: cover, cover, auto;
     background-repeat: no-repeat, no-repeat, repeat;
     background-position: center, center, center;
@@ -128,7 +128,7 @@
   .bg-bounsic-custom-gradient-green-based {
     background-image:
       linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
-      url('/background/custom/green-based.png');
+      url('/background/custom/green-based.webp');
     background-size: cover, cover, auto;
     background-repeat: no-repeat, no-repeat, repeat;
     background-position: center, center, center;
