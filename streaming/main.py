@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
 from streeming import router
 from config import ALLOWED_ORIGINS
 import os
@@ -25,7 +24,6 @@ app.add_middleware(
 app.include_router(router)
 
 # Ruta para servir el HTML
-@app.get("/", response_class=HTMLResponse)
-async def serve_html():
-    with open("index.html", "r", encoding="utf-8") as f:
-        return HTMLResponse(content=f.read())
+@app.get("/")
+async def health_check():
+    return {"status": "ok", "message": "Service is healthy"}
