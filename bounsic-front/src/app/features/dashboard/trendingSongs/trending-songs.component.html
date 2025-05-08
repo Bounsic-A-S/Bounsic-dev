@@ -1,35 +1,41 @@
 <div class="relative">
-    <!-- Contenedor de botones arriba a la derecha -->
-    <div class="absolute top-0 right-0 flex gap-2 p-2 z-10 -translate-y-14">
-      <button
-        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
-        (click)="scrollLeft()"
-      >
-        <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
-      </button>
-  
-      <button
-        class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
-        (click)="scrollRight()"
-      >
-        <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
-      </button>
-    </div>
-  
-    <!-- Carrusel de álbumes -->
-    <div
-      #scrollContainer
-      class="flex gap-x-12 overflow-x-auto pb-4 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto"
-    >
+  <!-- Contenedor de botones arriba a la derecha -->
+  <div class="absolute top-0 right-0 flex gap-2 p-2 z-10 -translate-y-14">
+    <button
+      class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
+      (click)="scrollLeft()">
+      <lucide-angular [img]="ChevronLeft" class="my-icon" [size]="36"></lucide-angular>
+    </button>
+
+    <button
+      class="bg-black/50 hover:bg-black/70 p-2 rounded-full cursor-pointer not-dark:bg-white/50 not-dark:hover:bg-white/70"
+      (click)="scrollRight()">
+      <lucide-angular [img]="ChevronRight" class="my-icon" [size]="36"></lucide-angular>
+    </button>
+  </div>
+
+  <!-- Carrusel de álbumes -->
+  <ng-container *ngIf="!loading; else skeletonLoader">
+    <div #scrollContainer
+      class="flex gap-x-12 overflow-x-auto pb-4 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto">
       <div *ngFor="let trendingSong of songs" class="flex-none w-24 sm:w-28 lg:w-32">
-        <img
-          [src]="trendingSong.img_url"
-          [alt]="trendingSong.title"
-          class="w-full aspect-square object-cover rounded-md mb-2"
-          />
-      <h4 class="lg:text-lg text-pretty">{{ trendingSong.title }}</h4>
-      <p class="text-sm lg:text-base text-bounsic-gray-1 text-pretty not-dark:text-bounsic-dark-1">{{ trendingSong.artist }}</p>
+        <a [routerLink]="['/player', trendingSong._id]" class="block">
+
+          <img [src]="trendingSong.img_url" [alt]="trendingSong.title"
+            class="w-full aspect-square object-cover rounded-md mb-2" />
+          <h4 class="lg:text-lg text-pretty">{{ trendingSong.title }}</h4>
+          <p class="text-sm lg:text-base text-bounsic-gray-1 text-pretty not-dark:text-bounsic-dark-1">{{
+            trendingSong.artist }}</p>
+        </a>
       </div>
     </div>
+  </ng-container>
+  <ng-template #skeletonLoader>
+    <div #scrollContainer
+      class="flex gap-x-8 md:gap-x-12 overflow-x-auto mb-4 md:px-10 scroll-smooth scroll-hidden snap-x snap-mandatory touch-pan-x md:touch-auto">
+      <app-skeleton-song-card-col size="w-24 sm:w-28 lg:w-32"
+        *ngFor="let _ of [].constructor(12)"></app-skeleton-song-card-col>
+    </div>
+  </ng-template>
+
 </div>
-  
