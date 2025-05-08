@@ -1,17 +1,17 @@
-# Usa una imagen base oficial de Python
-FROM python:3.11-slim
+# Imagen base de Python
+FROM python:3.11.9-slim
 
-# Establece el directorio de trabajo
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos del proyecto al contenedor
+# Copiar archivos necesarios
 COPY . .
 
-# Instala las dependencias
+# Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponer el puerto por defecto de Hypercorn
+# Exponer el puerto que usará la aplicación
 EXPOSE 4000
 
-# Comando para correr el servidor con Hypercorn
-CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:4000"]
+# Comando de inicio utilizando Hypercorn
+CMD ["python", "hypercorn_app.py"]
