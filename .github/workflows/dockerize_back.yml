@@ -35,6 +35,7 @@ jobs:
           docker build -t bounsic-back:latest ./bounsic-back
           echo "✅ Imagen construida correctamente"
 
+
       - name: Verify Docker image
         run: |
           echo "🔎 Verificando imagen Docker..."
@@ -81,7 +82,7 @@ jobs:
             echo "🚀 Iniciando nuevo contenedor..."
             docker run -d \
               --name bounsic-back \
-              -p 1801:8000 \
+              -p 443:443 \
               --restart always \
               bounsic-back:latest
             

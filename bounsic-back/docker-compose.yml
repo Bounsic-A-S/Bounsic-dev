@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bounsic-backend
+    expose:
+      - "8000"
+    networks:
+      - bounsic-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: bounsic-nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - bounsic-network
+
+networks:
+  bounsic-network:
+    driver: bridge
