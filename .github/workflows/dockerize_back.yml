@@ -21,10 +21,10 @@ jobs:
           echo "🔓 Desencriptando archivo .env..."
           mkdir -p ./bounsic-back/env
           openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 \
-            -in .env.dev.enc \
+            -in ./bounsic-back/env/.env.dev.enc \ # Ruta corregida
             -out ./bounsic-back/env/.env.dev \
             -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "❌ Falló la desencriptación"; exit 1)
-          
+
           chmod 600 ./bounsic-back/env/.env.dev
           echo "✅ Archivo .env desencriptado correctamente"
 
