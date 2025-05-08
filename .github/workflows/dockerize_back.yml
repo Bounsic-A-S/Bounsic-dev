@@ -18,9 +18,22 @@ jobs:
         uses: docker/setup-buildx-action@v2
         run: echo "🚀 Configurando Docker Buildx..."
 
+      - name: Decrypt .env file
+        run: |
+          echo "🔓 Desencriptando archivo .env..."
+          mkdir -p ./bounsic-back/env
+          openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 \
+            -in .env.dev.enc \
+            -out ./bounsic-back/env/.env.dev \
+            -pass pass:"${{ secrets.ENV_PASSWORD }}" || (echo "❌ Falló la desencriptación"; exit 1)
+          
+          chmod 600 ./bounsic-back/env/.env.dev
+          echo "✅ Archivo .env desencriptado correctamente"
+          echo "🔒 Permisos configurados (600)"
+
       - name: Build Docker image
         run: |
-          echo "🏗️ Construyendo imagen Docker..."
+          echo "🏗️ Construyendo imagen Docker con .env..."
           docker build -t bounsic-back:latest ./bounsic-back
           echo "✅ Imagen construida correctamente"
 
@@ -28,8 +41,9 @@ jobs:
         run: |
           echo "🔎 Verificando imagen Docker..."
           docker inspect bounsic-back:latest || (echo "❌ Falló la verificación de imagen"; exit 1)
-          docker run --rm bounsic-back:latest ls /app || (echo "❌ No se pudo ejecutar contenedor temporal"; exit 1)
-          echo "✅ Imagen verificada con éxito"
+          docker run --rm -v $(pwd)/bounsic-back/env:/app/env bounsic-back:latest \
+            sh -c '[ -f /app/env/.env.dev ] && echo "✔ .env encontrado en contenedor" || exit 1'
+          echo "✅ Imagen verificada con éxito (incluyendo .env)"
 
       - name: Compress and save image
         run: |
@@ -72,6 +86,7 @@ jobs:
             echo "🚀 Iniciando nuevo contenedor..."
             docker run -d \
               --name bounsic-back \
+              -v $(pwd)/env/.env.dev:/app/env/.env.dev:ro \
               -p 1801:8000 \
               --restart always \
               bounsic-back:latest || (echo "❌ Falló al iniciar el contenedor"; exit 1)

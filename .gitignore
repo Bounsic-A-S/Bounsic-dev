@@ -43,7 +43,7 @@ Thumbs.db
 bun.lock
 
 # Environment files
-
+.env.dev
 
 
 # lock-json
