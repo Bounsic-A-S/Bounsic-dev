@@ -22,6 +22,9 @@ services:
       - backend
     networks:
       - bounsic-network
+    volumes:
+      - ./bounsic-back/cert/cert.pem:/etc/ssl/certs/cert.pem
+      - ./bounsic-back/cert/key.pem:/etc/ssl/private/key.pem
 
 networks:
   bounsic-network:

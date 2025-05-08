@@ -2,11 +2,11 @@
 FROM nginx:latest
 
 # Copia tu configuración personalizada de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY ./bounsic-back/nginx.conf /etc/nginx/nginx.conf
 
 # Copia los certificados SSL (usa tus certificados existentes)
-COPY cert/cert.pem /etc/ssl/certs/cert.pem
-COPY cert/key.pem /etc/ssl/private/key.pem
+COPY ./bounsic-back/cert/cert.pem /etc/ssl/certs/cert.pem
+COPY ./bounsic-back/cert/key.pem /etc/ssl/private/key.pem
 
 # Exponer el puerto 443 para HTTPS
 EXPOSE 443
