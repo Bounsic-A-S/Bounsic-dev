@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-from fastapi.staticfiles import StaticFiles
-
 dotenv_path = Path(__file__).resolve().parent.parent / "env" / ".env.dev"
 if not load_dotenv(dotenv_path):
     print(f"⚠️ No se pudo cargar el archivo {dotenv_path}")
@@ -34,10 +32,6 @@ os.environ["PYTHONPYCACHEPREFIX"] = os.path.abspath("./.pycache_project")
 
 
 print(f"Servidor corriendo en: http://{env_host}:{app_port} (modo: {env_mode})")
-
-
-app.mount("/static", StaticFiles(directory="app/services/images"), name="static")
-
 
 # Opcional: Importar y registrar routers aquí
 from app.routes import algorithms_router, bert_router, crawl_router, scrapping_router, song_router, db_router, health_router, artist_router, spotify_router, playlist_router, mysql_router,user_router

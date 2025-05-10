@@ -2,8 +2,8 @@ import Song from "../Song";
 
 interface Playlist {
     id: number;
-    name: string;
-    desc: string;
+    title: string;
+    img_url:string;
     updated_at: Date;
     songs: Song[];
 }
