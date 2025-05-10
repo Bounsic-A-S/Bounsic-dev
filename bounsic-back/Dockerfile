@@ -63,8 +63,12 @@ COPY --from=builder /install /usr/local
 COPY . .
 COPY cookies/ ./cookies/
 
-# Puerto expuesto
-EXPOSE 8000
+# Copia los certificados SSL
+COPY cert/privkey.pem /app/cert/key.pem
+COPY cert/fullchain.pem /app/cert/cert.pem
 
-# Comando de inicio del servidor FastAPI
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log", "--log-level", "debug"]
+# Puerto expuesto
+EXPOSE 443
+
+# Comando de inicio del servidor FastAPI en HTTPS
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/cert/key.pem", "--ssl-certfile", "/app/cert/cert.pem", "--access-log", "--log-level", "debug"]
