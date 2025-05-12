@@ -134,6 +134,11 @@ async def delete_playlist(playlist_id: int):
 async def get_likes_by_user(user_email: str):
     return await MySQLController.get_likes_by_user(user_email)
 
+@router.get("/likes/count/{user_email}")
+async def get_likes_by_user_count(user_email: str):
+    return await MySQLController.get_likes_by_user_count(user_email)
+
+
 @router.get("/hasLike/{user_id}/{song_id}")
 async def check_like_by_user(user_id: int , song_id :str):
     return await MySQLController.check_like_by_user(user_id,song_id)
