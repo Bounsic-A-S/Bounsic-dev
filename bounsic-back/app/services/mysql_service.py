@@ -514,6 +514,19 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
             return None
+        
+    @staticmethod
+    async def get_likes_by_user_count(user_id):
+        try:
+            result = await MySQLSongService._db.execute_query(
+                "SELECT COUNT(*) as like_count FROM Bounsic_Like WHERE user_id = :user_id", 
+                {"user_id": user_id}
+            )
+            return result[0]["like_count"] if result else 0
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            return 0
+
 
     @staticmethod
     async def check_like_by_user( user_id , song_id):
