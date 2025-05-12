@@ -459,7 +459,7 @@ class MySQLController:
             mongo_songs = [like["song_mongo_id"] for like in likes]
             print(mongo_songs)
             likes_mongo = Song_service.get_songs_by_ids_exeptid(mongo_songs)
-            return JSONResponse(status_code=200, content={"likes": likes_mongo})
+            return JSONResponse(status_code=200, content=likes_mongo)
         except HTTPException:
             raise
         except Exception as e:
@@ -472,7 +472,7 @@ class MySQLController:
             likes = await MySQLSongService.get_likes_by_user_count(user_id)
             if not likes:
                 raise HTTPException(status_code=404, detail="No likes found for this user")
-            return JSONResponse(status_code=200, content={"likes_count": likes})
+            return JSONResponse(status_code=200, content=likes)
         except HTTPException:
             raise
         except Exception as e:
