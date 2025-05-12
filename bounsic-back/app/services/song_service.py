@@ -10,6 +10,7 @@ import traceback
 from bson import ObjectId
 from datetime import datetime
 from app.services import Scrapping_service
+import requests
 class Song_service:
     @staticmethod
     def get_song_by_id(id:str):
@@ -601,3 +602,45 @@ class Song_service:
         except PyMongoError as e:
             print(f"Error al agregar letras a la canción: {e}")
             return False
+        
+    @staticmethod
+    async def evaluate_lyrics(lyrics):
+        try:
+            url = "https://bounsic.site:5000/bert/lyrics_analysis"  # URL de tu API
+            headers = {"Content-Type": "application/json"}
+            data = {"lyrics": lyrics}
+
+            response = requests.post(url, json=data, headers=headers)
+            response.raise_for_status()  # Lanza excepción si hay un error en la solicitud
+
+            result = response.json()  # Obtiene la respuesta en JSON
+            return result
+
+        except requests.RequestException as e:
+            print(f"Error al realizar el fetch de la API: {e}")
+            return False
+        
+
+    @staticmethod
+    def update_song_lyrics_analysis(song_id, numeric_values):
+        """
+        Actualiza o crea el campo 'tagsAnalysis' de una canción con un array de números.
+
+        Args:
+            song_id (ObjectId): ID de la canción a actualizar.
+            numeric_values (list): Array de números a insertar en 'tagsAnalysis'.
+
+        Returns:
+            bool: True si se actualizó, False si no se modificó o hubo error.
+        """
+        try:
+            result = db["songs"].update_one(
+                {"_id":song_id},
+                {"$set":{"tagsAnalysis": numeric_values}}
+            )
+            return result.modified_count > 0
+
+        except PyMongoError as e:
+            print(f"Error al agregar 'tagsAnalysis' a la canción: {e}")
+            return False
+        

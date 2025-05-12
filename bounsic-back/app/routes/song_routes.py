@@ -45,6 +45,10 @@ async def create_song(track_name: str):
 async def update_lyrics():
     return await Song_controller.update_lyrics_controller()
 
+@router.put("/update/lyrics_analysis")
+async def update_lyrics_analysis():
+    return await Song_controller.update_Bert_analysis()
+
 @router.post("/safeChoice")
 async def get_safe_choice(request: Request):
     data = await request.json()

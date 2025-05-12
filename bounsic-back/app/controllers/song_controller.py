@@ -10,6 +10,7 @@ import traceback
 import unicodedata
 from bson import ObjectId
 import time
+from app.provider import  Songs_db_provider
 
 class Song_controller:
     @staticmethod
@@ -467,7 +468,8 @@ class Song_controller:
 
     @staticmethod
     async def update_lyrics_controller():
-        songs_mongo =  Db_service.get_all_songs_mongo()
+        songs_provider = Songs_db_provider()
+        songs_mongo =  songs_provider.get_all()
         song_in = []
 
         for song in songs_mongo:
@@ -475,15 +477,56 @@ class Song_controller:
                 _id = song["_id"]
                 title = song["title"]
                 artist = song["artist"]
-                lyrics = await Scrapping_service.get_lyrics(title, artist)
-                success =  Song_service.update_song_lyrics(_id, lyrics)
-                if success:
-                    print("lyrics inserted of:", title)
-                    song_in.append(title)
+                lyrics = song["lyrics"]
+
+                # Verifica si las letras están vacías o son "Letra no disponible en el momento"
+                if not lyrics or lyrics.strip().lower() == "letra no disponible en el momento":
+                    new_lyrics = await Scrapping_service.get_lyrics(title, artist)
+                    success = Song_service.update_song_lyrics(_id, new_lyrics)
+                    
+                    if success:
+                        print("Lyrics inserted for:", title)
+                        song_in.append(title)
+                else:
+                    print(f"Lyrics already available for: {title}")
+
             except Exception as e:
-                print(f"Error en {title}: {str(e)}")
+                print(f"Error in {title}: {str(e)}")
 
         return JSONResponse(status_code=200, content={"data": song_in})
+
+    @staticmethod
+    async def update_Bert_analysis():
+        songs_provider = Songs_db_provider()
+        songs_mongo = songs_provider.get_all()
+        updated_songs = []  
+
+        for song in songs_mongo:
+            try:
+                _id = song["_id"]
+                title = song["title"]
+                artist = song["artist"]
+                lyrics = song.get("lyrics", "")
+
+                # Verifica si las letras están vacías o son "Letra no disponible en el momento"
+                if lyrics and lyrics.strip().lower() != "letra no disponible en el momento":
+                    analysis = await Song_service.evaluate_lyrics(lyrics)
+                    if not analysis: 
+                        print(f"Error al analizar las letras para {title} - {artist}")
+                        continue
+
+                    update_mongo = Song_service.update_song_lyrics_analysis(_id, analysis)
+                    if update_mongo:
+                        print(f"Actualizada canción: {title} - {artist}")
+                        updated_songs.append({"title": title, "artist": artist})
+                    else:
+                        print(f"Error al actualizar MongoDB para {title} - {artist}")
+
+
+            except Exception as e:
+                print(f"Error en {title} - {artist}: {str(e)}")
+
+        return JSONResponse(status_code=200, content=updated_songs)
 
     @staticmethod
     async def feed_related_recomendations(email: str):
