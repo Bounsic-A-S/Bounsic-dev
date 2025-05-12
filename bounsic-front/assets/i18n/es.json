@@ -59,6 +59,11 @@
       "LIKES": "Me gustas"
     },
     "PLAYLIST": {
+      "PRIVACY": {
+        "PUBLIC": "Publica",
+        "PRIVATE": "Privada"
+      },
+      "LOADING": "Cargando canciones...",
       "PLAYLIST": "Listas de reproducción",
       "LIKES": "Me gustas",
       "SONGS": "Canciones",

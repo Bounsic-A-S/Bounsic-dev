@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { formatDuration } from '../utils/format-song-duration';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-song-hero',
@@ -10,6 +10,8 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongHeroComponent {
+  private translateService = inject(TranslateService)
+
   @Input() totalSongs!: number;
   @Input() totalDuration!: number;
   @Input() updatedDate!: Date;
@@ -20,7 +22,7 @@ export class SongHeroComponent {
     return formatDuration(this.totalDuration)
   }
   get playlistStatus(): string {
-    return this.isPublic ? "Public" : "Private" //had to change in i18n
+    return this.isPublic ? this.translateService.instant('BOUNSIC.PLAYLIST.PRIVACY.PUBLIC') : this.translateService.instant('BOUNSIC.PLAYLIST.PRIVACY.PRIVATE')
   }
   get formattedTime(): string {
     return new Date(this.updatedDate).toLocaleString()

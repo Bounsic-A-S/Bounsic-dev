@@ -1,31 +1,23 @@
 <main-navbar></main-navbar>
 
-<main [ngClass]="bg$ | async" class="mx-auto px-6 pt-[14vh] h-screen text-white overflow-hidden flex flex-col not-dark:text-black">
+<main [ngClass]="bg$ | async"
+  class="mx-auto px-6 pt-[14vh] h-screen text-white overflow-hidden flex flex-col not-dark:text-black">
   <section class="flex flex-col flex-1 xl:gap-x-10 mx-auto container overflow-hidden md:flex-row">
-    <aside class="self-center md:self-auto">
-      <ng-container *ngIf="loading; else loaded">
-        <app-song-hero
-          [totalSongs]="0"
-          [totalDuration]="0"
-          [isPublic]="false"
-        ></app-song-hero>
-      </ng-container>
 
-      <ng-template #loaded>
-        <ng-container *ngIf="playlist$ | async as album">
-          <app-song-hero
-            [totalSongs]="album.totalSongs"
-            [totalDuration]="album.totalDuration"
-            [isPublic]="album.isPublic"
-            [updatedDate]="album.updated_at"
-            [img_url]="album.img_url"
-          ></app-song-hero>
-        </ng-container>
+    <!-- Hero section -->
+    <aside class="self-center md:self-auto">
+      <ng-container *ngIf="playlist$ | async as album; else loadingHero">
+        <app-song-hero [totalSongs]="album.totalSongs" [totalDuration]="album.totalDuration" [isPublic]="album.isPublic"
+          [updatedDate]="album.updated_at" [img_url]="album.img_url"></app-song-hero>
+      </ng-container>
+      <ng-template #loadingHero>
+        <app-song-hero [totalSongs]="0" [totalDuration]="0" [isPublic]="false"></app-song-hero>
       </ng-template>
     </aside>
 
+    <!-- Songs section -->
     <section class="w-full flex flex-col overflow-hidden">
-      <ng-container *ngIf="playlist$ | async as album">
+      <ng-container *ngIf="playlist$ | async as album; else loadingContent">
         <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
           {{ album.title }}
         </h1>
@@ -33,15 +25,8 @@
 
         <ul class="w-full flex-1 pr-1 xl:pr-4 overflow-y-auto max-h-[65vh] scroll-smooth scroll-hidden">
           <li *ngFor="let song of album.songs; let i = index">
-            <playlist-item
-              [id]="i +1"
-              [title]="song.title"
-              [artist]="song.artist"
-              [album]="song.album"
-              [duration]="song.duration"
-              [imageUrl]="song.img_url"
-              [mp3Url]="song.mp3_url"
-            ></playlist-item>
+            <playlist-item [id]="i + 1" [title]="song.title" [artist]="song.artist" [album]="song.album"
+              [duration]="song.duration" [imageUrl]="song.img_url" [mp3Url]="song.mp3_url"></playlist-item>
           </li>
           <li *ngIf="album.songs.length === 0">
             <p class="text-center py-4">No hay canciones en esta playlist.</p>
@@ -49,13 +34,15 @@
         </ul>
       </ng-container>
 
-      <ng-container *ngIf="!(playlist$ | async)">
+      <ng-template #loadingContent>
         <h1 class="font-poppins text-xl sm:text-3xl md:text-4xl font-bold mt-4 sm:mt-1 mb-2">
-          Loading...
+          {{ 'BOUNSIC.LOADING' | translate }}
         </h1>
         <div class="h-px bg-white w-full my-3 md:my-6 not-dark:bg-black"></div>
-        <p class="text-center py-4">Cargando canciones...</p>
-      </ng-container>
+        <p class="text-center py-4">
+          {{ 'BOUNSIC.PLAYLIST.LOADING' | translate }}
+        </p>
+      </ng-template>
     </section>
   </section>
 </main>

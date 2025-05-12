@@ -59,6 +59,11 @@
       "LIKES": "좋아요"
     },
     "PLAYLIST": {
+      "PRIVACY": {
+        "PUBLIC": "공개",
+        "PRIVATE": "비공개"
+      },
+      "LOADING": "노래를 불러오는 중...",
       "PLAYLIST": "재생목록",
       "LIKES": "좋아요",
       "SONGS": "노래",
