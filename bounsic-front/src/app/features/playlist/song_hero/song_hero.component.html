@@ -1,35 +1,32 @@
-<article
-  class="text-white w-fit p-4 flex flex-row items-start gap-4 md:flex-col md:items-start md:mx-2 md:gap-2"
->
+<article class="w-fit p-4 flex flex-row items-start gap-4 md:flex-col md:items-start md:mx-2 md:gap-2">
   <div class="aspect-square rounded-xl overflow-hidden mb-2 size-56 drop-shadow-lg">
-    <img
-      [src]="img_url"
-      alt="Playlist Cover"
-      class="w-full h-full object-cover"
-    />
+    <img [src]="img_url" alt="Playlist Cover" class="w-full h-full object-cover" />
   </div>
 
   <div class="flex-1 md:w-full md:flex md:flex-col md:justify-between">
     <section class="text-left">
-      <h3 class="text-2xl mb-2 text-nowrap font-semibold md:mb-1 sm:text-4xl md:text-xl ">Playlist {{playlistStatus}}</h3>
-      <p class="text-sm text-nowrap text-bounsic-gray-1">{{ totalSongs }} {{'BOUNSIC.PLAYLIST.SONGS' | translate}}</p>
-      <p class="text-sm text-nowrap text-bounsic-gray-1">{{'BOUNSIC.PLAYLIST.ID.UPDATED' | translate}} {{formattedTime}}</p>
+      <h3 class="text-2xl mb-2 text-nowrap font-semibold md:mb-1 sm:text-4xl md:text-xl ">Playlist {{playlistStatus}}
+      </h3>
+      <p class="text-sm text-nowrap text-bounsic-gray-1 not-dark:text-bounsic-dark-1">{{ totalSongs }}
+        {{'BOUNSIC.PLAYLIST.SONGS' | translate}}</p>
+      <p class="text-sm text-nowrap text-bounsic-gray-1 not-dark:text-bounsic-dark-1">{{'BOUNSIC.PLAYLIST.ID.UPDATED' |
+        translate}} {{formattedTime}}</p>
     </section>
 
     <section class="mt-2 text-left">
-      <p class="text-sm text-bounsic-gray-1">{{'BOUNSIC.PLAYLIST.ID.LENGTH' | translate}}</p>
+      <p class="text-sm text-bounsic-gray-1 not-dark:text-bounsic-dark-1">{{'BOUNSIC.PLAYLIST.ID.LENGTH' | translate}}
+      </p>
       <p class="text-sm">{{ formattedDuration }}</p>
     </section>
 
     <div class="flex items-center gap-3 mt-4">
       <button
-        class="bg-white text-black px-4 py-1 rounded-full text-sm text-nowrap font-semibold hover:scale-105 transition-transform"
-      >
+        class="bg-white text-black px-4 py-1 rounded-full text-sm text-nowrap font-semibold hover:scale-105 transition-transform not-dark:bg-black not-dark:text-white">
         {{'BOUNSIC.PLAYLIST.ID.PLAYMIX' | translate}}
       </button>
-      <button
-        class="border border-gray-500 text-gray-500 px-2 py-1 rounded-full text-sm hover:bg-gray-800 transition-colors"
-      >
+      <button class="border border-gray-500 text-gray-500 px-2 py-1 rounded-full text-sm transition-colors 
+       hover:bg-gray-800 
+       not-dark:border-gray-700 not-dark:text-gray-800 not-dark:hover:bg-gray-200">
         ⟳
       </button>
     </div>
