@@ -23,7 +23,7 @@ class Playlist_service:
 
             songs = list(songs_collection.find(
                 {"_id": {"$in": song_ids}}, 
-                {"fingerprint": 0}
+                {"fingerprint": 0, "genres": 0, "lyrics": 0}
             ))
 
 
@@ -60,7 +60,7 @@ class Playlist_service:
 
             songs = list(songs_collection.find(
                 {"_id": {"$in": song_ids}}, 
-                {"fingerprint": 0}
+                {"fingerprint": 0, "genres": 0, "lyrics": 0}
             ))
 
 

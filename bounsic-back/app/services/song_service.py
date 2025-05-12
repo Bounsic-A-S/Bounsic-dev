@@ -63,7 +63,10 @@ class Song_service:
             
             object_ids = [ObjectId(id_) for id_ in ids if ObjectId.is_valid(id_)]
             
-            songs_cursor = songs_collection.find({"_id": {"$in": object_ids}},  {"fingerprint": 0})
+            songs_cursor = songs_collection.find(
+                {"_id": {"$in": object_ids}},  
+                {"fingerprint": 0, "genres": 0, "lyrics": 0}
+            )
 
             songs = list(songs_cursor)
 
