@@ -6,14 +6,23 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-song-hero',
   standalone: true,
   templateUrl: './song_hero.component.html',
-  imports:[TranslateModule],
+  imports: [TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SongHeroComponent {
   @Input() totalSongs!: number;
-  @Input() totalDuration!: string;
+  @Input() totalDuration!: number;
+  @Input() updatedDate!: Date;
+  @Input() isPublic!: boolean;
+  @Input() img_url!: string;
 
   get formattedDuration(): string {
     return formatDuration(this.totalDuration)
+  }
+  get playlistStatus(): string {
+    return this.isPublic ? "Public" : "Private" //had to change in i18n
+  }
+  get formattedTime(): string {
+    return new Date(this.updatedDate).toLocaleString()
   }
 }

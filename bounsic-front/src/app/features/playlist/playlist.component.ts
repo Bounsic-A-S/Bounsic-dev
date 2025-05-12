@@ -5,29 +5,11 @@ import { CommonModule } from '@angular/common';
 import { SongHeroComponent } from './song_hero/song_hero.component';
 import { ActivatedRoute } from '@angular/router';
 import { PlaylistService } from '@app/services/playlist.service';
-import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { BackgroundService } from '@app/services/background.service';
-
-interface Song {
-  id: number;
-  title: string;
-  artist: string;
-  album: string;
-  cover: string;
-  duration: string;
-  mp3Url: string;
-}
-
-interface PlaylistDetail {
-  id: number | string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  totalSongs: number;
-  totalDuration: string;
-  songs: Song[];
-}
+import Playlist from 'src/types/playlist/Playlist';
+import PlaylistDetail from 'src/types/playlist/PlaylistDetailed';
 
 @Component({
   selector: 'app-playlist',
@@ -42,9 +24,7 @@ export class PlaylistComponent {
   private backgroundService = inject(BackgroundService);
   bg$: Observable<string> = this.backgroundService.background$;
 
-
-
-  public loading = true; // init load always tru
+  public loading = true;
 
   playlist$: Observable<PlaylistDetail | undefined> = this.route.paramMap.pipe(
     switchMap((params) => {
@@ -52,48 +32,38 @@ export class PlaylistComponent {
       if (!playlistId) return of(undefined);
 
       return this.playlistService.getPlaylistById(playlistId).pipe(
+        switchMap((response) => from(this.mapPlaylistResponse(response))),
         tap(() => {
-          this.loading = false; // load ends
+          this.loading = false;
         }),
-        map((response) => this.mapPlaylistResponse(response)),
         catchError(() => {
-          this.loading = false; // load ends
+          this.loading = false;
           return of(undefined);
         })
       );
     })
   );
 
-  private mapPlaylistResponse(response: any): PlaylistDetail {
-    console.log(response)
+  private async mapPlaylistResponse(response: Playlist): Promise<PlaylistDetail> {
+    const songsWithDurations = await Promise.all(
+      (response.songs || []).map(async (song) => ({
+        ...song,
+        duration: await this.getAudioDuration(song.mp3_url)
+      }))
+    );
     return {
-      id: response.id,
-      name: response.name || response.title || 'Untitled Playlist',
-      description: response.description ?? '',
-      imageUrl: response.img_url || '',
-      totalSongs: response.songs?.length || 0,
-      totalDuration: this.calculateTotalDuration(response.songs || []),
-      songs: (response.songs || []).map((song: { title: any; artist: any; album: any; img_url: any; cover: any; mp3_url: any; duration: any; }, i: number) => ({
-        id: i + 1,
-        title: song.title || '',
-        artist: song.artist || '',
-        album: song.album || '',
-        cover: song.img_url || song.cover || '',
-        mp3Url: song.mp3_url || '',
-        duration: song.duration || '0:00',
-      })),
+      ...response,
+      songs: songsWithDurations,
+      totalSongs: songsWithDurations.length,
+      totalDuration: songsWithDurations.reduce((acc, s) => acc + s.duration, 0)
     };
   }
 
-  private calculateTotalDuration(songs: any[]): string {
-    const totalSeconds = songs.reduce((acc, song) => {
-      const [minutes, seconds] = (song.duration || '0:00').split(':').map(Number);
-      return acc + (minutes * 60 + (seconds || 0));
-    }, 0);
-
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  private getAudioDuration(url: string): Promise<number> {
+    return new Promise((resolve) => {
+      const audio = new Audio(url);
+      audio.addEventListener('loadedmetadata', () => resolve(audio.duration));
+      audio.addEventListener('error', () => resolve(0));
+    });
   }
-
 }

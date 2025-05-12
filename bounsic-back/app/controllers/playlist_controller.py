@@ -5,7 +5,7 @@ from app.services import Playlist_service
 class Playlist_controller:
     @staticmethod
     async def get_playlist_by_id_controller_user(playlist_id: str):
-        result = Playlist_service.getPlaylistById(playlist_id)
+        result = Playlist_service.getPlaylistById_libray(playlist_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
         elif "message" in result and result["message"] == "Playlist not found":
@@ -14,7 +14,7 @@ class Playlist_controller:
     
     @staticmethod
     async def get_playlist_by_id_controller(playlist_id: str):
-        result = Playlist_service.getPlaylistById_libray(playlist_id)
+        result = Playlist_service.getPlaylistById(playlist_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
         elif "message" in result and result["message"] == "Playlist not found":

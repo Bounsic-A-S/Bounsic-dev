@@ -6,12 +6,7 @@ import { PlaylistService } from '@app/services/playlist.service';
 import { catchError, map, of, Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { BackgroundService } from '@app/services/background.service';
-interface Playlist {
-  playlist_id: string;
-  title: string;
-  songCount: number;
-  img_url: string;
-}
+import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 
 @Component({
   selector: 'app-library',
@@ -25,29 +20,32 @@ export class LibraryComponent implements OnInit {
   private backgroundService = inject(BackgroundService)
   bg$: Observable<string> = this.backgroundService.background$;
   
-  favorites: Playlist = {
-    playlist_id: "4",
+  favorites: LibraryPlaylist = {
+    id: "4",
     title: 'Lista de Me gustas',
-    songCount: 156,
+    song_count: 156,
+    isPublic:false,
     img_url: '/library/favorites.png'
   };
 
-  likedPlaylists: Playlist[] = [
+  likedPlaylists: LibraryPlaylist[] = [
     {
-      playlist_id: "5",
+      id: "5",
       title: 'Jueves',
-      songCount: 2,
+      song_count: 2,
+      isPublic:false,
       img_url: 'https://i.pinimg.com/736x/05/28/d0/0528d0292b477ef58b027f09459fe9aa.jpg'
     }
   ];
 
-  playlistsT$!: Observable<Playlist[]>;
+  playlistsT$!: Observable<LibraryPlaylist[]>;
 
-  private defaultPlaylists: Playlist[] = [
+  private defaultPlaylists: LibraryPlaylist[] = [
     {
-      playlist_id: "1",
+      id: "1",
       title: 'Not found',
-      songCount: 0,
+      song_count: 0,
+      isPublic:true,
       img_url: 'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg'
     }
   ];
@@ -56,14 +54,7 @@ export class LibraryComponent implements OnInit {
   ngOnInit(): void {
     this.playlistsT$ = this.playlistService.getAllPlaylist().pipe(
       map((response) => {
-        if (Array.isArray(response) && response.length > 0) {
-          return response.map((item, index) => ({
-            playlist_id: item.playlist_id,
-            title: item.title || `Lista ${index + 1}`,
-            songCount: item.songs?.length || 0,
-            img_url: item.img_url || ''
-          }));
-        }
+        if (response) return response
         return this.defaultPlaylists;
       }),
       catchError((err) => {

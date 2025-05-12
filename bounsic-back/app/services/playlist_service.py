@@ -31,12 +31,12 @@ class Playlist_service:
                 song["_id"] = str(song["_id"])
 
             return {
-                "playlist_id": str(playlist["_id"]),
+                "id": str(playlist["_id"]),
                 "title": playlist.get("playlist_name"),
                 "songs": songs,
                 "isPublic": playlist.get("isPublic", False),
                 "img_url": playlist.get("img_url", ""),
-                "updated_at": playlist.get("updated_at")
+                "updated_at": playlist.get("updated_at").isoformat() if playlist.get("updated_at") else None
             }
 
         except PyMongoError as e:
@@ -68,7 +68,7 @@ class Playlist_service:
                 song["_id"] = str(song["_id"])
 
             return {
-                "playlist_id": str(playlist["_id"]),
+                "id": str(playlist["_id"]),
                 "title": playlist.get("playlist_name"),
                 "song_count": len(songs),
                 "isPublic": playlist.get("isPublic", False),

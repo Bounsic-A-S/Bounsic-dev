@@ -3,18 +3,20 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.dev';
+import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
+import Playlist from 'src/types/playlist/Playlist';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlaylistService {
   private apiUrl = environment.apiUrl;
-  private playlistsSubject = new BehaviorSubject<any[]>([]);
+  private playlistsSubject = new BehaviorSubject<LibraryPlaylist[]>([]);
   private playlists$ = this.playlistsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getAllPlaylist(): Observable<any[]> {
+  getAllPlaylist(): Observable<LibraryPlaylist[]> {
     if (this.playlistsSubject.value.length > 0) {
       return this.playlists$;
     }
@@ -30,11 +32,18 @@ export class PlaylistService {
     );
   }
 
-  getPlaylistById(playlistId: string): Observable<any> {
+  getPlaylistById(playlistId: string): Observable<Playlist> {
     return this.http.get<any>(`${this.apiUrl}/playlist/${playlistId}`).pipe(
       catchError((err) => {
         console.error('Error al obtener playlist:', err);
-        return of(null);
+        return of({
+          id: "0",
+          title: "",
+          img_url: "",
+          updated_at: new Date(),
+          songs: [],
+          isPublic:false
+        });
       })
     );
   }
