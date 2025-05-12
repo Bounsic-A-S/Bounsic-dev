@@ -21,17 +21,58 @@ class Playlist_service:
 
             song_ids = [song["song_id"] for song in playlist.get("songs", [])]
 
-            songs = list(songs_collection.find({"_id": {"$in": song_ids}}))
+            songs = list(songs_collection.find(
+                {"_id": {"$in": song_ids}}, 
+                {"fingerprint": 0}
+            ))
+
 
             for song in songs:
                 song["_id"] = str(song["_id"])
 
             return {
                 "playlist_id": str(playlist["_id"]),
+                "title": playlist.get("playlist_name"),
                 "songs": songs,
                 "isPublic": playlist.get("isPublic", False),
                 "img_url": playlist.get("img_url", ""),
-                # "updated_at": playlist.get("updated_at")
+                "updated_at": playlist.get("updated_at")
+            }
+
+        except PyMongoError as e:
+            return {"error": "Database error", "details": str(e)}
+        except Exception as e:
+            return {"error": "Unexpected error", "details": str(e)}
+        
+    @staticmethod
+    def getPlaylistById_libray(playlist_id: str):
+        try:
+            playlists_collection = db["playlists"]
+            songs_collection = db["songs"]
+
+            playlist_obj_id = ObjectId(playlist_id)
+
+            playlist = playlists_collection.find_one({"_id": playlist_obj_id})
+            if not playlist:
+                return {"message": "Playlist not found"}
+
+            song_ids = [song["song_id"] for song in playlist.get("songs", [])]
+
+            songs = list(songs_collection.find(
+                {"_id": {"$in": song_ids}}, 
+                {"fingerprint": 0}
+            ))
+
+
+            for song in songs:
+                song["_id"] = str(song["_id"])
+
+            return {
+                "playlist_id": str(playlist["_id"]),
+                "title": playlist.get("playlist_name"),
+                "song_count": len(songs),
+                "isPublic": playlist.get("isPublic", False),
+                "img_url": playlist.get("img_url", ""),
             }
 
         except PyMongoError as e:

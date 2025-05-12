@@ -377,7 +377,7 @@ class MySQLController:
                     continue  # Previene errores si algún registro no tiene ID
 
                 # Obtiene el detalle de la playlist por su ID
-                detailed = await Playlist_controller.get_playlist_by_id_controller(playlist_id)
+                detailed = await Playlist_controller.get_playlist_by_id_controller_user(playlist_id)
                 if detailed:
                     detailed_playlists.append(detailed)
 
