@@ -14,7 +14,7 @@ import { BackgroundService } from '@app/services/background.service';
 import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 import { AuthService } from '@app/services/auth/auth.service';
 import User from 'src/types/user/User';
-import { ModalCreatePlaylistComponent } from "./modal_create_playlist/modal_create_playlist.component";
+import { ModalCreatePlaylistComponent } from './modal_create_playlist/modal_create_playlist.component';
 
 @Component({
   selector: 'app-library',
@@ -25,8 +25,8 @@ import { ModalCreatePlaylistComponent } from "./modal_create_playlist/modal_crea
     CommonModule,
     LibraryItemComponent,
     TranslateModule,
-    ModalCreatePlaylistComponent
-],
+    ModalCreatePlaylistComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LibraryComponent implements OnInit {
@@ -42,6 +42,8 @@ export class LibraryComponent implements OnInit {
 
   playlistsT$!: Observable<LibraryPlaylist[]>;
 
+  isModalOpen = false;
+
   private defaultPlaylists: LibraryPlaylist[] = [
     {
       id: '1',
@@ -52,7 +54,13 @@ export class LibraryComponent implements OnInit {
         'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg',
     },
   ];
+  openModal() {
+    this.isModalOpen = true;
+  }
 
+  closeModal() {
+    this.isModalOpen = false;
+  }
   ngOnInit(): void {
     this.user = this.authService.getUserProfile();
 

@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -31,7 +33,8 @@ import { PlaylistService } from '@app/services/playlist.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalCreatePlaylistComponent {
-  @Input() isOpen = true;
+  @Input() isOpen = false;
+  @Output() closeModal = new EventEmitter<void>();
 
   isSubmitting = false;
   registerForm: FormGroup;
@@ -41,7 +44,7 @@ export class ModalCreatePlaylistComponent {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private playlistService = inject(PlaylistService)
+  private playlistService = inject(PlaylistService);
 
   constructor() {
     this.registerForm = this.fb.group({
@@ -50,7 +53,7 @@ export class ModalCreatePlaylistComponent {
   }
 
   close(): void {
-    this.isOpen = false;
+    this.closeModal.emit();
   }
   onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
