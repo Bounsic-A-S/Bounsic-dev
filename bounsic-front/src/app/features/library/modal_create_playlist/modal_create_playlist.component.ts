@@ -14,6 +14,8 @@ import {
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule, Pencil } from 'lucide-angular';
+import { AuthService } from '@app/services/auth/auth.service';
+import { PlaylistService } from '@app/services/playlist.service';
 
 @Component({
   selector: 'playlist-modal-create',
@@ -38,6 +40,8 @@ export class ModalCreatePlaylistComponent {
   selectedImageFile: File | null = null;
 
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private playlistService = inject(PlaylistService)
 
   constructor() {
     this.registerForm = this.fb.group({
@@ -57,14 +61,39 @@ export class ModalCreatePlaylistComponent {
     }
   }
   onSubmit(): void {
-    const formValues = this.registerForm.value;
-    if(!formValues) return 
-    const playlist_title = formValues.playlist_title
-    console.log(playlist_title)
-    const formData = new FormData()
-    formData.append('title', playlist_title)
-    if (this.selectedImageFile) {
-      formData.append('profile_img', this.selectedImageFile);
+    this.isSubmitting = true;
+
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      this.isSubmitting = false;
+      return;
     }
+
+    const user = this.authService.getUserProfile();
+    if (!user?.id_user) {
+      console.error('El usuario no está autenticado');
+      this.isSubmitting = false;
+      return;
+    }
+
+    const playlist_title = this.registerForm.get('playlist_title')?.value;
+
+    const formData = new FormData();
+    formData.append('playlist_name', playlist_title);
+    formData.append('user_id', user.id_user.toString());
+
+    if (this.selectedImageFile) {
+      formData.append('img_url', this.selectedImageFile);
+    }
+
+    console.log('Formulario válido. Enviando datos...');
+
+    this.playlistService.createPlaylist(formData).subscribe((success) => {
+      if (success) {
+        console.log('Playlist creada exitosamente');
+      } else {
+        console.log('Error al crear playlist');
+      }
+    });
   }
 }

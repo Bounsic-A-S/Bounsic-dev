@@ -8,29 +8,31 @@ import Playlist from 'src/types/playlist/Playlist';
 import Song from 'src/types/Song';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlaylistService {
   private apiUrl = environment.apiUrl;
   private playlistsSubject = new BehaviorSubject<LibraryPlaylist[]>([]);
   private playlists$ = this.playlistsSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAllPlaylist(user_id: number): Observable<LibraryPlaylist[]> {
     if (this.playlistsSubject.value.length > 0) {
       return this.playlists$;
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/user/playlists/user/${user_id}`).pipe(
-      tap((playlists) => {
-        this.playlistsSubject.next(playlists);
-      }),
-      catchError((err) => {
-        console.error('Error al obtener playlists:', err);
-        return of([]);
-      })
-    );
+    return this.http
+      .get<any[]>(`${this.apiUrl}/user/playlists/user/${user_id}`)
+      .pipe(
+        tap((playlists) => {
+          this.playlistsSubject.next(playlists);
+        }),
+        catchError((err) => {
+          console.error('Error al obtener playlists:', err);
+          return of([]);
+        })
+      );
   }
 
   getPlaylistById(playlistId: string): Observable<Playlist> {
@@ -38,23 +40,25 @@ export class PlaylistService {
       catchError((err) => {
         console.error('Error al obtener playlist:', err);
         return of({
-          id: "0",
-          title: "",
-          img_url: "",
+          id: '0',
+          title: '',
+          img_url: '',
           updated_at: new Date(),
           songs: [],
-          isPublic: false
+          isPublic: false,
         });
       })
     );
   }
   getLikesCount(user_id: number): Observable<number> {
-    return this.http.get<any>(`${this.apiUrl}/user/likes/count/${user_id}`).pipe(
-      catchError((err) => {
-        console.error('Error al obtener likes:', err);
-        return of(0);
-      })
-    );
+    return this.http
+      .get<any>(`${this.apiUrl}/user/likes/count/${user_id}`)
+      .pipe(
+        catchError((err) => {
+          console.error('Error al obtener likes:', err);
+          return of(0);
+        })
+      );
   }
   getLikesPlaylist(user_id: number): Observable<Song[]> {
     return this.http.get<any>(`${this.apiUrl}/user/likes/${user_id}`).pipe(
@@ -65,4 +69,12 @@ export class PlaylistService {
     );
   }
 
+  createPlaylist(data: FormData): Observable<boolean> {
+    return this.http.post<any>(`${this.apiUrl}/playlist/create`, data).pipe(
+      catchError((err) => {
+        console.error('Error al crear playlist:', err);
+        return of(false);
+      })
+    );
+  }
 }

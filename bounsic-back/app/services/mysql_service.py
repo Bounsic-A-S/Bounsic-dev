@@ -453,6 +453,7 @@ class MySQLSongService:
             if "user_id" in data and result:
                 last_id_result = await MySQLSongService._db.execute_query("SELECT LAST_INSERT_ID() AS id")
                 playlist_id = last_id_result[0]["id"]
+                print(playlist_id)
 
                 await MySQLSongService._db.execute_query(
                     """

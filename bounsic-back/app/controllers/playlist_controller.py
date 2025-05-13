@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import HTTPException
-from app.services import Playlist_service
+from app.services import Playlist_service, insert_usr_image
 
 class Playlist_controller:
     @staticmethod
@@ -26,10 +26,13 @@ class Playlist_controller:
         return Playlist_service.getAllPlaylists()
 
     @staticmethod
-    async def create_user_playlist_controller(user_id: int, playlist_name: str, img_url: Optional[str] = None):
+    async def create_user_playlist_controller(user_id: str, playlist_name: str, img_url: Optional[str] = None):
         if not playlist_name:
             raise HTTPException(status_code=400, detail="El nombre de la playlist es obligatorio")
-
+        if img_url != None:
+            img_url = await insert_usr_image(img_url)
+        if user_id != None:
+            user_id = int(user_id)
         inserted_id = await Playlist_service.create_user_playlist(user_id, playlist_name, img_url)
 
         if not inserted_id:
