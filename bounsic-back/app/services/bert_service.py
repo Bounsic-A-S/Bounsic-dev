@@ -48,18 +48,36 @@ class Bert_service:
     res_songs = []
     inserted_ids = set()
     inserted_ids.add(seed_song["_id"])
-    print(f"seed_id: {seed_song['_id']}")
 
     for song in db_songs:
-      if (song["_id"] in inserted_ids):
-        continue
-      res = Bert_service.evaluate_lyrics(song["lyric_info"], seed_song["lyric_info"])
-      if (res):
-        res_songs.append(song)
-        inserted_ids.add(song["_id"])
+      try:
+        if (song["_id"] in inserted_ids):
+          continue
+        res = Bert_service.evaluate_lyrics(song["lyric_info"], seed_song["lyric_info"])
+        if (res):
+          res_songs.append(song)
+          inserted_ids.add(song["_id"])
+      except Exception as e:
+          continue
+    
+    res_songs = random.sample(res_songs, size)
 
-    # return res_songs
-    return random.sample(res_songs, size)
+    print(f"Etiquetas de {seed_song['title']}")
+    print(f"{Bert_service.read_tags(seed_song['lyric_info'])}\n")
+    for s in res_songs:
+      print(f"Etiquetas de {s['title']}")
+      print(f"{Bert_service.read_tags(s['lyric_info'])}\n")
+
+    return res_songs
   
   def evaluate_lyrics(lyric_a: int, lyric_b: int):
-    return True if (lyric_a & lyric_b > 0) else 0
+    return True if (lyric_a & lyric_b > 0) else False
+  
+  def read_tags(lyric: int):
+    tags = []
+    for emotion, bit in Bert_service.emotions.items():
+      if (lyric & bit > 0):
+        # tags += emotion + ", "
+        tags.append(emotion)
+    
+    return tags
