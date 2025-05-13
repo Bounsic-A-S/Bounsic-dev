@@ -34,8 +34,12 @@ async def get_song_image(blob_name: str):
     return await Song_controller.get_song_image_controller(blob_name)
 
 @router.post("/insert")
-async def insert_bs():
-    return await Song_controller.insert_bs_controller("")
+async def insert_bs(request: Request):
+    data = await request.json()
+    artist= data.get("artist")
+    title= data.get("title")
+    print(artist , title)
+    return await Song_controller.insert_bs_controller(artist, title)
 
 @router.put("/insert/{track_name}")
 async def create_song(track_name: str):

@@ -581,28 +581,32 @@ class Song_service:
             return False
         
     @staticmethod
-    def add_song_to_album(album_id: ObjectId, song_id: ObjectId) -> bool:
+    def add_song_to_album(album_id: ObjectId, song_id: str) -> bool:
         """
         Agrega una canción existente a un álbum, si no está ya asociada.
 
         Args:
             album_id (ObjectId): ID del álbum
-            song_id (ObjectId): ID de la canción
+            song_id (str): ID de la canción (en formato string)
 
         Returns:
             bool: True si se insertó, False si ya existía o hubo error
         """
         try:
+            # Asegurarse de que song_id es siempre string
+            if not isinstance(song_id, str):
+                song_id = str(song_id)
+
             result = db["albums"].update_one(
-                {"_id": album_id, "songs.song_id": {"$ne": song_id}},  # Solo si NO existe
+                {"_id": album_id, "songs": {"$not": {"$elemMatch": {"song_id": song_id}}}},
                 {"$push": {"songs": {"song_id": song_id}}}
             )
-
             return result.modified_count > 0  # True si de verdad modificó algo
 
         except PyMongoError as e:
             print(f"Error al agregar canción al álbum: {e}")
             return False
+
 
     @staticmethod
     def update_song_lyrics(song_id:ObjectId, lyrics):

@@ -11,6 +11,7 @@ import unicodedata
 from bson import ObjectId
 import time
 from app.provider import  Songs_db_provider
+import asyncio
 
 class Song_controller:
     @staticmethod
@@ -80,45 +81,34 @@ class Song_controller:
         return JSONResponse(status_code=200, content={"data": res})
 
     @staticmethod
-    async def insert_bs_controller(url: str):
+    async def insert_bs_controller(artist: str, title: str):
         try:
-            json_path = "D:/CursoJava/Programacion/PI-2/Pi2/Bounsic-dev/bounsic-back/audios/data.json"
+     
+            if not artist or not title:
+                raise HTTPException(status_code=400, detail="El título y el artista son obligatorios.")
+            
+            busqueda = f"{title} {artist}"
+            youtube_search = Scrapping_service.buscar_en_youtube(busqueda)
 
-            if not os.path.exists(json_path):
-                raise HTTPException(status_code=404, detail="Archivo JSON no encontrado")
+            title = youtube_search['title']
+            artist = youtube_search['artist']
 
-            with open(json_path, "r", encoding="utf-8") as f:
-                songs_list = json.load(f)
-            results = []  
+            print(title, artist)
+
+            result = await Song_controller.process_song_and_album(title, artist)
+            # Ensure the result is JSON serializable
+            return Song_controller.serialize_for_json({
+                "status": "success",
+                "data": result
+            })
         
-            for song in songs_list:
-                try:
-                    titleE = song['title']
-                    artistE = song['artist']
-                    
-                    busqueda = f"{titleE} {artistE}"
-                    youtube_search = Scrapping_service.buscar_en_youtube(busqueda)
-
-                    title = youtube_search['title']
-                    artist = youtube_search['artist']
-
-                    result = await Song_controller.process_song_and_album(title, artist)
-                    # Ensure the result is JSON serializable
-                    return Song_controller.serialize_for_json({
-                        "status": "success",
-                        "data": result
-                    })
-                except Exception as e:
-                    return Song_controller.serialize_for_json({
-                        "status": "error",
-                        "error": str(e)
-                    })
-                
-            return Song_controller.serialize_for_json({"message": "Songs processed", "data": results})
-
         except Exception as e:
-            logging.error(f"Error al insertar canciones: {str(e)}")
-            raise HTTPException(status_code=500, detail="Error interno al insertar canciones")
+            logging.error(f"Error al insertar canción: {str(e)}")
+            return Song_controller.serialize_for_json({
+                "status": "error",
+                "error": str(e)
+            })
+        
 
     @staticmethod
     async def insert_song_controller(track_name: str):
@@ -184,11 +174,12 @@ class Song_controller:
         return title.strip()
 
 
+
+
     @staticmethod
-    # Fixed process_song_and_album function
     async def process_song_and_album(title: str, artist: str):
         """
-        Procesa una canción y descarga todo su álbum, con vinculaciones completas.
+        Procesa todas las canciones de un álbum y las inserta en paralelo.
         """
         result = {
             "status": "success",
@@ -202,7 +193,7 @@ class Song_controller:
 
         try:
             ainicio = time.time()
-                        
+                            
             cleanTitle = Song_controller.clean_song_title(title)
             cleanArtist = Song_controller.clean_artist_name(artist)
 
@@ -222,7 +213,6 @@ class Song_controller:
             artist_db = Song_service.searchArtist(cleanArtist)
             
             if not artist_db:
-                # Insertar nuevo artista
                 artist_id = Song_service.insert_artist(
                     name=artist_info["name"],
                     artist_name=artist_info["artist_name"],
@@ -236,10 +226,8 @@ class Song_controller:
             # 3. Verificar/insertar álbum
             album_db = Song_service.searchAlbum(album_name, result["artist_id"])
             album_info = Spotify_service.get_album_info(album_name, cleanArtist)
-            print(album_info)
             
             if not album_db:
-                # Insertar nuevo álbum
                 album_id = Song_service.insert_album(
                     name=album_info["name"],
                     release_year=album_info["release_year"],
@@ -248,65 +236,53 @@ class Song_controller:
                 )
                 result["album_id"] = album_id
                 
-                # Vincular álbum al artista
                 Song_service.add_album_to_artist(result["artist_id"], result["album_id"])
                 Song_service.add_artist_to_album(result["artist_id"], result["album_id"])
             else:
                 result["album_id"] = album_db["_id"]
-            
-            for track in album_info["songs"]:
-                track_title = track["name"]
-                
-                # Verificar si la canción ya existe
-                existing_song_id = Song_service.search_song_exact(track_title, artist)
-                if existing_song_id:
-                    song_id = existing_song_id
-                else:
-                    song_result = await Song_controller.process_single_song(track_title, cleanArtist, spotify_data)
-                    if song_result["status"] != "success":
-                        result["failed_songs"].append({
-                            "title": track_title,
-                            "error": song_result.get("error", "unknown_error")
-                        })
-                        continue
-                    
-                    song_id = song_result["song_id"]
-                
-                # CONVERSIÓN SEGURA A ObjectId
-                try:
-                    if isinstance(song_id, dict):
-                        # Si es diccionario, extraer el song_id
-                        song_id = song_id.get("song_id", song_id.get("_id"))
-                    
-                    if isinstance(song_id, ObjectId):
-                        song_id_obj = song_id
-                    else:
-                        song_id_obj = ObjectId(song_id)
-                except:
+
+            # 4. Procesar todas las canciones en paralelo
+            tasks = [
+                Song_controller.process_single_song(track["name"], cleanArtist, spotify_data)
+                for track in album_info["songs"]
+            ]
+
+            song_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for idx, song_result in enumerate(song_results):
+                track_title = album_info["songs"][idx]["name"]
+                if isinstance(song_result, Exception) or song_result.get("status") != "success":
                     result["failed_songs"].append({
                         "title": track_title,
-                        "error": f"invalid_song_id: {song_id}"
+                        "error": song_result if isinstance(song_result, Exception) else song_result.get("error", "unknown_error")
                     })
                     continue
 
-                # Agregar canción al álbum
-                Song_service.add_song_to_album(result["album_id"], song_id_obj)
+                # Si la canción fue exitosa
+                song_id = song_result.get("song_id")
 
+                if isinstance(song_id, ObjectId):
+                    # Agregar canción al álbum
+                    Song_service.add_song_to_album(result["album_id"], song_id)
                 
+                # Registrar como procesada
                 result["processed_songs"].append({
                     "title": track_title,
-                    "status": "inserted" if not existing_song_id else "already_exists",
-                    "song_id": str(song_id_obj)
+                    "status": "inserted",
+                    "song_id": str(song_id)
                 })
+
             afin = time.time()
             print(f"Time: {afin - ainicio:.6f} segundos")
             return Song_controller.serialize_for_json(result)
+        
         except Exception as e:
             print(f"Error processing album: {str(e)}")
             traceback.print_exc()
             result["status"] = "error"
             result["error"] = str(e)
             return Song_controller.serialize_for_json(result)
+
         
     @staticmethod
     async def process_single_song(title: str, artist: str, spotify_data: dict = None):
@@ -681,22 +657,22 @@ class Song_controller:
                     continue
 
                 # Si no está, intentar insertar
-                print("No está, se intenta insertar:", track_name, artist_name)
-                insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
+                # print("No está, se intenta insertar:", track_name, artist_name)
+                # insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
 
-                for s in insert_result.get("processed_songs", []):
-                    song_id = s.get("song_id")
-                    if not song_id:
-                        continue
-                    mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
-                    if mongo_song:
-                        result.append({
-                            "_id": str(mongo_song.get("_id")),
-                            "artist": mongo_song.get("artist"),
-                            "title": mongo_song.get("title"),
-                            "album": mongo_song.get("album"),
-                            "img_url": mongo_song.get("img_url")
-                        })
+                # for s in insert_result.get("processed_songs", []):
+                #     song_id = s.get("song_id")
+                #     if not song_id:
+                #         continue
+                #     mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
+                #     if mongo_song:
+                #         result.append({
+                #             "_id": str(mongo_song.get("_id")),
+                #             "artist": mongo_song.get("artist"),
+                #             "title": mongo_song.get("title"),
+                #             "album": mongo_song.get("album"),
+                #             "img_url": mongo_song.get("img_url")
+                #         })
 
             return JSONResponse(
                 status_code=200,

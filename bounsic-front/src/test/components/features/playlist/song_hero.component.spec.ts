@@ -15,7 +15,7 @@ describe('SongHeroComponent', () => {
     component = fixture.componentInstance;
 
     component.totalSongs = 12;
-    component.totalDuration = '2:30';
+    component.totalDuration = 330;
 
     fixture.detectChanges();
   });
@@ -27,7 +27,7 @@ describe('SongHeroComponent', () => {
   it('should render total songs and formatted duration', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('12');
-    expect(compiled.textContent).toContain('2 horas 30 minutos');
+    expect(compiled.textContent).toContain('5:30');
   });
 
 });

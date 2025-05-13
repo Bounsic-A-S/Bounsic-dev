@@ -1,23 +1,32 @@
 import { formatDuration } from "@app/features/playlist/utils/format-song-duration";
 
 describe('Unit Test - formatDuration', () => {
-  it('should format single hour and minute', () => {
-    expect(formatDuration('1:1')).toBe('1 hora 1 minuto');
+  it('should format 1 minute 1 second', () => {
+    expect(formatDuration(61)).toBe('01:01');
   });
 
-  it('should format plural correctly', () => {
-    expect(formatDuration('2:3')).toBe('2 horas 3 minutos');
+  it('should format 2 minutes 3 seconds', () => {
+    expect(formatDuration(123)).toBe('02:03');
   });
 
-  it('should handle zeroes', () => {
-    expect(formatDuration('0:0')).toBe('0 horas 0 minutos');
+  it('should handle zero duration', () => {
+    expect(formatDuration(0)).toBe('00:00');
   });
 
-  it('should handle only minutes', () => {
-    expect(formatDuration('0:45')).toBe('0 horas 45 minutos');
+  it('should handle less than a minute', () => {
+    expect(formatDuration(45)).toBe('00:45');
   });
 
-  it('should handle only hours', () => {
-    expect(formatDuration('5:00')).toBe('5 horas 0 minutos');
+  it('should handle full minutes with zero seconds', () => {
+    expect(formatDuration(300)).toBe('05:00');
+  });
+
+  it('should return 00:00 for invalid input (NaN)', () => {
+    expect(formatDuration(NaN)).toBe('00:00');
+  });
+
+  it('should return 00:00 for invalid input (not a number)', () => {
+    // @ts-expect-error for test purposes
+    expect(formatDuration('invalid')).toBe('00:00');
   });
 });

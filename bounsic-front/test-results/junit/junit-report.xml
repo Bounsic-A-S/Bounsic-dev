@@ -1,37 +1,39 @@
 <?xml version="1.0"?>
-<testsuite name="Chrome Headless 135.0.0.0 (Windows 10)" package="" timestamp="2025-05-01T03:20:34" id="0" hostname="DESKTOP-9752NFV" tests="25" errors="0" failures="0" time="0.183">
+<testsuite name="Chrome Headless 136.0.0.0 (Linux x86_64)" package="" timestamp="2025-05-13T00:26:41" id="0" hostname="dxckrr-hp-laptop" tests="27" errors="0" failures="0" time="0.299">
   <properties>
-    <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/135.0.0.0 Safari/537.36"/>
+    <property name="browser.fullName" value="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/136.0.0.0 Safari/537.36"/>
   </properties>
-  <testcase name="LandingNavBarComponent should toggle mobile menu" time="0.055" classname="LandingNavBarComponent"/>
-  <testcase name="LandingNavBarComponent should load datos from the API on init" time="0.007" classname="LandingNavBarComponent"/>
-  <testcase name="LandingNavBarComponent should create" time="0.004" classname="LandingNavBarComponent"/>
-  <testcase name="NavbarAppComponent should logout and refresh userProfile$" time="0.046" classname="NavbarAppComponent"/>
-  <testcase name="NavbarAppComponent should check if user is logged" time="0.006" classname="NavbarAppComponent"/>
-  <testcase name="NavbarAppComponent should call authService.initialize on init" time="0.004" classname="NavbarAppComponent"/>
-  <testcase name="NavbarAppComponent should create the navbar" time="0.005" classname="NavbarAppComponent"/>
-  <testcase name="NavbarAppComponent should toggle the login option" time="0.004" classname="NavbarAppComponent"/>
-  <testcase name="NavbarAppComponent should toggle mobile menu" time="0.006" classname="NavbarAppComponent"/>
-  <testcase name="Unit Test - formatDuration should handle only hours" time="0" classname="Unit Test - formatDuration"/>
-  <testcase name="Unit Test - formatDuration should format single hour and minute" time="0" classname="Unit Test - formatDuration"/>
-  <testcase name="Unit Test - formatDuration should handle only minutes" time="0.001" classname="Unit Test - formatDuration"/>
-  <testcase name="Unit Test - formatDuration should format plural correctly" time="0" classname="Unit Test - formatDuration"/>
-  <testcase name="Unit Test - formatDuration should handle zeroes" time="0" classname="Unit Test - formatDuration"/>
-  <testcase name="AppComponent should create the app" time="0.004" classname="AppComponent"/>
-  <testcase name="PlayListSongItemComponent should display title, artist, album and duration" time="0.007" classname="PlayListSongItemComponent"/>
-  <testcase name="PlayListSongItemComponent should display the image" time="0.003" classname="PlayListSongItemComponent"/>
-  <testcase name="PlayListSongItemComponent should create" time="0.002" classname="PlayListSongItemComponent"/>
-  <testcase name="LandingTextComponent should apply hovered class on mouseenter and remove it on mouseleave" time="0.008" classname="LandingTextComponent"/>
-  <testcase name="SongHeroComponent should render total songs and formatted duration" time="0.008" classname="SongHeroComponent"/>
-  <testcase name="SongHeroComponent should create" time="0.003" classname="SongHeroComponent"/>
-  <testcase name="LandingTextComponent with multiple languages should render correctly in en" time="0.002" classname="LandingTextComponent with multiple languages"/>
-  <testcase name="LandingTextComponent with multiple languages should render correctly in es" time="0.002" classname="LandingTextComponent with multiple languages"/>
-  <testcase name="LandingTextComponent with multiple languages should create the component" time="0.002" classname="LandingTextComponent with multiple languages"/>
+  <testcase name="LandingTextComponent should apply hovered class on mouseenter and remove it on mouseleave" time="0.042" classname="LandingTextComponent"/>
+  <testcase name="LandingNavBarComponent should load datos from the API on init" time="0.034" classname="LandingNavBarComponent"/>
+  <testcase name="LandingNavBarComponent should create" time="0.005" classname="LandingNavBarComponent"/>
+  <testcase name="LandingNavBarComponent should toggle mobile menu" time="0.004" classname="LandingNavBarComponent"/>
   <testcase name="LandingTextComponent with multiple languages should render correctly in kr" time="0.004" classname="LandingTextComponent with multiple languages"/>
+  <testcase name="LandingTextComponent with multiple languages should render correctly in es" time="0.004" classname="LandingTextComponent with multiple languages"/>
+  <testcase name="LandingTextComponent with multiple languages should render correctly in en" time="0.006" classname="LandingTextComponent with multiple languages"/>
+  <testcase name="LandingTextComponent with multiple languages should create the component" time="0.005" classname="LandingTextComponent with multiple languages"/>
+  <testcase name="PlayListSongItemComponent should display title, artist, album and duration" time="0.05" classname="PlayListSongItemComponent"/>
+  <testcase name="PlayListSongItemComponent should display the image" time="0.008" classname="PlayListSongItemComponent"/>
+  <testcase name="PlayListSongItemComponent should create" time="0.004" classname="PlayListSongItemComponent"/>
+  <testcase name="Unit Test - formatDuration should handle zero duration" time="0.001" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should format 2 minutes 3 seconds" time="0" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should return 00:00 for invalid input (not a number)" time="0.001" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should handle full minutes with zero seconds" time="0" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should return 00:00 for invalid input (NaN)" time="0.001" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should format 1 minute 1 second" time="0" classname="Unit Test - formatDuration"/>
+  <testcase name="Unit Test - formatDuration should handle less than a minute" time="0" classname="Unit Test - formatDuration"/>
+  <testcase name="SongHeroComponent should create" time="0.017" classname="SongHeroComponent"/>
+  <testcase name="SongHeroComponent should render total songs and formatted duration" time="0.002" classname="SongHeroComponent"/>
+  <testcase name="NavbarAppComponent should call authService.initialize on init" time="0.067" classname="NavbarAppComponent"/>
+  <testcase name="NavbarAppComponent should toggle the login option" time="0.008" classname="NavbarAppComponent"/>
+  <testcase name="NavbarAppComponent should toggle mobile menu" time="0.004" classname="NavbarAppComponent"/>
+  <testcase name="NavbarAppComponent should create the navbar" time="0.006" classname="NavbarAppComponent"/>
+  <testcase name="NavbarAppComponent should check if user is logged" time="0.011" classname="NavbarAppComponent"/>
+  <testcase name="NavbarAppComponent should logout and refresh userProfile$" time="0.009" classname="NavbarAppComponent"/>
+  <testcase name="AppComponent should create the app" time="0.006" classname="AppComponent"/>
   <system-out>
-    <![CDATA[Chrome Headless 135.0.0.0 (Windows 10) LOG: 'Bounsic works in testing!'
-,Chrome Headless 135.0.0.0 (Windows 10) LOG: 'Bounsic works in testing!'
-,Chrome Headless 135.0.0.0 (Windows 10) LOG: 'Bounsic works in testing!'
+    <![CDATA[Chrome Headless 136.0.0.0 (Linux x86_64) LOG: 'Bounsic works in testing!'
+,Chrome Headless 136.0.0.0 (Linux x86_64) LOG: 'Bounsic works in testing!'
+,Chrome Headless 136.0.0.0 (Linux x86_64) LOG: 'Bounsic works in testing!'
 
 ]]>
   </system-out>
