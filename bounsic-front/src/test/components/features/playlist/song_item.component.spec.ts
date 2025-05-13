@@ -20,7 +20,7 @@ describe('PlayListSongItemComponent', () => {
     component.title = 'Mock Song';
     component.artist = 'Mock Artist';
     component.album = 'Mock Album';
-    component.duration = '3:45';
+    component.duration = 320;
     component.imageUrl = 'mock-image-url.jpg';
 
     fixture.detectChanges();
@@ -35,7 +35,7 @@ describe('PlayListSongItemComponent', () => {
     expect(compiled.textContent).toContain('Mock Song');
     expect(compiled.textContent).toContain('Mock Artist');
     expect(compiled.textContent).toContain('Mock Album');
-    expect(compiled.textContent).toContain('3:45');
+    expect(compiled.textContent).toContain('5:20');
   });
 
   it('should display the image', () => {
