@@ -61,9 +61,7 @@ export class LibraryComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
   }
-  ngOnInit(): void {
-    this.user = this.authService.getUserProfile();
-
+  loadPlaylists() {
     if (this.user?.id_user) {
       this.playlistsT$ = this.playlistService
         .getAllPlaylist(this.user.id_user)
@@ -74,7 +72,13 @@ export class LibraryComponent implements OnInit {
             return of(this.defaultPlaylists);
           })
         );
+    }
+  }
 
+  ngOnInit(): void {
+    this.user = this.authService.getUserProfile();
+    this.loadPlaylists()
+    if (this.user?.id_user) {
       this.favorites$ = this.playlistService
         .getLikesCount(this.user.id_user)
         .pipe(

@@ -35,6 +35,7 @@ import { PlaylistService } from '@app/services/playlist.service';
 export class ModalCreatePlaylistComponent {
   @Input() isOpen = false;
   @Output() closeModal = new EventEmitter<void>();
+  @Output() playlistCreated = new EventEmitter<void>();
 
   isSubmitting = false;
   registerForm: FormGroup;
@@ -94,8 +95,11 @@ export class ModalCreatePlaylistComponent {
     this.playlistService.createPlaylist(formData).subscribe((success) => {
       if (success) {
         console.log('Playlist creada exitosamente');
+        this.playlistCreated.emit();
+        this.close();
       } else {
         console.log('Error al crear playlist');
+        this.close();
       }
     });
   }
