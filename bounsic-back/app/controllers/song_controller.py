@@ -496,7 +496,8 @@ class Song_controller:
         return JSONResponse(status_code=200, content={"data": song_in})
 
     @staticmethod
-    async def update_Bert_analysis():
+    async def update_all_Bert_analysis():
+        """Update all database songs"""
         songs_provider = Songs_db_provider()
         songs_mongo = songs_provider.get_all()
         updated_songs = []
@@ -508,30 +509,61 @@ class Song_controller:
                 artist = song["artist"]
                 lyrics = song.get("lyrics", "")
                 analysis = 0
-
-                # Verifica si las letras están vacías o son "Letra no disponible en el momento"
-                if lyrics and lyrics.strip().lower() != "letra no disponible en el momento":
-                    analysis = await Bert_service.analyze_lyrics(lyrics)
-                    if not analysis: 
-                        print(f"Error in lyric analysis {title} - {artist}")
-
-                update_mongo = Song_service.update_song_lyrics_analysis(_id, analysis)
-                if update_mongo:
-                    print(f"Actualizada canción: {title} - {artist}")
+                
+                updated = await Song_controller._update_lyric_infoDb(_id, title, artist, lyrics)
+                if updated:
                     updated_songs.append({"title": title, "artist": artist})
-                else:
-                    print(f"0 rows affected in MongoDB {title} - {artist}")
-
 
             except Exception as e:
                 print(f"Error en {title} - {artist}: {str(e)}")
         return JSONResponse(status_code=200, content=updated_songs)
     
     @staticmethod
-    async def diagnose_songs_db():
+    async def update_Bert_analysis(null_values=False):
+        """Update just songs without lyric_info"""
         songs_provider = Songs_db_provider()
         songs_mongo = songs_provider.get_all()
         updated_songs = []
+        
+        for song in songs_mongo:
+            try:
+                _id = song["_id"]
+                title = song["title"]
+                artist = song["artist"]
+                lyrics = song.get("lyrics", "")
+                lyric_info = song["lyric_info"]
+
+                if null_values and (not lyric_info):
+                    updated = await Song_controller._update_lyric_infoDb(_id, title, artist, lyrics)
+                    if updated:
+                        updated_songs.append({"title": title, "artist": artist})
+
+            except Exception as e:
+                analysis = 0
+                # Verifica si las letras están vacías o son "Letra no disponible en el momento"
+                updated = await Song_controller._update_lyric_infoDb(_id, title, artist, lyrics)
+                if updated:
+                    updated_songs.append({"title": title, "artist": artist})
+                
+        return JSONResponse(status_code=200, content=updated_songs)
+    
+    async def _update_lyric_infoDb(_id, title, artist, lyrics):
+        analysis = 0
+        # Verifica si las letras están vacías o son "Letra no disponible en el momento"
+        if lyrics and lyrics.strip().lower() != "letra no disponible en el momento":
+            analysis = await Bert_service.analyze_lyrics(lyrics)
+
+        update_mongo = Song_service.update_song_lyrics_analysis(_id, analysis)
+        if update_mongo:
+            print(f"Canción actualizada ({analysis}): {title} - {artist}")
+        else:
+            print(f"0 rows affected in MongoDB {title} - {artist}")
+        return update_mongo
+
+    @staticmethod
+    async def diagnose_songs_db():
+        songs_provider = Songs_db_provider()
+        songs_mongo = songs_provider.get_all()
 
         null_lyrics = 0
         null_info_lyrics = 0
@@ -576,7 +608,13 @@ class Song_controller:
         print(f"Songs without lyrics: {null_lyrics}")
         print(f"Without info themes: {null_info_lyrics}")
 
-        return JSONResponse(status_code=200, content=updated_songs)
+        res = {
+            "Songs without fingerprint": null_fingerprint,
+            "Songs without lyrics": null_lyrics,
+            "Without info themes": null_info_lyrics,
+        }
+
+        return JSONResponse(status_code=200, content=res)
 
     @staticmethod
     async def feed_related_recomendations(email: str):
