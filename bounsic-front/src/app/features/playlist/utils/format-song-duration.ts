@@ -1,5 +1,8 @@
-const formatDuration = (duration: string): string => {
-    const [hours, minutes] = duration.split(':').map(Number);
-    return `${hours} hora${hours !== 1 ? 's' : ''} ${minutes} minuto${minutes !== 1 ? 's' : ''}`;
-}
-export { formatDuration };
+export function formatDuration(duration: number): string {
+    if (typeof duration !== 'number' || isNaN(duration)) return '00:00';
+  
+    const minutes = Math.floor(duration / 60);
+    const seconds = Math.floor(duration % 60);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+  

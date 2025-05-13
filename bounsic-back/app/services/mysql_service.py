@@ -411,22 +411,26 @@ class MySQLSongService:
             return None
 
     @staticmethod
-    async def get_playlist_by_id( playlist_id):
+    async def get_playlist_by_id(playlist_id):
         try:
-            return await MySQLSongService._db.execute_query("SELECT * FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
+            query = "SELECT * FROM Bounsic_Playlist WHERE playlist_id = :playlist_id"
+            params = {"playlist_id": playlist_id}
+            return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
             logging.error(f"get_playlist_by_id error: {e}")
             return None
+
 
     @staticmethod
     async def get_playlists_by_user( user_id):
         try:
             query = """
-                SELECT p.* FROM Bounsic_Playlist p
-                JOIN Bounsic_User_Playlists up ON p.playlist_id = up.playlist_id
-                WHERE up.user_id = %s
+                    SELECT p.*
+                    FROM Bounsic_Playlist p
+                    JOIN Bounsic_User_Playlists up ON p.playlist_id = up.playlist_id
+                    WHERE up.user_id = :user_id;
             """
-            return await MySQLSongService._db.execute_query(query, (user_id,))
+            return await MySQLSongService._db.execute_query(query, {"user_id":user_id})
         except Exception as e:
             logging.error(f"get_playlists_by_user error: {e}")
             return None
@@ -434,23 +438,37 @@ class MySQLSongService:
     @staticmethod
     async def insert_playlist(data):
         try:
-            query = "INSERT INTO Bounsic_Playlist (plist_name, playlist_desc, playlist_mongo_id) VALUES (%s, %s, %s)"
-            values = (data["plist_name"], data.get("playlist_desc"), data["playlist_mongo_id"])
-            result = MySQLSongService._db.execute_query(query, values)
+            query = """
+            INSERT INTO Bounsic_Playlist (plist_name, playlist_desc, playlist_mongo_id)
+            VALUES (:p1, :p2, :p3)
+            """
+            values = {
+                "p1": data["plist_name"],
+                "p2": data.get("playlist_desc"),
+                "p3": data["playlist_mongo_id"]
+            }
+
+            result = await MySQLSongService._db.execute_query(query, values)
 
             if "user_id" in data and result:
-                # Obtener el ID directamente del resultado
-                playlist_id = result["lastrowid"]
-                
+                last_id_result = await MySQLSongService._db.execute_query("SELECT LAST_INSERT_ID() AS id")
+                playlist_id = last_id_result[0]["id"]
+
                 await MySQLSongService._db.execute_query(
-                    "INSERT INTO Bounsic_User_Playlists (user_id, playlist_id) VALUES (%s, %s)", 
-                    (data["user_id"], playlist_id)
+                    """
+                    INSERT INTO Bounsic_User_Playlists (user_id, playlist_id)
+                    VALUES (:user_id, :playlist_id)
+                    """,
+                    {"user_id": data["user_id"], "playlist_id": playlist_id}
                 )
 
             return result
         except Exception as e:
-            logging(f"insert_playlist error: {e}")
+            logging.error(f"insert_playlist error: {e}")
             return False
+
+           
+
 
     @staticmethod
     async def update_playlist( playlist_id, data):
@@ -463,9 +481,11 @@ class MySQLSongService:
             return False
 
     @staticmethod
-    async def delete_playlist( playlist_id):
+    async def delete_playlist(playlist_id):
         try:
-            return await MySQLSongService._db.execute_query("DELETE FROM Bounsic_Playlist WHERE playlist_id = %s", (playlist_id,))
+            query = "DELETE FROM Bounsic_Playlist WHERE playlist_id = :playlist_id"
+            params = {"playlist_id": playlist_id}
+            return await MySQLSongService._db.execute_query(query, params)
         except Exception as e:
             logging.error(f"delete_playlist error: {e}")
             return False
@@ -494,6 +514,19 @@ class MySQLSongService:
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
             return None
+        
+    @staticmethod
+    async def get_likes_by_user_count(user_id):
+        try:
+            result = await MySQLSongService._db.execute_query(
+                "SELECT COUNT(*) as like_count FROM Bounsic_Like WHERE user_id = :user_id", 
+                {"user_id": user_id}
+            )
+            return result[0]["like_count"] if result else 0
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            return 0
+
 
     @staticmethod
     async def check_like_by_user( user_id , song_id):

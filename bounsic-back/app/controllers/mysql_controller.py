@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import logging
-from app.services import MySQLSongService , insert_usr_image
+from app.services import MySQLSongService , insert_usr_image, Song_service
+from app.controllers import Playlist_controller
 
 
 class MySQLController:
@@ -371,7 +372,7 @@ class MySQLController:
             playlist = await MySQLSongService.get_playlist_by_id(playlist_id)
             if not playlist:
                 raise HTTPException(status_code=404, detail="Playlist not found")
-            return JSONResponse(status_code=200, content={"playlist": playlist})
+            return JSONResponse(status_code=200, content=playlist)
         except HTTPException:
             raise
         except Exception as e:
@@ -384,7 +385,21 @@ class MySQLController:
             playlists = await MySQLSongService.get_playlists_by_user(user_id)
             if not playlists:
                 raise HTTPException(status_code=404, detail="No playlists found for this user")
-            return JSONResponse(status_code=200, content={"playlists": playlists})
+                        
+            # Lista para almacenar resultados detallados de cada playlist
+            detailed_playlists = []
+
+            for playlist in playlists:
+                playlist_id = playlist.get("playlist_mongo_id")
+                if playlist_id is None:
+                    continue  # Previene errores si algún registro no tiene ID
+
+                # Obtiene el detalle de la playlist por su ID
+                detailed = await Playlist_controller.get_playlist_by_id_controller_user(playlist_id)
+                if detailed:
+                    detailed_playlists.append(detailed)
+
+            return JSONResponse(status_code=200, content=detailed_playlists)
         except HTTPException:
             raise
         except Exception as e:
@@ -459,12 +474,29 @@ class MySQLController:
             likes = await MySQLSongService.get_likes_by_user(user_id)
             if not likes:
                 raise HTTPException(status_code=404, detail="No likes found for this user")
-            return JSONResponse(status_code=200, content={"likes": likes})
+            mongo_songs = [like["song_mongo_id"] for like in likes]
+            print(mongo_songs)
+            likes_mongo = Song_service.get_songs_by_ids_exeptid(mongo_songs)
+            return JSONResponse(status_code=200, content=likes_mongo)
         except HTTPException:
             raise
         except Exception as e:
             logging.error(f"get_likes_by_user error: {e}")
-            raise HTTPException(status_code=500, detail="Error fetching likes by user")
+            raise HTTPException(status_code=500, detail="Error fetching likes by user")   
+        
+    @staticmethod
+    async def get_likes_by_user_count( user_id):
+        try:
+            likes = await MySQLSongService.get_likes_by_user_count(user_id)
+            if not likes:
+                raise HTTPException(status_code=404, detail="No likes found for this user")
+            return JSONResponse(status_code=200, content=likes)
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"get_likes_by_user error: {e}")
+            raise HTTPException(status_code=500, detail="Error fetching likes by user")   
+        
     @staticmethod
     async def check_like_by_user( user_id , song_id):
         try:

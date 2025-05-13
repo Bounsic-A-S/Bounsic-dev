@@ -1,74 +1,91 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
 import { LibraryItemComponent } from './library_item/library_item.component';
 import { PlaylistService } from '@app/services/playlist.service';
 import { catchError, map, of, Observable } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from '@app/services/background.service';
-interface Playlist {
-    id: number;
-    title: string;
-    songCount: number;
-    coverUrl: string;
-}
+import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
+import { AuthService } from '@app/services/auth/auth.service';
+import User from 'src/types/user/User';
 
 @Component({
-    selector: 'app-library',
-    standalone: true,
-    templateUrl: './library.component.html',
-    imports: [NavbarAppComponent, CommonModule, LibraryItemComponent, TranslateModule],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-library',
+  standalone: true,
+  templateUrl: './library.component.html',
+  imports: [
+    NavbarAppComponent,
+    CommonModule,
+    LibraryItemComponent,
+    TranslateModule,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LibraryComponent implements OnInit {
-    private playlistService = inject(PlaylistService);
-    private backgroundService = inject(BackgroundService)
-    bg$ : Observable<string> = this.backgroundService.background$;
-    favorites: Playlist = {
-        id: 4,
-        title: 'Lista de Me gustas',
-        songCount: 156,
-        coverUrl: '/library/favorites.png'
-    };
+  private playlistService = inject(PlaylistService);
+  private backgroundService = inject(BackgroundService);
+  private translateService = inject(TranslateService);
+  private authService = inject(AuthService);
 
-    likedPlaylists: Playlist[] = [
-        {
-            id: 5,
-            title: 'Jueves',
-            songCount: 2,
-            coverUrl: 'https://i.pinimg.com/736x/05/28/d0/0528d0292b477ef58b027f09459fe9aa.jpg'
-        }
-    ];
+  user: User | null = null;
+  bg$: Observable<string> = this.backgroundService.background$;
 
-    playlistsT$!: Observable<Playlist[]>;
+  favorites$!: Observable<LibraryPlaylist>;
 
-    private defaultPlaylists: Playlist[] = [
-        {
-            id: 1,
-            title: 'Not found',
-            songCount: 0,
-            coverUrl: 'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg'
-        }
-    ];
+  playlistsT$!: Observable<LibraryPlaylist[]>;
 
+  private defaultPlaylists: LibraryPlaylist[] = [
+    {
+      id: '1',
+      title: 'Not found',
+      song_count: 0,
+      isPublic: true,
+      img_url:
+        'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg',
+    },
+  ];
 
-    ngOnInit(): void {
-        this.playlistsT$ = this.playlistService.getAllPlaylist().pipe(
-          map((response) => {
-            if (Array.isArray(response) && response.length > 0) {
-              return response.map((item, index) => ({
-                id: item._id,
-                title: item.title || `Lista ${index + 1}`,
-                songCount: item.songs?.length || 0,
-                coverUrl: item.img_url || ''
-              }));
-            }
-            return this.defaultPlaylists;
-          }),
+  ngOnInit(): void {
+    this.user = this.authService.getUserProfile();
+
+    if (this.user?.id_user) {
+      this.playlistsT$ = this.playlistService
+        .getAllPlaylist(this.user.id_user)
+        .pipe(
+          map((response) => response || this.defaultPlaylists),
           catchError((err) => {
             console.error('Error al obtener playlists:', err);
             return of(this.defaultPlaylists);
           })
         );
+
+      this.favorites$ = this.playlistService
+        .getLikesCount(this.user.id_user)
+        .pipe(
+          map((count) => ({
+            id: 'likes',
+            title: this.translateService.instant('BOUNSIC.PLAYLIST.LIKES'),
+            song_count: count,
+            isPublic: false,
+            img_url: '/library/favorites.png',
+          })),
+          catchError((err) => {
+            console.error('Error al obtener favoritos:', err);
+            return of({
+              id: 'likes',
+              title: this.translateService.instant('BOUNSIC.PLAYLIST.LIKES'),
+              song_count: 0,
+              isPublic: false,
+              img_url: '/library/favorites.png',
+            });
+          })
+        );
     }
+  }
 }

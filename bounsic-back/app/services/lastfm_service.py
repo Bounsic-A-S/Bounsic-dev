@@ -52,5 +52,3 @@ class LastfmService:
                     print(f"No se pudo obtener la información de la canción '{song['title']}'.")
             else:
                 print(f"La canción '{song['title']}' ya existe en la base de datos.")
-
-

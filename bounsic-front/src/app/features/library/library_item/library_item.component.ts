@@ -2,13 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-
-interface Playlist {
-    id: number;
-    title: string;
-    songCount: number;
-    coverUrl: string;
-}
+import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 
 @Component({
     selector: 'library-item',
@@ -18,11 +12,12 @@ interface Playlist {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibraryItemComponent {
-    @Input() playlist!: Playlist;
+    @Input() playlist!: LibraryPlaylist;
 
     constructor(private router: Router) {}
 
     goToPlaylist() {
+        console.log(this.playlist)
         this.router.navigate(['/playlist', this.playlist.id]);
     }
 }

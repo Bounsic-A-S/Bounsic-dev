@@ -10,5 +10,6 @@ interface Song {
     fingerprint: any[];
     lyrics?:string;
     isLiked?:boolean;
+    duration?:number;
 }
 export default Song;

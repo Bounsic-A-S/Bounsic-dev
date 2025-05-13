@@ -3,7 +3,9 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
+from sqlalchemy import  text
+from sqlalchemy.engine import Result
+
 
 class DatabaseFacade:
     def __init__(self, config_path="env/.env.dev"):
@@ -37,23 +39,20 @@ class DatabaseFacade:
             try:
                 stmt = text(query)
 
-                if isinstance(params, dict) or isinstance(params, (list, tuple)):
-                    result: Result = await session.execute(stmt, params)
-                elif params is None:
-                    result: Result = await session.execute(stmt)
-                else:
-                    raise ValueError("Params must be a dict, list, tuple, or None")
+                if isinstance(params, (list, tuple)) and not isinstance(params, dict):
+                    params = [params]
+
+                result: Result = await session.execute(stmt, params)
 
                 try:
-                    # Intentamos hacer fetchall() para detectar si es SELECT
                     rows = result.fetchall()
                     return [dict(row._mapping) for row in rows]
                 except Exception:
-                    # Si no es SELECT, se hace commit y se devuelve info útil
                     await session.commit()
                     return {
                         "rowcount": result.rowcount,
-                        "message": "Query executed successfully"
+                        "message": "Query executed successfully",
+                        "lastrowid": result.lastrowid if hasattr(result, 'lastrowid') else None
                     }
 
             except Exception as e:

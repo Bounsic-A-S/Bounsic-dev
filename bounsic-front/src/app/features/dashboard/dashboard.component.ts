@@ -71,7 +71,9 @@ export class DashboardComponent implements OnInit {
     this.songRelated$ = this.songService.getRelatedSongs(email).pipe(
       take(1)
     );
-    this.songTrending$ = this.songService.getTrendingSongs()
+    this.songTrending$ = this.songService.getTrendingSongs().pipe(
+      take(1)
+    );
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }
