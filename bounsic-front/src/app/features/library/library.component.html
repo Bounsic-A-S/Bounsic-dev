@@ -32,9 +32,9 @@
       <div class="h-px w-full bg-white mb-6 not-dark:bg-black"></div>
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
-        <library-item [playlist]="favorites">
-        </library-item>
-
+        <ng-container *ngIf="favorites$ | async as favorites; else loading">
+          <library-item [playlist]="favorites"></library-item>
+        </ng-container>
         <!-- Liked Playlist Cards -->
         <!-- <library-item *ngFor="let playlist of likedPlaylists" [playlist]="playlist">
         </library-item> -->

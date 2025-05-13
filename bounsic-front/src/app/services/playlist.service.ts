@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.dev';
 import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 import Playlist from 'src/types/playlist/Playlist';
+import Song from 'src/types/Song';
 
 @Injectable({
   providedIn: 'root'
@@ -55,18 +56,11 @@ export class PlaylistService {
       })
     );
   }
-  getLikesPlaylist(user_id: number): Observable<Playlist> {
+  getLikesPlaylist(user_id: number): Observable<Song[]> {
     return this.http.get<any>(`${this.apiUrl}/user/likes/${user_id}`).pipe(
       catchError((err) => {
         console.error('Error al obtener playlist:', err);
-        return of({
-          id: "0",
-          title: "",
-          img_url: "",
-          updated_at: new Date(),
-          songs: [],
-          isPublic: false
-        });
+        return of([] as Song[]);
       })
     );
   }
