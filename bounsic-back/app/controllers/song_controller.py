@@ -526,22 +526,22 @@ class Song_controller:
                     continue
 
                 # Si no está, intentar insertar
-                print("No está, se intenta insertar:", track_name, artist_name)
-                insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
+                # print("No está, se intenta insertar:", track_name, artist_name)
+                # insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
 
-                for s in insert_result.get("processed_songs", []):
-                    song_id = s.get("song_id")
-                    if not song_id:
-                        continue
-                    mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
-                    if mongo_song:
-                        result.append({
-                            "_id": str(mongo_song.get("_id")),
-                            "artist": mongo_song.get("artist"),
-                            "title": mongo_song.get("title"),
-                            "album": mongo_song.get("album"),
-                            "img_url": mongo_song.get("img_url")
-                        })
+                # for s in insert_result.get("processed_songs", []):
+                #     song_id = s.get("song_id")
+                #     if not song_id:
+                #         continue
+                #     mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
+                #     if mongo_song:
+                #         result.append({
+                #             "_id": str(mongo_song.get("_id")),
+                #             "artist": mongo_song.get("artist"),
+                #             "title": mongo_song.get("title"),
+                #             "album": mongo_song.get("album"),
+                #             "img_url": mongo_song.get("img_url")
+                #         })
 
             return JSONResponse(
                 status_code=200,
