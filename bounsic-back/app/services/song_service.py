@@ -602,24 +602,6 @@ class Song_service:
         except PyMongoError as e:
             print(f"Error al agregar letras a la canción: {e}")
             return False
-        
-    @staticmethod
-    async def evaluate_lyrics(lyrics):
-        try:
-            url = "https://bounsic.site:5000/bert/lyrics_analysis"  # URL de tu API
-            headers = {"Content-Type": "application/json"}
-            data = {"lyrics": lyrics}
-
-            response = requests.post(url, json=data, headers=headers)
-            response.raise_for_status()  # Lanza excepción si hay un error en la solicitud
-
-            result = response.json()  # Obtiene la respuesta en JSON
-            return result
-
-        except requests.RequestException as e:
-            print(f"Error al realizar el fetch de la API: {e}")
-            return False
-        
 
     @staticmethod
     def update_song_lyrics_analysis(song_id, numeric_values):
@@ -636,11 +618,11 @@ class Song_service:
         try:
             result = db["songs"].update_one(
                 {"_id":song_id},
-                {"$set":{"tagsAnalysis": numeric_values}}
+                {"$set":{"lyric_info": numeric_values}}
             )
             return result.modified_count > 0
 
         except PyMongoError as e:
-            print(f"Error al agregar 'tagsAnalysis' a la canción: {e}")
+            print(f"Error al agregar 'lyric_info' a la canción: {e}")
             return False
         

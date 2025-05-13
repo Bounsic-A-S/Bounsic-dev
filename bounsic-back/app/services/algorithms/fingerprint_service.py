@@ -74,10 +74,10 @@ async def generate_fingerprint(audioPath:str ,segment_duration: float = 0.5, top
         
     except FileNotFoundError as e:
         print(f"File error: {str(e)}")
-        return False
+        return {}
     except Exception as e:
         print(f"Error generating fingerprint: {str(e)}")
-        return False
+        return {}
 
 def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop_length, sr):
     fingerprint = []
@@ -112,7 +112,7 @@ def _analyze_frequencies(D_dB, frequencies, frames_per_segment, top_n_freqs, hop
             low_peaks = []
             mid_peaks = []
             high_peaks = []
-
+            
             for p in pks:
                 freq = frequencies[p]
                 if freq < 200:

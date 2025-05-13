@@ -1,6 +1,6 @@
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint, Feed_service, Queue_service, LastfmService
+from app.services import Song_service, Scrapping_service, Db_service , Spotify_service, MySQLSongService, generate_fingerprint, Feed_service, Queue_service, LastfmService, Bert_service
 import logging
 import re
 import json
@@ -499,7 +499,7 @@ class Song_controller:
     async def update_Bert_analysis():
         songs_provider = Songs_db_provider()
         songs_mongo = songs_provider.get_all()
-        updated_songs = []  
+        updated_songs = []
 
         for song in songs_mongo:
             try:
@@ -507,24 +507,74 @@ class Song_controller:
                 title = song["title"]
                 artist = song["artist"]
                 lyrics = song.get("lyrics", "")
+                analysis = 0
 
                 # Verifica si las letras están vacías o son "Letra no disponible en el momento"
                 if lyrics and lyrics.strip().lower() != "letra no disponible en el momento":
-                    analysis = await Song_service.evaluate_lyrics(lyrics)
+                    analysis = await Bert_service.analyze_lyrics(lyrics)
                     if not analysis: 
-                        print(f"Error al analizar las letras para {title} - {artist}")
-                        continue
+                        print(f"Error in lyric analysis {title} - {artist}")
 
-                    update_mongo = Song_service.update_song_lyrics_analysis(_id, analysis)
-                    if update_mongo:
-                        print(f"Actualizada canción: {title} - {artist}")
-                        updated_songs.append({"title": title, "artist": artist})
-                    else:
-                        print(f"Error al actualizar MongoDB para {title} - {artist}")
+                update_mongo = Song_service.update_song_lyrics_analysis(_id, analysis)
+                if update_mongo:
+                    print(f"Actualizada canción: {title} - {artist}")
+                    updated_songs.append({"title": title, "artist": artist})
+                else:
+                    print(f"0 rows affected in MongoDB {title} - {artist}")
 
 
             except Exception as e:
                 print(f"Error en {title} - {artist}: {str(e)}")
+        return JSONResponse(status_code=200, content=updated_songs)
+    
+    @staticmethod
+    async def diagnose_songs_db():
+        songs_provider = Songs_db_provider()
+        songs_mongo = songs_provider.get_all()
+        updated_songs = []
+
+        null_lyrics = 0
+        null_info_lyrics = 0
+        null_fingerprint = 0
+
+        for song in songs_mongo:
+            _id = song["_id"]
+            title = song["title"]
+            artist = song["artist"]
+            fp = True
+            try:
+                temp = song["fingerprint"]
+                if not temp:
+                    null_fingerprint += 1
+                    fp = False
+            except Exception as e:
+                fp = False
+                print(f"[fingerprint] Error, {title} - {artist}:        {str(e)}")
+            if fp:
+                try:
+                    temp = temp["bpm"]
+                    if not temp:
+                        null_lyrics += 1
+                except Exception as e:
+                    print(f"[bpm] Error, {title} - {artist}:        {str(e)}")
+                
+            try:
+                temp = song["lyric_info"]
+                if not temp:
+                    null_info_lyrics += 1
+            except Exception as e:
+                print(f"[lyric_info] Error, {title} - {artist}:        {str(e)}")
+
+            try:
+                lyrics = song["lyrics"]
+                if lyrics and lyrics.strip().lower() == "letra no disponible en el momento":
+                    null_lyrics += 1
+            except Exception as e:
+                print(f"[_lyrics] Error, {title} - {artist}: {str(e)}")
+
+        print(f"Songs without fingerprint: {null_fingerprint}")
+        print(f"Songs without lyrics: {null_lyrics}")
+        print(f"Without info themes: {null_info_lyrics}")
 
         return JSONResponse(status_code=200, content=updated_songs)
 
@@ -619,24 +669,46 @@ class Song_controller:
             logging.error(f"Error en get_top_12_songs_controller: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Error interno al obtener las canciones")
 
-
-            
-
-        
     @staticmethod
     async def player_queue(song_id):
         try:
-            ainicio = time.time()
             seed_song = Song_service.get_song_by_id(song_id)
             if not seed_song:
                 return JSONResponse(
                     status_code=200,
                     content=[]
                 )
-            afin = time.time()
-            print(f"get songById: {afin - ainicio:.6f} segundos")
             # get recommendations
             res_songs = await Queue_service.get_queue(seed_song)
+            final_songs = []
+            keys = ["_id", "artist", "title", "album", "img_url"]
+            
+            final_songs = [
+                {k: str(song.get(k, "")) for k in keys}
+                for song in res_songs
+            ]
+
+            return JSONResponse(
+                status_code=200,
+                content=final_songs
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"Error en player_queue: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno en la cola")
+        
+    @staticmethod
+    async def lyrics_related(song_name):
+        try:
+            seed_song = Song_service.getSongByTitle(song_name)
+            # Song_service.get
+            if not seed_song:
+                return JSONResponse(
+                    status_code=200,
+                    content=[]
+                )
+            res_songs = Bert_service.get_lyrics_recomendation(seed_song)
             final_songs = []
             keys = ["_id", "artist", "title", "album", "img_url"]
             

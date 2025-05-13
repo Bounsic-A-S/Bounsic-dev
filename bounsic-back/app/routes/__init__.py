@@ -1,4 +1,3 @@
-from .bert_routes import router as bert_router
 from .crawl_routes import router as crawl_router
 from .scrapping_routes import router as scrapping_router
 from .song_routes import router as song_router
