@@ -1,0 +1,20 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center z-50">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="relative w-[460px] h-[460px] flex items-center justify-center group" clickOutside
+      (clickOutside)="close()">
+
+      <!-- Contenido del modal -->
+      <div
+        class="z-10 bg-bounsic-gray-4 border border-bounsic-gray-3/10 w-80 h-80 px-6 py-3 rounded-xl flex flex-col justify-center items-center text-white relative">
+        <button (click)="close()" class="z-20 absolute top-4 right-4 text-gray-300 hover:text-white cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <h2 class="text-lg font-semibold">
+          playlist create
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
