@@ -10,6 +10,7 @@ import traceback
 from bson import ObjectId
 from datetime import datetime
 from app.services import Scrapping_service
+import requests
 class Song_service:
     @staticmethod
     def get_song_by_id(id:str):
@@ -625,3 +626,27 @@ class Song_service:
         except PyMongoError as e:
             print(f"Error al agregar letras a la canción: {e}")
             return False
+
+    @staticmethod
+    def update_song_lyrics_analysis(song_id, numeric_values):
+        """
+        Actualiza o crea el campo 'tagsAnalysis' de una canción con un array de números.
+
+        Args:
+            song_id (ObjectId): ID de la canción a actualizar.
+            numeric_values (list): Array de números a insertar en 'tagsAnalysis'.
+
+        Returns:
+            bool: True si se actualizó, False si no se modificó o hubo error.
+        """
+        try:
+            result = db["songs"].update_one(
+                {"_id":song_id},
+                {"$set":{"lyric_info": numeric_values}}
+            )
+            return result.modified_count > 0
+
+        except PyMongoError as e:
+            print(f"Error al agregar 'lyric_info' a la canción: {e}")
+            return False
+        

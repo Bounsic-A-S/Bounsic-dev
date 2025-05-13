@@ -45,6 +45,14 @@ async def create_song(track_name: str):
 async def update_lyrics():
     return await Song_controller.update_lyrics_controller()
 
+@router.put("/update/lyrics_analysis")
+async def update_lyrics_analysis():
+    return await Song_controller.update_Bert_analysis()
+
+@router.get("/diagnose/songs-db")
+async def diagnose_songs_db():
+    return await Song_controller.diagnose_songs_db()
+
 @router.post("/safeChoice")
 async def get_safe_choice(request: Request):
     data = await request.json()
@@ -72,3 +80,9 @@ async def get_player_queue(request : Request):
     data = await request.json()
     seed_song_id = data.get("song_id")
     return await Song_controller.player_queue(seed_song_id)
+
+@router.post("/get/lyrics-related")
+async def get_lyrics_related(request : Request):
+    data = await request.json()
+    seed_song_id = data.get("song_name")
+    return await Song_controller.lyrics_related(seed_song_id)
