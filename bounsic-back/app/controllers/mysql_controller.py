@@ -79,7 +79,25 @@ class MySQLController:
             if not preferences:
                 return JSONResponse(status_code=400, content={"message": "Err creating the preferences"})
             full_user = await MySQLSongService.get_full_user_by_email(data["email"])
-            return JSONResponse(status_code=201, content={"user":full_user})
+            full_user = full_user[0]
+            transformated_user = {
+                "id_user": full_user["id_user"],
+                "username": full_user["username"],
+                "name": full_user["name"],
+                "email": full_user["email"],
+                "role": full_user["role"],
+                "phone":full_user["phone"],
+                "country":full_user["country"],
+                "profile_img": full_user["profile_img"],
+                "preferences": {
+                    "background": full_user["background"],
+                    "typography": full_user["typography"],
+                    "language": full_user["language"],
+                    "theme": full_user["theme"]
+
+                }
+            }
+            return JSONResponse(status_code=201, content=transformated_user)
         except Exception as e:
             logging.error(f"create_user error: {e}")
             raise HTTPException(status_code=500, detail="Error creating user")
