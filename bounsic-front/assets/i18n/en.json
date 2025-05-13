@@ -1,6 +1,7 @@
 {
   "BOUNSIC": {
     "LOADING": "Loading...",
+    "CREATE": "Create",
     "LANDING": {
       "TITLE1": "YOUR MUSIC. YOUR VIBES.",
       "TITLE2": "TUNE IN.",
@@ -71,7 +72,9 @@
         "UPDATED": "Updated on",
         "PLAYMIX": "Play mix",
         "LENGTH": "Length"
-      }
+      },
+      "PLAYLIST_TITLE": "Playlist title",
+      "NEW_PLAYLIST": "New playlist"
     },
     "PLAYER": {
       "ALBUM": "Album",

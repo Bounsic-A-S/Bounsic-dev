@@ -14,6 +14,7 @@ import { BackgroundService } from '@app/services/background.service';
 import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 import { AuthService } from '@app/services/auth/auth.service';
 import User from 'src/types/user/User';
+import { ModalCreatePlaylistComponent } from "./modal_create_playlist/modal_create_playlist.component";
 
 @Component({
   selector: 'app-library',
@@ -24,7 +25,8 @@ import User from 'src/types/user/User';
     CommonModule,
     LibraryItemComponent,
     TranslateModule,
-  ],
+    ModalCreatePlaylistComponent
+],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LibraryComponent implements OnInit {
