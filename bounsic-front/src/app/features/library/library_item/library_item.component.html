@@ -1,9 +1,9 @@
 <article class="cursor-pointer" (click)="goToPlaylist()">
   <div class="aspect-square rounded-xl overflow-hidden mb-2 size-36 md:size-44 xl:size-48">
-    <img [src]="playlist.coverUrl" alt="{{ playlist.title }}" class="w-full h-full object-cover" />
+    <img [src]="playlist.img_url" alt="{{ playlist.title }}" class="w-full h-full object-cover" />
   </div>
   <h3 class="font-medium">{{ playlist.title }}</h3>
   <p class="text-sm text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
-    {{ playlist.songCount }} {{'BOUNSIC.PLAYLIST.SONGS' | translate}}
+    {{ playlist.song_count }} {{'BOUNSIC.PLAYLIST.SONGS' | translate}}
   </p>
 </article>

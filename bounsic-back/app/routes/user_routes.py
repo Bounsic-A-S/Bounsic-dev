@@ -110,9 +110,9 @@ async def get_all_playlists():
 async def get_playlist_by_id(playlist_id: int):
     return await MySQLController.get_playlist(playlist_id)
 
-@router.get("/playlists/user/{user_email}")
-async def get_playlists_by_user(user_email: str):
-    return await MySQLController.get_playlists_by_user(user_email)
+@router.get("/playlists/user/{user_id}")
+async def get_playlists_by_user(user_id: int):
+    return await MySQLController.get_playlists_by_user(user_id)
 
 @router.post("/playlists/create")
 async def create_playlist(request: Request):
@@ -133,6 +133,11 @@ async def delete_playlist(playlist_id: int):
 @router.get("/likes/{user_email}")
 async def get_likes_by_user(user_email: str):
     return await MySQLController.get_likes_by_user(user_email)
+
+@router.get("/likes/count/{user_email}")
+async def get_likes_by_user_count(user_email: str):
+    return await MySQLController.get_likes_by_user_count(user_email)
+
 
 @router.get("/hasLike/{user_id}/{song_id}")
 async def check_like_by_user(user_id: int , song_id :str):

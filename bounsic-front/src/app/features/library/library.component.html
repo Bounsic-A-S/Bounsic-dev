@@ -32,18 +32,18 @@
       <div class="h-px w-full bg-white mb-6 not-dark:bg-black"></div>
 
       <div class="flex flex-row flex-wrap gap-6 p-1">
-        <library-item [playlist]="favorites">
-        </library-item>
-
+        <ng-container *ngIf="favorites$ | async as favorites; else loading">
+          <library-item [playlist]="favorites"></library-item>
+        </ng-container>
         <!-- Liked Playlist Cards -->
-        <library-item *ngFor="let playlist of likedPlaylists" [playlist]="playlist">
-        </library-item>
+        <!-- <library-item *ngFor="let playlist of likedPlaylists" [playlist]="playlist">
+        </library-item> -->
       </div>
     </section>
   </main>
 </div>
 <ng-template #loading>
   <div class="w-full h-full flex justify-center items-center">
-    <p class="text-lg text-gray-500">Cargando playlists...</p>
+    <p class="text-lg text-gray-500">{{'BOUNSIC.LOADING' | translate }}</p>
   </div>
 </ng-template>

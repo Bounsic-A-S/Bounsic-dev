@@ -55,6 +55,30 @@ class Song_service:
             import traceback
             traceback.print_exc()
             return None
+        
+    @staticmethod 
+    def get_songs_by_ids_exeptid(ids: list[str]):
+        try:
+            songs_collection = db["songs"]
+            
+            object_ids = [ObjectId(id_) for id_ in ids if ObjectId.is_valid(id_)]
+            
+            songs_cursor = songs_collection.find(
+                {"_id": {"$in": object_ids}},  
+                {"fingerprint": 0, "genres": 0, "lyrics": 0}
+            )
+
+            songs = list(songs_cursor)
+
+            for song in songs:
+                song["_id"] = str(song["_id"])
+
+            return songs
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return None
+        
     @staticmethod
     def getSongByArtist(artist: str):
         try:

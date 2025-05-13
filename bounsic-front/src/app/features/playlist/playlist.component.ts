@@ -1,99 +1,99 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
-import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { CommonModule } from '@angular/common';
-import { SongHeroComponent } from './song_hero/song_hero.component';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
+
+import { NavbarAppComponent } from '@app/shared/navbar/navbar-app.component';
+import { SongHeroComponent } from './song_hero/song_hero.component';
+import { PlayListSongItemComponent } from './playlist_song_item/playlist_song.component';
 import { PlaylistService } from '@app/services/playlist.service';
-import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { BackgroundService } from '@app/services/background.service';
 
-interface Song {
-  id: number;
-  title: string;
-  artist: string;
-  album: string;
-  cover: string;
-  duration: string;
-  mp3Url: string;
-}
-
-interface PlaylistDetail {
-  id: number | string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  totalSongs: number;
-  totalDuration: string;
-  songs: Song[];
-}
+import Playlist from 'src/types/playlist/Playlist';
+import PlaylistDetail from 'src/types/playlist/PlaylistDetailed';
+import { AuthService } from '@app/services/auth/auth.service';
+import User from 'src/types/user/User';
 
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  templateUrl: './playlist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SongHeroComponent, PlayListSongItemComponent, CommonModule, NavbarAppComponent],
+  imports: [
+    CommonModule,
+    NavbarAppComponent,
+    SongHeroComponent,
+    PlayListSongItemComponent,
+    TranslateModule,
+  ],
+  templateUrl: './playlist.component.html',
 })
 export class PlaylistComponent {
   private route = inject(ActivatedRoute);
   private playlistService = inject(PlaylistService);
   private backgroundService = inject(BackgroundService);
+  private authService = inject(AuthService);
+  private translateService = inject(TranslateService);
+
   bg$: Observable<string> = this.backgroundService.background$;
 
+  private user$: Observable<User> = this.authService.userProfile$
 
+  playlist$: Observable<PlaylistDetail | undefined> = combineLatest([
+    this.route.paramMap.pipe(map(params => params.get('id'))),
+    this.user$
+  ]).pipe(
+    switchMap(([id, user]) => {
+      if (!id) return of(undefined);
 
-  public loading = true; // init load always tru
+      if (id === 'likes') {
+        if (!user?.id_user) return of(undefined);
 
-  playlist$: Observable<PlaylistDetail | undefined> = this.route.paramMap.pipe(
-    switchMap((params) => {
-      const playlistId = params.get('id');
-      if (!playlistId) return of(undefined);
+        return this.playlistService.getLikesPlaylist(user.id_user).pipe(
+          switchMap((songs) => {
+            const playlist: Playlist = {
+              id: 'likes',
+              title: this.translateService.instant('BOUNSIC.PLAYLIST.LIKES'),
+              isPublic: false,
+              img_url: '/library/favorites.png',
+              songs,
+              updated_at: new Date(),
+            };
+            return this.mapPlaylistResponse(playlist);
+          }),
+          catchError(() => of(undefined))
+        );
+      }
 
-      return this.playlistService.getPlaylistById(playlistId).pipe(
-        tap(() => {
-          this.loading = false; // load ends
-        }),
-        map((response) => this.mapPlaylistResponse(response)),
-        catchError(() => {
-          this.loading = false; // load ends
-          return of(undefined);
-        })
+      return this.playlistService.getPlaylistById(id).pipe(
+        switchMap((response) => this.mapPlaylistResponse(response)),
+        catchError(() => of(undefined))
       );
-    })
+    }),
+    shareReplay(1)
   );
 
-  private mapPlaylistResponse(response: any): PlaylistDetail {
-    console.log(response)
+  private async mapPlaylistResponse(response: Playlist): Promise<PlaylistDetail> {
+    const songsWithDurations = await Promise.all(
+      (response.songs || []).map(async (song) => ({
+        ...song,
+        duration: await this.getAudioDuration(song.mp3_url),
+      }))
+    );
     return {
-      id: response.id,
-      name: response.name || response.title || 'Untitled Playlist',
-      description: response.description ?? '',
-      imageUrl: response.img_url || '',
-      totalSongs: response.songs?.length || 0,
-      totalDuration: this.calculateTotalDuration(response.songs || []),
-      songs: (response.songs || []).map((song: { title: any; artist: any; album: any; img_url: any; cover: any; mp3_url: any; duration: any; }, i: number) => ({
-        id: i + 1,
-        title: song.title || '',
-        artist: song.artist || '',
-        album: song.album || '',
-        cover: song.img_url || song.cover || '',
-        mp3Url: song.mp3_url || '',
-        duration: song.duration || '0:00',
-      })),
+      ...response,
+      songs: songsWithDurations,
+      totalSongs: songsWithDurations.length,
+      totalDuration: songsWithDurations.reduce((acc, s) => acc + s.duration, 0),
     };
   }
 
-  private calculateTotalDuration(songs: any[]): string {
-    const totalSeconds = songs.reduce((acc, song) => {
-      const [minutes, seconds] = (song.duration || '0:00').split(':').map(Number);
-      return acc + (minutes * 60 + (seconds || 0));
-    }, 0);
-
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  private getAudioDuration(url: string): Promise<number> {
+    return new Promise((resolve) => {
+      const audio = new Audio(url);
+      audio.addEventListener('loadedmetadata', () => resolve(audio.duration));
+      audio.addEventListener('error', () => resolve(0));
+    });
   }
-
 }
