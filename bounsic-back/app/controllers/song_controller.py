@@ -795,7 +795,7 @@ class Song_controller:
             processed_artists = set()  # Conjunto para almacenar artistas ya procesados
             for artist_name in artist_names:
                 if artist_name not in processed_artists:  # Verificar si el artista ya fue procesado
-                    artist_info = Spotify_service.get_artist_info(artist_name)
+                    artist_info = Spotify_service.get_artist_dash(artist_name)
                     if artist_info:
                         artist_songs.append(artist_info)
                         processed_artists.add(artist_name)  # Marcar al artista como procesado
