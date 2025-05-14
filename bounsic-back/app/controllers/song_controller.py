@@ -699,7 +699,9 @@ class Song_controller:
     @staticmethod
     async def player_queue(song_id):
         try:
+            print(song_id)
             seed_song = Song_service.get_song_by_id(song_id)
+            print(seed_song)
             if not seed_song:
                 return JSONResponse(
                     status_code=200,
