@@ -1,6 +1,6 @@
 <div [ngClass]="bg$ | async" class="text-white min-h-screen pb-4 not-dark:text-black">
   <main-navbar></main-navbar>
-  <playlist-modal-create [isOpen]="isModalOpen" (playlistCreated)="loadPlaylists()" (closeModal)="closeModal()">
+  <playlist-modal-create [isOpen]="isModalOpen" (playlistCreated)="onPlaylistCreated()" (closeModal)="closeModal()">
   </playlist-modal-create>
 
   <main class="container mx-auto mt-14 pt-8 sm:pt-10 px-6 xl:px-2">

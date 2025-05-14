@@ -15,24 +15,32 @@ export class PlaylistService {
   private playlistsSubject = new BehaviorSubject<LibraryPlaylist[]>([]);
   private playlists$ = this.playlistsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllPlaylist(user_id: number): Observable<LibraryPlaylist[]> {
     if (this.playlistsSubject.value.length > 0) {
       return this.playlists$;
     }
 
-    return this.http
-      .get<any[]>(`${this.apiUrl}/user/playlists/user/${user_id}`)
+    this.loadPlaylists(user_id);
+    return this.playlists$;
+  }
+
+  refreshPlaylists(user_id: number): void {
+    this.loadPlaylists(user_id);
+  }
+
+  private loadPlaylists(user_id: number): void {
+    this.http.get<LibraryPlaylist[]>(`${this.apiUrl}/user/playlists/user/${user_id}`)
       .pipe(
-        tap((playlists) => {
-          this.playlistsSubject.next(playlists);
-        }),
-        catchError((err) => {
+        tap(playlists => this.playlistsSubject.next(playlists)),
+        catchError(err => {
           console.error('Error al obtener playlists:', err);
+          this.playlistsSubject.next([]);
           return of([]);
         })
-      );
+      )
+      .subscribe();
   }
 
   getPlaylistById(playlistId: string): Observable<Playlist> {

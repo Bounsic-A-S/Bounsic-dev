@@ -90,8 +90,6 @@ export class ModalCreatePlaylistComponent {
       formData.append('img_url', this.selectedImageFile);
     }
 
-    console.log('Formulario válido. Enviando datos...');
-
     this.playlistService.createPlaylist(formData).subscribe((success) => {
       if (success) {
         console.log('Playlist creada exitosamente');
@@ -101,6 +99,8 @@ export class ModalCreatePlaylistComponent {
         console.log('Error al crear playlist');
         this.close();
       }
+      this.playlistCreated.emit();
+
     });
   }
 }

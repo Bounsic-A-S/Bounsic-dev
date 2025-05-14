@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   inject,
@@ -34,6 +35,8 @@ export class LibraryComponent implements OnInit {
   private backgroundService = inject(BackgroundService);
   private translateService = inject(TranslateService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
 
   user: User | null = null;
   bg$: Observable<string> = this.backgroundService.background$;
@@ -61,19 +64,28 @@ export class LibraryComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
   }
+  onPlaylistCreated(): void {
+    if (this.user?.id_user) {
+      this.playlistService.refreshPlaylists(this.user.id_user);
+    }
+  }
   loadPlaylists() {
     if (this.user?.id_user) {
       this.playlistsT$ = this.playlistService
         .getAllPlaylist(this.user.id_user)
         .pipe(
-          map((response) => response || this.defaultPlaylists),
+          map((response) => {
+            return response || this.defaultPlaylists;
+          }),
           catchError((err) => {
             console.error('Error al obtener playlists:', err);
             return of(this.defaultPlaylists);
           })
         );
     }
+    this.cdr.markForCheck();
   }
+
 
   ngOnInit(): void {
     this.user = this.authService.getUserProfile();
