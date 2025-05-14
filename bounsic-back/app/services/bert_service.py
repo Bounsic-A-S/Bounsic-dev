@@ -60,7 +60,8 @@ class Bert_service:
       except Exception as e:
           continue
     
-    res_songs = random.sample(res_songs, size)
+    if (len(res_songs) > size):
+      res_songs = random.sample(res_songs, size)
 
     print(f"Etiquetas de {seed_song['title']}")
     print(f"{Bert_service.read_tags(seed_song['lyric_info'])}\n")

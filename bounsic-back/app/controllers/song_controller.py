@@ -699,9 +699,7 @@ class Song_controller:
     @staticmethod
     async def player_queue(song_id):
         try:
-            print(song_id)
             seed_song = Song_service.get_song_by_id(song_id)
-            print(seed_song)
             if not seed_song:
                 return JSONResponse(
                     status_code=200,
@@ -728,15 +726,21 @@ class Song_controller:
             raise HTTPException(status_code=500, detail="Error interno en la cola")
         
     @staticmethod
-    async def lyrics_related(song_name):
+    async def lyrics_related(seed_id):
         try:
-            seed_song = Song_service.getSongByTitle(song_name)
+            seed_song = Song_service.get_song_by_id(seed_id)
             # Song_service.get
             if not seed_song:
                 return JSONResponse(
                     status_code=200,
                     content=[]
                 )
+            try:
+                if not seed_song["lyric_info"]:
+                    return []
+            except Exception as e:
+                return []
+            
             res_songs = Bert_service.get_lyrics_recomendation(seed_song)
             final_songs = []
             keys = ["_id", "artist", "title", "album", "img_url"]
