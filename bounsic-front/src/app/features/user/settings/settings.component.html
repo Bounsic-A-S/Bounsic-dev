@@ -33,7 +33,7 @@
             routerLinkActive
             #rla="routerLinkActive"
             [ngClass]="{
-              'bg-gradient-to-r from-bounsic-red to-bounsic-yellow font-medium': rla.isActive
+              'bg-bounsic-dark-1 not-dark:bg-bounsic-gray-1/70 font-medium': rla.isActive
             }"
           >
             <ng-container *ngIf="item.route; else staticContent">

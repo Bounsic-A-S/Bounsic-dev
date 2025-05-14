@@ -7,16 +7,18 @@
         <section class="flex flex-row md:flex-col justify-center items-center gap-x-6">
           <ng-container *ngIf="song$ | async as song">
             <player-song [song]="song" />
+            <player-song-list [song_id]="song._id" />
           </ng-container>
-          <player-song-list />
+
         </section>
 
-        <section class="flex flex-col place-self-center gap-y-2 max-h-[70vh]">
+        <section class="flex flex-col place-self-center gap-y-2 max-h-[30vh] lg:max-h-[70vh]">
           <ng-container *ngIf="song$ | async as song">
             <div class="flex h-auto overflow-y-auto p-1 scroll-hidden scroll-smooth">
               <player-lyrics [lyrics]="song.lyrics" />
             </div>
-            <div class="text-end mt-6 text-bounsic-gray-3 not-dark:text-bounsic-dark-1/50" *ngIf="song.lyrics !==null">-Tomado de Letras.com</div>
+            <div class="text-end mt-6 text-bounsic-gray-3 not-dark:text-bounsic-dark-1/50" *ngIf="song.lyrics !==null">
+              -Tomado de Letras.com</div>
           </ng-container>
         </section>
       </div>

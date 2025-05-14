@@ -26,9 +26,11 @@ class Feed_service:
 
         linicio = time.time()
         for s in liked_songs:
-            songs.append(Song_service.get_song_by_id(s["song_mongo_id"]))
+            temp = Song_service.get_song_by_id(s["song_mongo_id"])
+            if temp: songs.append(temp)
         for s in lastest_songs:
-            songs.append(Song_service.get_song_by_id(s["song_mongo_id"]))
+            temp = Song_service.get_song_by_id(s["song_mongo_id"])
+            if temp: songs.append(temp)
         lfin = time.time()
 
         bfin = time.time()
@@ -87,12 +89,14 @@ class Feed_service:
         # input_song = Song_service.get_song_by_id(input_song["song_mongo_id"])
         
         song_id, album_id = Db_service.get_random_song_by_album(input_song["album"])
-        if song_id: 
-            songs.append(Song_service.get_song_by_id(song_id["song_id"]))
+        if (song_id) and (song_id["song_id"] not in inserted_ids):
+            s = Song_service.get_song_by_id(song_id["song_id"])
+            if s: 
+                songs.append(s)
             
-
-        s = Feed_service.get_random_artist_song(input_song["artist"], album_id, size-1)
-        if (s): songs.append(s)
+        # s = Feed_service.get_random_artist_song(input_song["artist"], album_id, size-1)
+        # if (s): 
+        #     songs.append(s)
 
         return songs
 
@@ -125,7 +129,7 @@ class Feed_service:
         if not album: return []
 
         pipeline = [
-            {"$match": {"_id": album["album_id"]}},
+            {"$match": {"_id": ObjectId(album["album_id"])}},
             {"$unwind": "$songs"},
             {"$sample": {"size": 1}},
             {"$lookup": {

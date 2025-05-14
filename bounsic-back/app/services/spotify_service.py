@@ -160,7 +160,43 @@ class Spotify_service:
         except Exception as e:
             print(f"Error al obtener artista de Spotify: {str(e)}")
             return None
+    
+    @staticmethod
+    def get_artist_dash(artist_name: str):
+        """
+        Obtiene el nombre y la imagen de un artista desde Spotify.
         
+        Args:
+            artist_name (str): Nombre del artista a buscar
+        
+        Returns:
+            dict: {
+                "artist_name": str,  # Nombre artístico
+                "image_url": str     # URL de la imagen del artista
+            }
+            None: Si no se encuentra el artista
+        """
+        try:
+            # Buscar artista en Spotify
+            result = sp.search(q=f'artist:{artist_name}', type='artist', limit=1)
+            if not result['artists']['items']:
+                print(f"No se encontró el artista: {artist_name}")
+                return None
+
+            artist = result['artists']['items'][0]
+            artist_name = artist['name']
+            image_url = artist['images'][0]['url'] if artist['images'] else None
+
+            # Retornar solo el nombre y la imagen
+            return {
+                "artist_name": artist_name,
+                "img": image_url
+            }
+
+        except Exception as e:
+            print(f"Error al obtener artista de Spotify: {str(e)}")
+            return None
+
     @staticmethod
     def get_album_info(album_name: str, artist_name: str = None):
         """

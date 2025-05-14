@@ -53,6 +53,12 @@
       },
       "ARTISTS": {
         "TEXT1": "당신이 좋아할 아티스트"
+      },
+      "RESULTS": "검색 결과",
+      "FILTERS": {
+        "GENRE": "성별",
+        "RHYTHM": "리듬",
+        "LYRIC": "가사"
       }
     },
     "LIBRARY": {

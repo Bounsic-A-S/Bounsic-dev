@@ -3,7 +3,7 @@
     "LOADING": "Cargando...",
     "CREATE": "Crear",
     "LANDING": {
-      "TITLE1": "TU MÚSICA TU ESCENCIA",
+      "TITLE1": "TU MÚSICA TU ESENCIA",
       "TITLE2": "ESCUCHAR AHORA",
       "NAVBAR": {
         "HELP": "Ayuda",
@@ -53,6 +53,12 @@
       },
       "ARTISTS": {
         "TEXT1": "Artistas que podrían interesarte"
+      },
+      "RESULTS": "Resultados de búsqueda",
+      "FILTERS": {
+        "GENRE": "Género",
+        "RHYTHM": "Ritmo",
+        "LYRIC": "Letra"
       }
     },
     "LIBRARY": {

@@ -88,5 +88,9 @@ async def get_player_queue(request : Request):
 @router.post("/get/lyrics-related")
 async def get_lyrics_related(request : Request):
     data = await request.json()
-    seed_song_id = data.get("song_name")
+    seed_song_id = data.get("song_id")
     return await Song_controller.lyrics_related(seed_song_id)
+
+@router.get("/getRamdom")
+async def get_ramdomsongs():
+    return await Song_controller.getRamdom_choices()

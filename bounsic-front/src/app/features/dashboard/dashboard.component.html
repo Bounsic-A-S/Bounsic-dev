@@ -3,45 +3,69 @@
   <!-- Header Section -->
   <section class="max-w-4xl mx-auto text-center mb-12">
     <h1 class="text-xl sm:text-2xl mb-6">
-      {{'BOUNSIC.DASHBOARD.TITLE1'  | translate}}
+      {{'BOUNSIC.DASHBOARD.TITLE1' | translate}}
     </h1>
     <!-- SearchBar -->
-    <dashboard-searchBar></dashboard-searchBar>
+    <!-- dashboard.component.html -->
+    <dashboard-searchBar (searchTriggered)="handleSearchResults($event)"></dashboard-searchBar>
   </section>
-  <!-- Carousel songs -->
-  <section class="max-w-6xl 2xl:max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h2 class="text-sm sm:text-xl mb-2">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT1'  | translate}}</h2>
-    <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT2'  | translate}}</h3>
-    <dashboard-songsCarousel
-    [songs]="songRelated$ | async ">
-    ></dashboard-songsCarousel>
-  </section>
+  <ng-container *ngIf="searchResults.length > 0; else fullDashboard">
+    <div class="p-4 h-screen">
+      <h2 class="text-xl font-bold mb-4">{{'BOUNSIC.DASHBOARD.RESULTS' | translate}}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <div *ngFor="let song of searchResults"
+          class="hover:bg-white/5 rounded-lg cursor-pointer not-dark:hover:bg-black/10">
+          <a [routerLink]="['/player', song._id]" class="flex items-center gap-4 p-2 w-full h-full">
+            <div class="w-8 sm:w-10 lg:w-12">
+              <img [src]="song.img_url" [alt]="song.title" class="w-full aspect-square object-cover rounded" />
+            </div>
+            <div>
+              <h4 class="text-base lg:text-lg">{{ song.title }}</h4>
+              <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
+                {{ song.artist }} || {{ song.album }}
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #fullDashboard>
 
-  <!-- Safe Choices Section -->
-  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h3 class="text-lg sm:text-2xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.SAFE_CHOICES.TEXT1'  | translate}}</h3>
-    <dashboard-safe-choice-list
-    [songs]="songSafeChoices$ | async ">
-  </dashboard-safe-choice-list>
-  </section>
+    <!-- Carousel songs -->
+    <section class="max-w-6xl 2xl:max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+      <h2 class="text-sm sm:text-xl mb-2">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT1' | translate}}</h2>
+      <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.NEW_DESCOVERY.TEXT2' |
+        translate}}
+      </h3>
+      <dashboard-songsCarousel [songs]="songRelated$ | async ">
+        ></dashboard-songsCarousel>
+    </section>
 
-  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h2 class="text-sm sm:text-xl mb-2">{{'BOUNSIC.DASHBOARD.THIS_WEEK.TEXT1'  | translate}}</h2>
-    <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.THIS_WEEK.TEXT2'  | translate}}</h3>
-    <dashboard-trending-songs
-    [songs]="songTrending$ | async ">
-  </dashboard-trending-songs>
-  </section>
-  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h3 class="text-lg sm:text-xl xl:text-2xl mb-6">{{'BOUNSIC.DASHBOARD.LAST_MONTH.TEXT1'  | translate}}</h3>
-    <dashboard-last-month-songs
-    [songs]="songLastMonth$ |async">
-  </dashboard-last-month-songs>
-  </section>
-  <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-    <h2 class="text-xl sm:text-2xl xl:text-3xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.ARTISTS.TEXT1'  | translate}}</h2>
-    <dashboard-artist-list
-    [artists]="artists$ | async "
-    ></dashboard-artist-list>
-  </section>
+    <!-- Safe Choices Section -->
+    <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+      <h3 class="text-lg sm:text-2xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.SAFE_CHOICES.TEXT1' | translate}}</h3>
+      <dashboard-safe-choice-list [songs]="songSafeChoices$ | async ">
+      </dashboard-safe-choice-list>
+    </section>
+
+    <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+      <h2 class="text-sm sm:text-xl mb-2">{{'BOUNSIC.DASHBOARD.THIS_WEEK.TEXT1' | translate}}</h2>
+      <h3 class="text-2xl sm:text-3xl xl:text-4xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.THIS_WEEK.TEXT2' | translate}}
+      </h3>
+      <dashboard-trending-songs [songs]="songTrending$ | async ">
+      </dashboard-trending-songs>
+    </section>
+    <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+      <h3 class="text-lg sm:text-xl xl:text-2xl mb-6">{{'BOUNSIC.DASHBOARD.LAST_MONTH.TEXT1' | translate}}</h3>
+      <dashboard-last-month-songs [songs]="songLastMonth$ |async">
+      </dashboard-last-month-songs>
+    </section>
+    <section class="max-w-7xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+      <h2 class="text-xl sm:text-2xl xl:text-3xl font-bold mb-6">{{'BOUNSIC.DASHBOARD.ARTISTS.TEXT1' | translate}}</h2>
+      <dashboard-artist-list [artists]="artists$ | async "></dashboard-artist-list>
+    </section>
+  </ng-template>
+
+
 </main>

@@ -32,7 +32,7 @@ export class SettingsComponent {
   readonly preferences = Palette;
   readonly language = Languages;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
   private backgroundService = inject(BackgroundService)
   public sideBarOpen = true;
   bg$ = this.backgroundService.background$
@@ -45,7 +45,7 @@ export class SettingsComponent {
     this.sideBarOpen = !this.sideBarOpen;
   }
   closeSideBar(): void {
-    if(window.innerWidth < 768){
+    if (window.innerWidth < 768) {
       this.sideBarOpen = false;
     }
   }
@@ -58,8 +58,8 @@ export class SettingsComponent {
   menuItems = [
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.ACCOUNT', route: 'account', icon: this.account },
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.PRIVACY', icon: this.privacy },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.CONNECTIONS',icon: this.connections },
-    { label: 'BOUNSIC.SETTINGS.SIDEBAR.NOTIFICATIONS',icon: this.notifications },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.CONNECTIONS', icon: this.connections },
+    { label: 'BOUNSIC.SETTINGS.SIDEBAR.NOTIFICATIONS', icon: this.notifications },
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.PLAYER', icon: this.player },
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.PREFERENCES', route: 'appearance', icon: this.preferences },
     { label: 'BOUNSIC.SETTINGS.SIDEBAR.LANGUAGE', route: 'language', icon: this.language },
