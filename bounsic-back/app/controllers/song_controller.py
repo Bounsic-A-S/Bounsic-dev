@@ -708,6 +708,7 @@ class Song_controller:
                 )
             # get recommendations
             res_songs = await Queue_service.get_queue(seed_song)
+            res_songs = res_songs[:3]
             final_songs = []
             keys = ["_id", "artist", "title", "album", "img_url"]
             

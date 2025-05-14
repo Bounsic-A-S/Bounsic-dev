@@ -120,4 +120,14 @@ export class SongService {
       })
     );
   }
+
+  getPlayerQueue(id: string): Observable<DashboardSong[]> {
+    return this.http.post<DashboardSong[]>(`${this.apiUrl}/song/player-queue`, { song_id: id }).pipe(
+      catchError((err) => {
+        console.error('Error obteniendo canciones:', err);
+        return of([]);
+      })
+    );
+
+  }
 }

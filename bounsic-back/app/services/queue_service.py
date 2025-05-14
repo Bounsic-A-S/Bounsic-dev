@@ -1,6 +1,6 @@
 import random
 from typing import Set
-from app.services import get_alikes, Song_service, Feed_service
+from app.services import get_alikes, Feed_service
 from app.provider import Songs_db_provider
 import time
 from bson import ObjectId
@@ -8,7 +8,8 @@ from bson import ObjectId
 class Queue_service:
 
     @staticmethod    
-    async def get_queue(seed_song, size=25):
+    async def get_queue(seed_song, size=3):
+        # SIZE was 25 but it is setted to 3 cuz of academic reasons
         inserted_ids = set()
         inserted_ids.add(seed_song["_id"])
         res_songs = [] # final recomendations
