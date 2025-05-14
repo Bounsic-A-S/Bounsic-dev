@@ -69,3 +69,5 @@ class Artist_service:
             return {"error": "Database error", "details": str(e)}
         except Exception as e:
             return {"error": "Unexpected error", "details": str(e)}
+        
+

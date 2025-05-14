@@ -12,6 +12,7 @@ from bson import ObjectId
 import time
 from app.provider import  Songs_db_provider
 import asyncio
+import random
 
 class Song_controller:
     @staticmethod
@@ -759,3 +760,59 @@ class Song_controller:
         except Exception as e:
             logging.error(f"Error en player_queue: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Error interno en la cola")
+
+    @staticmethod
+    async def getRamdom_choices():
+        try:
+            songs_provider = Songs_db_provider()
+            songs_mongo = list(songs_provider.get_all())
+
+            if len(songs_mongo) < 24:
+                raise HTTPException(status_code=400, detail="No hay suficientes canciones para seleccionar 24.")
+
+            getsafechoices = random.sample(songs_mongo, 12)
+            getrecom = random.sample(songs_mongo, 12)
+            getArtist = random.sample(songs_mongo, 15)
+
+            # Función para extraer solo los valores relevantes
+            keys = ["_id", "artist", "title", "album", "img_url"]
+            def extract_keys(songs_list):
+                # Convertir ObjectId a str
+                return [
+                    {key: str(song.get(key)) if isinstance(song.get(key), ObjectId) else song.get(key) for key in keys}
+                    for song in songs_list
+                ]
+
+            # Extraer las canciones con las claves necesarias
+            safe_choices_extracted = extract_keys(getsafechoices)
+            recom_extracted = extract_keys(getrecom)
+
+            # Extraer nombres de artistas de getArtist
+            artist_names = [song.get("artist") for song in getArtist if song.get("artist")]
+
+            # Buscar cada artista por su nombre, evitando duplicados
+            artist_songs = []
+            processed_artists = set()  # Conjunto para almacenar artistas ya procesados
+            for artist_name in artist_names:
+                if artist_name not in processed_artists:  # Verificar si el artista ya fue procesado
+                    artist_info = Spotify_service.get_artist_info(artist_name)
+                    if artist_info:
+                        artist_songs.append(artist_info)
+                        processed_artists.add(artist_name)  # Marcar al artista como procesado
+
+            # Combinar todo en el formato de respuesta final
+            final_songs = {
+                "getsafechoices": safe_choices_extracted,
+                "getrecom": recom_extracted,
+                "artist_songs": artist_songs,
+            }
+
+            return JSONResponse(
+                status_code=200,
+                content=final_songs
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logging.error(f"Error en player_queue: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error interno en la obtencion de ramdoms")
