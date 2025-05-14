@@ -12,7 +12,7 @@
 
         </section>
 
-        <section class="flex flex-col place-self-center gap-y-2 max-h-[70vh]">
+        <section class="flex flex-col place-self-center gap-y-2 max-h-[30vh] lg:max-h-[70vh]">
           <ng-container *ngIf="song$ | async as song">
             <div class="flex h-auto overflow-y-auto p-1 scroll-hidden scroll-smooth">
               <player-lyrics [lyrics]="song.lyrics" />
