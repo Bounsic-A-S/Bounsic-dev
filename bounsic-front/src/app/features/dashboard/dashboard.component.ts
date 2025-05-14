@@ -36,7 +36,7 @@ import { BackgroundService } from '@app/services/background.service';
     LastMonthSongsComponent,
     TranslateModule,
     CommonModule
-],
+  ],
   templateUrl: './dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -53,8 +53,8 @@ export class DashboardComponent implements OnInit {
   songLastMonth$!: Observable<DashboardSong[]>;
   songTrending$!: Observable<DashboardSong[]>;
   // bg
-  bg$ : Observable<string> = this.backgroundService.background$;
-  
+  bg$: Observable<string> = this.backgroundService.background$;
+
   ngOnInit(): void {
     this.authService.userProfile$.subscribe((user) => {
       if (user?.email) this.getData(user.email);
@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit {
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }
-  
+
   private getLanguage(language: string): void {
     const savedLanguage = localStorage.getItem('language');
     if (!savedLanguage && language) {
@@ -85,12 +85,17 @@ export class DashboardComponent implements OnInit {
     }
   }
   private getCurrentTheme(theme: string): void {
-    if(!theme) return
+    if (!theme) return
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme !== theme || !document.documentElement.classList.contains(theme)) {
       document.documentElement.className = '';
       document.documentElement.classList.add(theme);
       localStorage.setItem('theme', theme);
     }
+  }
+  searchResults: DashboardSong[] = [];
+
+  handleSearchResults(results: DashboardSong[]) {
+    this.searchResults = results;
   }
 }

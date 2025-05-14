@@ -23,8 +23,8 @@ export class SongService {
   private songTrendingSubject = new BehaviorSubject<DashboardSong[]>([]);
   private songTrending$ = this.songTrendingSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
-  getData(title:string): Observable<any> {
+  constructor(private http: HttpClient) { }
+  getData(title: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/song/title/${title}`);
   }
   getById(id: string): Observable<Song> {
@@ -38,8 +38,8 @@ export class SongService {
       })
     );
   }
-  getSafeChoices (email: string): Observable<DashboardSong[]> {
-    if(this.songSafeChoicesSubject.value.length > 0) {
+  getSafeChoices(email: string): Observable<DashboardSong[]> {
+    if (this.songSafeChoicesSubject.value.length > 0) {
       return this.songSafeChoices$;
     }
     return this.http.post<any>(`${this.apiUrl}/song/safeChoice`, { email: email }).pipe(
@@ -49,11 +49,11 @@ export class SongService {
       catchError((err) => {
         console.error('Error al obtener safe choices:', err);
         return of([]);
-      })  
+      })
     );
   }
-  getRelatedSongs (email: string): Observable<DashboardSong[]> {
-    if(this.songRelatedSubject.value.length > 0) {
+  getRelatedSongs(email: string): Observable<DashboardSong[]> {
+    if (this.songRelatedSubject.value.length > 0) {
       return this.songRelated$;
     }
     return this.http.post<any>(`${this.apiUrl}/song/getRelated`, { email: email }).pipe(
@@ -63,11 +63,11 @@ export class SongService {
       catchError((err) => {
         console.error('Error al obtener related songs:', err);
         return of([]);
-      })  
+      })
     );
   }
-  getLastMonthSongs (email: string): Observable<DashboardSong[]> {
-    if(this.songLastMonthSubject.value.length > 0) {
+  getLastMonthSongs(email: string): Observable<DashboardSong[]> {
+    if (this.songLastMonthSubject.value.length > 0) {
       return this.songLastMonth$;
     }
     return this.http.post<any>(`${this.apiUrl}/song/lastMonth`, { email: email }).pipe(
@@ -77,11 +77,11 @@ export class SongService {
       catchError((err) => {
         console.error('Error al obtener last month songs:', err);
         return of([]);
-      })  
+      })
     );
   }
-  getTrendingSongs (): Observable<DashboardSong[]> {
-    if(this.songTrendingSubject.value.length > 0) {
+  getTrendingSongs(): Observable<DashboardSong[]> {
+    if (this.songTrendingSubject.value.length > 0) {
       return this.songTrending$;
     }
     return this.http.get<any>(`${this.apiUrl}/song/top12`).pipe(
@@ -91,16 +91,24 @@ export class SongService {
       catchError((err) => {
         console.error('Error al obtener last month songs:', err);
         return of([]);
-      })  
+      })
     );
   }
   //search
-  searchSongByTitle (title : string): Observable<DashboardSong[]> {
+  searchSongByTitle(title: string): Observable<DashboardSong[]> {
     return this.http.get<any>(`${this.apiUrl}/song/search/${title}`).pipe(
       catchError((err) => {
         console.error('Error en la busqeuda:', err);
         return of([]);
-      })  
+      })
+    );
+  }
+  searchSongsAlikeByLyrics(song_id: string): Observable<DashboardSong[]> {
+    return this.http.post<any>(`${this.apiUrl}/song/get/lyrics-related`, { song_id: song_id }).pipe(
+      catchError((err) => {
+        console.error('Error en la busqeuda:', err);
+        return of([]);
+      })
     );
   }
 }

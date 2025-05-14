@@ -6,28 +6,60 @@
 
 <div class="mb-6 relative w-full max-w-2xl mx-auto" (clickOutside)="setResultsUi(false)">
   <!-- Input de búsqueda -->
-  <input type="text" placeholder="{{ 'BOUNSIC.DASHBOARD.SEARCH' | translate }}" class="w-full px-8 py-2 md:py-4 bg-bounsic-gray-4 rounded-4xl shadow-bounsic-searchbar text-white placeholder-white/80
+  <section class="relative w-full">
+    <!-- Input con padding extra a la derecha para que el botón no lo tape -->
+    <input type="text" placeholder="{{ 'BOUNSIC.DASHBOARD.SEARCH' | translate }}" class="w-full px-8 py-2 md:py-4 pr-12 bg-bounsic-gray-4 rounded-4xl shadow-bounsic-searchbar text-white placeholder-white/80
            focus:outline-none focus:border-white
            not-dark:text-black not-dark:placeholder-black/80 not-dark:bg-bounsic-light-1" (keydown.enter)="search()"
-    [(ngModel)]="songToSearch" (focus)="setResultsUi(true)" />
+      [(ngModel)]="songToSearch" (focus)="setResultsUi(true)" />
+
+    <!-- Botón clear posicionado -->
+    <div class="absolute top-1/2 right-4 transform -translate-y-1/2">
+      <button *ngIf="selectedTags.length > 0" (click)="clearFilters()"
+        class="w-8 h-8 rounded-full flex items-center justify-center bg-white not-dark:bg-black cursor-pointer">
+        <lucide-angular [img]="TrashIcon"
+          class="stroke-black not-dark:stroke-white"
+          [size]="18"></lucide-angular>
+      </button>
+    </div>
+  </section>
+
+
+
+
 
   <div *ngIf="(searchResults?.length && isSearchBarOnFocus)" class="absolute top-full mt-2 w-full bg-bounsic-gray-4 rounded-lg shadow-bounsic-searchbar text-white
            not-dark:text-black not-dark:bg-bounsic-light-1 z-10">
     <ul class="p-2">
       <li *ngFor="let result of searchResults"
         class="text-start hover:bg-white/10 px-4 py-2 cursor-pointer not-dark:hover:bg-black/10 rounded">
-        <a [routerLink]="['/player', result._id]" class="flex items-center gap-4 p-2 w-full h-full">
-          <div class="w-8 sm:w-10 lg:w-12">
-            <img [src]="result.img_url" [alt]="result.title"
-              class="w-full aspect-square object-cover rounded" />
-          </div>
-          <div>
-            <h4 class="text-base lg:text-lg">{{ result.title }}</h4>
-            <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
-              {{ result.artist }} || {{ result.album }}
-            </p>
-          </div>
-        </a>
+        <ng-container *ngIf="selectedTags.length > 0;else normalSearch">
+          <button [id]="result._id" (click)="handleSongClick(result._id ?? '')"
+            class="flex items-center gap-4 p-2 w-full h-full cursor-pointer">
+            <div class="w-8 sm:w-10 lg:w-12">
+              <img [src]="result.img_url" [alt]="result.title" class="w-full aspect-square object-cover rounded" />
+            </div>
+            <div class="text-start">
+              <h4 class="text-base lg:text-lg">{{ result.title }}</h4>
+              <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
+                {{ result.artist }} || {{ result.album }}
+              </p>
+            </div>
+          </button>
+        </ng-container>
+        <ng-template #normalSearch>
+          <a [routerLink]="['/player', result._id]" class="flex items-center gap-4 p-2 w-full h-full">
+            <div class="w-8 sm:w-10 lg:w-12">
+              <img [src]="result.img_url" [alt]="result.title" class="w-full aspect-square object-cover rounded" />
+            </div>
+            <div>
+              <h4 class="text-base lg:text-lg">{{ result.title }}</h4>
+              <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
+                {{ result.artist }} || {{ result.album }}
+              </p>
+            </div>
+          </a>
+        </ng-template>
       </li>
     </ul>
   </div>

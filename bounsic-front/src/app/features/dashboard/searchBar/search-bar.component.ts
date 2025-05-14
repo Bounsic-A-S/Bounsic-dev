@@ -1,6 +1,6 @@
 // search-filter.component.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
@@ -8,14 +8,17 @@ import { SongService } from '@app/services/song.service';
 import { TranslateModule } from '@ngx-translate/core';
 import DashboardSong from 'src/types/dashboard/DashboardSong';
 import { LoaderComponent } from "../../../shared/ui/loaders/loader.component";
+import { LucideAngularModule, Trash } from 'lucide-angular';
 @Component({
   selector: 'dashboard-searchBar',
   templateUrl: 'search-bar.component.html',
-  imports: [CommonModule, TranslateModule, FormsModule, ClickOutsideDirective, RouterModule, LoaderComponent],
+  imports: [CommonModule, TranslateModule, FormsModule, ClickOutsideDirective, RouterModule, LoaderComponent, LucideAngularModule],
 })
 export class SearchBarComponent {
+  TrashIcon = Trash
   private searchService = inject(SongService)
-  private cdRef = inject(ChangeDetectorRef);  
+  private cdRef = inject(ChangeDetectorRef);
+
   searchQuery: string = '';
   filterTags: string[] = ['Género', 'Ritmo', 'Letra'];
   selectedTags: string[] = [];
@@ -28,28 +31,51 @@ export class SearchBarComponent {
   //loading
   public loading: boolean = false;
 
+  @Output() searchTriggered = new EventEmitter<DashboardSong[]>(); // resultados de búsqueda
+
   search(): void {
-    this.searchResults = [];  
+    this.searchResults = [];
     this.loading = true;
 
     this.searchService.searchSongByTitle(this.songToSearch).subscribe({
       next: (songs: DashboardSong[]) => {
-        this.searchResults = songs;  
+        this.searchResults = songs;
         this.loading = false;
         this.setResultsUi(true)
-        this.cdRef.detectChanges();  
+        this.cdRef.detectChanges();
       },
       error: err => {
         console.error('Error en la búsqueda:', err);
-        this.loading = false;  
-        this.cdRef.detectChanges();  
+        this.loading = false;
+        this.cdRef.detectChanges();
       }
     });
   }
-  
-  
-  
-  setResultsUi(value:boolean) {
+  handleSongClick(song_id: string): void {
+
+    this.searchService.searchSongsAlikeByLyrics(song_id).subscribe({
+      next: (songs: DashboardSong[]) => {
+        this.searchResults = songs;
+        this.loading = false;
+        this.setResultsUi(false)
+        this.cdRef.detectChanges();
+        this.searchTriggered.emit(songs);
+        this.searchResults = []
+      },
+      error: err => {
+        console.error('Error en la búsqueda:', err);
+        this.loading = false;
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  clearFilters(): void {
+    this.searchTriggered.emit([]);
+    this.selectedTags = [];
+  }
+
+  setResultsUi(value: boolean) {
     this.isSearchBarOnFocus = value
   }
 
