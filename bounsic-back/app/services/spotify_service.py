@@ -190,7 +190,7 @@ class Spotify_service:
             # Retornar solo el nombre y la imagen
             return {
                 "artist_name": artist_name,
-                "image_url": image_url
+                "img": image_url
             }
 
         except Exception as e:

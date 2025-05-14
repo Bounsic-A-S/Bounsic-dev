@@ -22,8 +22,22 @@ export class SearchBarComponent {
   private translateService = inject(TranslateService)
 
   searchQuery: string = '';
-  filterTags: string[] = [this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.GENRE'),
-  this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.RHYTHM'), this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.LYRIC')];
+  filterTags: string[] = [];
+
+  ngOnInit(): void {
+    this.translateService.get([
+      'BOUNSIC.DASHBOARD.FILTERS.GENRE',
+      'BOUNSIC.DASHBOARD.FILTERS.RHYTHM',
+      'BOUNSIC.DASHBOARD.FILTERS.LYRIC'
+    ]).subscribe(translations => {
+      this.filterTags = [
+        translations['BOUNSIC.DASHBOARD.FILTERS.GENRE'],
+        translations['BOUNSIC.DASHBOARD.FILTERS.RHYTHM'],
+        translations['BOUNSIC.DASHBOARD.FILTERS.LYRIC']
+      ];
+      this.cdRef.detectChanges(); 
+    });
+  }
 
   selectedTags: string[] = [];
 

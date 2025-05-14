@@ -14,7 +14,7 @@ import { ArtistListComponent } from './artistList/artist_list.component';
 import { LastMonthSongsComponent } from './lastMonthSongs/last-month-songs.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ArtistService } from '@app/services/artist.service';
-import { Observable, take } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SongService } from '@app/services/song.service';
 import DashboardSong from 'src/types/dashboard/DashboardSong';
@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.userProfile$.subscribe((user) => {
-      if (user?.email) this.getData(user.email);
+      if (user?.email) { this.getData(user.email) } else this.getDefaultData()
       if (user && user.preferences) {
         this.backgroundService.setBackground(user.preferences.background);
         this.getLanguage(user.preferences.language);
@@ -77,6 +77,23 @@ export class DashboardComponent implements OnInit {
     this.songLastMonth$ = this.songService.getLastMonthSongs(email);
 
   }
+  private getDefaultData(): void {
+    this.songTrending$ = this.songService.getTrendingSongs().pipe(
+      take(1)
+    );
+    this.songRelated$ = this.songService.getRelatedSongs("");
+    this.songService.getDefaultSongs().subscribe({
+      next: (res) => {
+        this.songSafeChoices$ = of(res.getsafechoices);
+        this.songLastMonth$ = of(res.getrecom);
+        this.artists$ = of(res.artist_songs);
+      },
+      error: (err) => {
+        console.error('Error fetching default songs:', err);
+      }
+    });
+  }
+
 
   private getLanguage(language: string): void {
     const savedLanguage = localStorage.getItem('language');

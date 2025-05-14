@@ -111,4 +111,13 @@ export class SongService {
       })
     );
   }
+
+  getDefaultSongs(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/song/getRamdom`).pipe(
+      catchError((err) => {
+        console.error('Error obteniendo canciones:', err);
+        return of([]);
+      })
+    );
+  }
 }
