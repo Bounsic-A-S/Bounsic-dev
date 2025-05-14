@@ -10,12 +10,22 @@
     <dashboard-searchBar (searchTriggered)="handleSearchResults($event)"></dashboard-searchBar>
   </section>
   <ng-container *ngIf="searchResults.length > 0; else fullDashboard">
-    <div class="p-4">
-      <h2 class="text-xl font-bold mb-4">Resultados de búsqueda</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div *ngFor="let song of searchResults">
-          <!-- Puedes usar el mismo componente de canción que ya usas -->
-          {{ song.title }}
+    <div class="p-4 h-screen">
+      <h2 class="text-xl font-bold mb-4">{{'BOUNSIC.DASHBOARD.RESULTS' | translate}}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <div *ngFor="let song of searchResults"
+          class="hover:bg-white/5 rounded-lg cursor-pointer not-dark:hover:bg-black/10">
+          <a [routerLink]="['/player', song._id]" class="flex items-center gap-4 p-2 w-full h-full">
+            <div class="w-8 sm:w-10 lg:w-12">
+              <img [src]="song.img_url" [alt]="song.title" class="w-full aspect-square object-cover rounded" />
+            </div>
+            <div>
+              <h4 class="text-base lg:text-lg">{{ song.title }}</h4>
+              <p class="text-sm sm:text-base text-bounsic-gray-1 not-dark:text-bounsic-dark-1">
+                {{ song.artist }} || {{ song.album }}
+              </p>
+            </div>
+          </a>
         </div>
       </div>
     </div>

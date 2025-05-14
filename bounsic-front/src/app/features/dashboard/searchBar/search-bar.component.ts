@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ClickOutsideDirective } from '@app/directive/clickoutside.directive';
 import { SongService } from '@app/services/song.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import DashboardSong from 'src/types/dashboard/DashboardSong';
 import { LoaderComponent } from "../../../shared/ui/loaders/loader.component";
 import { LucideAngularModule, Trash } from 'lucide-angular';
@@ -19,8 +19,12 @@ export class SearchBarComponent {
   private searchService = inject(SongService)
   private cdRef = inject(ChangeDetectorRef);
 
+  private translateService = inject(TranslateService)
+
   searchQuery: string = '';
-  filterTags: string[] = ['Género', 'Ritmo', 'Letra'];
+  filterTags: string[] = [this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.GENRE'),
+  this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.RHYTHM'), this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.LYRIC')];
+
   selectedTags: string[] = [];
 
   songToSearch: string = ''
@@ -80,7 +84,10 @@ export class SearchBarComponent {
   }
 
   toggleTag(tag: string): void {
+    if (tag === this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.GENRE') || tag === this.translateService.instant('BOUNSIC.DASHBOARD.FILTERS.RHYTHM')) return
+
     const index = this.selectedTags.indexOf(tag);
+
     if (index === -1) {
       this.selectedTags.push(tag);
     } else {

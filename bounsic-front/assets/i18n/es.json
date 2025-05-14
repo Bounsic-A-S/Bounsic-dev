@@ -53,6 +53,12 @@
       },
       "ARTISTS": {
         "TEXT1": "Artistas que podrían interesarte"
+      },
+      "RESULTS": "Resultados de búsqueda",
+      "FILTERS": {
+        "GENRE": "Género",
+        "RHYTHM": "Ritmo",
+        "LYRIC": "Letra"
       }
     },
     "LIBRARY": {

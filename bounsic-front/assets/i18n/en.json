@@ -53,6 +53,12 @@
       },
       "ARTISTS": {
         "TEXT1": "Artists You Might Like"
+      },
+      "RESULTS": "Search Results",
+      "FILTERS": {
+        "GENRE": "Genre",
+        "RHYTHM": "Rhythm",
+        "LYRIC": "Lyric"
       }
     },
     "LIBRARY": {
