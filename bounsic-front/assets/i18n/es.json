@@ -1,6 +1,7 @@
 {
   "BOUNSIC": {
     "LOADING": "Cargando...",
+    "CREATE": "Crear",
     "LANDING": {
       "TITLE1": "TU MÚSICA TU ESCENCIA",
       "TITLE2": "ESCUCHAR AHORA",
@@ -71,7 +72,9 @@
         "UPDATED": "Actualizada en",
         "PLAYMIX": "Play mix",
         "LENGTH": "Duración"
-      }
+      },
+      "PLAYLIST_TITLE": "Titulo de la playlist",
+      "NEW_PLAYLIST": "Nueva playlist"
     },
     "PLAYER": {
       "ALBUM": "Album",

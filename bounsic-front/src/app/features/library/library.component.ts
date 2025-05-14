@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   inject,
@@ -14,6 +15,7 @@ import { BackgroundService } from '@app/services/background.service';
 import LibraryPlaylist from 'src/types/playlist/LIbraryPlaylist';
 import { AuthService } from '@app/services/auth/auth.service';
 import User from 'src/types/user/User';
+import { ModalCreatePlaylistComponent } from './modal_create_playlist/modal_create_playlist.component';
 
 @Component({
   selector: 'app-library',
@@ -24,6 +26,7 @@ import User from 'src/types/user/User';
     CommonModule,
     LibraryItemComponent,
     TranslateModule,
+    ModalCreatePlaylistComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,6 +35,8 @@ export class LibraryComponent implements OnInit {
   private backgroundService = inject(BackgroundService);
   private translateService = inject(TranslateService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
 
   user: User | null = null;
   bg$: Observable<string> = this.backgroundService.background$;
@@ -39,6 +44,8 @@ export class LibraryComponent implements OnInit {
   favorites$!: Observable<LibraryPlaylist>;
 
   playlistsT$!: Observable<LibraryPlaylist[]>;
+
+  isModalOpen = false;
 
   private defaultPlaylists: LibraryPlaylist[] = [
     {
@@ -50,21 +57,40 @@ export class LibraryComponent implements OnInit {
         'https://i.pinimg.com/736x/3a/67/19/3a67194f5897030237d83289372cf684.jpg',
     },
   ];
+  openModal() {
+    this.isModalOpen = true;
+  }
 
-  ngOnInit(): void {
-    this.user = this.authService.getUserProfile();
-
+  closeModal() {
+    this.isModalOpen = false;
+  }
+  onPlaylistCreated(): void {
+    if (this.user?.id_user) {
+      this.playlistService.refreshPlaylists(this.user.id_user);
+    }
+  }
+  loadPlaylists() {
     if (this.user?.id_user) {
       this.playlistsT$ = this.playlistService
         .getAllPlaylist(this.user.id_user)
         .pipe(
-          map((response) => response || this.defaultPlaylists),
+          map((response) => {
+            return response || this.defaultPlaylists;
+          }),
           catchError((err) => {
             console.error('Error al obtener playlists:', err);
             return of(this.defaultPlaylists);
           })
         );
+    }
+    this.cdr.markForCheck();
+  }
 
+
+  ngOnInit(): void {
+    this.user = this.authService.getUserProfile();
+    this.loadPlaylists()
+    if (this.user?.id_user) {
       this.favorites$ = this.playlistService
         .getLikesCount(this.user.id_user)
         .pipe(

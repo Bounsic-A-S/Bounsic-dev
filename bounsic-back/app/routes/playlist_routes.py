@@ -3,6 +3,7 @@ from fastapi import APIRouter, Body, HTTPException
 from bson import ObjectId
 from pymongo.errors import PyMongoError
 from app.controllers import Playlist_controller
+from fastapi import UploadFile, Form, File
 
 router = APIRouter()
 
@@ -32,9 +33,9 @@ async def get_playlist_by_id(playlist_id: str):
     
 @router.post("/create")
 async def create_playlist(
-    user_id: int = Body(..., embed=True),
-    playlist_name: str = Body(..., embed=True),  
-    img_url: Optional[str] = Body(None, embed=True)  
+    user_id: str = Form(...),
+    playlist_name: str = Form(...),
+    img_url: UploadFile = File(None)  
 ):
     return await Playlist_controller.create_user_playlist_controller(user_id, playlist_name, img_url)
 

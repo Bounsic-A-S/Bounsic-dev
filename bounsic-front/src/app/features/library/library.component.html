@@ -1,5 +1,8 @@
 <div [ngClass]="bg$ | async" class="text-white min-h-screen pb-4 not-dark:text-black">
   <main-navbar></main-navbar>
+  <playlist-modal-create [isOpen]="isModalOpen" (playlistCreated)="onPlaylistCreated()" (closeModal)="closeModal()">
+  </playlist-modal-create>
+
   <main class="container mx-auto mt-14 pt-8 sm:pt-10 px-6 xl:px-2">
     <!-- Playlists Section -->
     <section class="mb-10">
@@ -14,7 +17,7 @@
         </ng-container>
 
         <!-- Add Playlist Button -->
-        <button class="cursor-pointer flex items-center ">
+        <button (click)="openModal()" class="cursor-pointer flex items-center ">
           <div
             class="aspect-square border border-gray-700 rounded-xl flex items-center justify-center mb-2 size-28 md:size-36 xl:size-40">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500" fill="none" viewBox="0 0 24 24"

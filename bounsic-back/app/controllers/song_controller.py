@@ -642,8 +642,11 @@ class Song_controller:
                 if not (track_name and artist_name):
                     continue
 
+                artistClean= Song_controller.clean_artist_name(artist_name)
+
+
                 # Buscar en Mongo
-                song =  Song_service.getSongByTitleAndArtist(track_name, artist_name)
+                song =  Song_service.getSongByTitleAndArtist(track_name, artistClean)
 
                 # Si ya está en Mongo
                 if song and not song.get("message") == "Song not found":
@@ -657,22 +660,32 @@ class Song_controller:
                     continue
 
                 # Si no está, intentar insertar
-                # print("No está, se intenta insertar:", track_name, artist_name)
-                # insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
+                print("No está, se intenta insertar:", track_name, artist_name)
+                insert_result = await Song_controller.process_song_and_album(track_name, artist_name)
 
-                # for s in insert_result.get("processed_songs", []):
-                #     song_id = s.get("song_id")
-                #     if not song_id:
-                #         continue
-                #     mongo_song =  Song_service.get_song_by_id(ObjectId(song_id))
-                #     if mongo_song:
-                #         result.append({
-                #             "_id": str(mongo_song.get("_id")),
-                #             "artist": mongo_song.get("artist"),
-                #             "title": mongo_song.get("title"),
-                #             "album": mongo_song.get("album"),
-                #             "img_url": mongo_song.get("img_url")
-                #         })
+                processed_songs = insert_result.get("processed_songs", [])
+                if not processed_songs:
+                    print("No se pudo procesar ninguna canción.")
+                    continue
+
+                for s in processed_songs:
+                    song_id = s.get("song_id")
+                    if not song_id or len(song_id) != 24:
+                        print("ID de canción inválido:", song_id)
+                        continue
+
+                    try:
+                        mongo_song = await Song_service.get_song_by_id(ObjectId(song_id))
+                        if mongo_song:
+                            result.append({
+                                "_id": str(mongo_song.get("_id")),
+                                "artist": mongo_song.get("artist"),
+                                "title": mongo_song.get("title"),
+                                "album": mongo_song.get("album"),
+                                "img_url": mongo_song.get("img_url")
+                            })
+                    except Exception as e:
+                        print(f"Error al obtener canción por ID: {e}")
 
             return JSONResponse(
                 status_code=200,

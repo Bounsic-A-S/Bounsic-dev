@@ -1,6 +1,7 @@
 {
   "BOUNSIC": {
     "LOADING": "카르간도",
+    "CREATE": "만들다",
     "LANDING": {
       "TITLE1": "당신의 음악. 당신의 분위기.",
       "TITLE2": "듣기 시작하세요.",
@@ -71,7 +72,9 @@
         "UPDATED": "수정된",
         "PLAYMIX": "플레이믹스",
         "LENGTH": "길이"
-      }
+      },
+      "PLAYLIST_TITLE": "재생목록 제목",
+      "NEW_PLAYLIST": "누에바 재생목록"
     },
     "PLAYER": {
       "ALBUM": "앨범",
