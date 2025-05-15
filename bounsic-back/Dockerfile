@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --prefix=/install -r requirements.txt
+    pip install --prefix=/install gunicorn
 
 # Etapa 2: Imagen final
 FROM python:3.11-slim
@@ -70,5 +71,5 @@ COPY cert/fullchain.pem /app/cert/cert.pem
 # Puerto expuesto
 EXPOSE 443
 
-# Comando de inicio del servidor FastAPI en HTTPS
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/cert/key.pem", "--ssl-certfile", "/app/cert/cert.pem", "--access-log", "--log-level", "debug"]
+# Comando de inicio del servidor FastAPI en HTTPS con Gunicorn y Uvicorn Workers
+CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:443", "--keyfile", "/app/cert/key.pem", "--certfile", "/app/cert/cert.pem", "--access-logfile", "-", "--error-logfile", "-"]

@@ -1,14 +1,9 @@
 name: Dockerize and Deploy Bounsic Back
 
 on:
-  workflow_run:
-    workflows: ["Run Tests"]
-    types:
-      - completed
-
   push:
     branches:
-      - main
+      - feat/uvicorn-change
 
 jobs:
   dockerize_and_deploy:
